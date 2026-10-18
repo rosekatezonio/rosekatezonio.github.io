@@ -1178,14 +1178,11 @@ function CertificationSection({ t, isDark }) {
 }
 
 const ABOUT_ME = [
-  "I'm currently a fourth-year student exploring the world of technology, one line of code at a time. I'm still learning and figuring things out, but I'm enjoying the journey of becoming a better coder and, hopefully, a mamaw when it comes to understanding the networks and systems working behind the scenes. I'm curious about how things work, whether it's the code that brings an application to life or the network that keeps everything connected.",
-  "## But there's more to me than just code and cables!",
-  "Before I got caught up in the world of programming and networking, I spent some time writing stories on Wattpad. I used to be an author with three novels under my belt, covering thriller, mystery, and comedy. I may not write as often as I used to, but the writer in me never really left. Every now and then, whenever inspiration strikes or boredom kicks in, I find myself writing a little prose or short story just for fun.",
-  "I also have a thing for Rubik's Cubes. I own at least ten of them, each one waiting for its turn to be scrambled and solved. Am I a speedcuber? Not exactly. Am I fast? Well, let's just say I can solve one in under a minute HAHAHAHAHA. I'm more of a casual cuber who enjoys the challenge, the patterns, and the satisfaction of getting every piece back where it belongs.",
-  "Music is another thing I can never get enough of, especially jazz. There's something about putting on my headphones or earphones and getting completely immersed in the music. It feels like I'm right there beside the instruments, listening to every note as if the musicians were playing just for me. It's my little escape whenever I need to relax, focus, or simply enjoy the moment.",
-  "When I'm not coding, writing, cubing, or listening to music, you'll probably find me admiring plants or thinking about growing some of my own. I love planting, and one of my little dreams is to have a house with a backyard full of plants someday. I imagine a peaceful green space where I can take care of my plants, breathe some fresh air, and enjoy a slower pace of life.",
-  "There's another side of me that has always been fascinated by films and the art of storytelling. Becoming a filmmaker is one of my dreams, and sometimes I wonder what my life would look like if I weren't pursuing the engineering path. Maybe I'd be behind a camera, directing a film, bringing stories to life, and turning the ideas in my head into something people could watch and feel. Who knows? Maybe I would've been a director in another life. It's a dream I still hold close to my heart, even as I continue working toward my goals in technology. After all, whether it's through writing code or directing a film, I think there's something beautiful about creating something from nothing and sharing it with the world.",
-  "At the end of the day, I'm just someone with a curious mind and a lot of dreams. I'm a future tech professional, a former Wattpad author, a casual cuber, a jazz lover, a plant lover, and a filmmaker at heart. I may be taking the engineering path for now, but a part of me will always be drawn to stories, cameras, and the magic of bringing an idea to life. I'm still figuring things out, learning as I go, and discovering the many things I could become. And honestly, I think that's one of the most exciting parts of being me.",
+  "I'm a fourth-year Computer Engineering student, still figuring things out as I find my way through the world of technology. I'm learning to write code, understand networks, and discover what happens behind the systems we use every day. I may still have a long way to go, but I guess that's part of the journey.",
+  "Outside the world of code and cables, there's a part of me that has always belonged to stories. I used to write novels on Wattpad, getting lost in worlds of my own making. These days, I write less often, but the storyteller in me never really left. Maybe that's why I've always been drawn to films, too. There's something beautiful about turning an idea into something people can see, hear, and feel. Somewhere along the way, becoming a filmmaker became one of those dreams I couldn't quite let go of.",
+  "When I'm not writing code or daydreaming about stories, you'll probably find me solving a Rubik's Cube, listening to jazz with my headphones on, or admiring plants and imagining the little garden I'd love to have someday.",
+  "I don't have everything figured out just yet. I'm still learning, still exploring, and still discovering the things I could become.",
+  "At the end of the day, I'm just someone with a curious mind and a lot of dreams. I'm a future tech professional, a former Wattpad author, a casual cuber, a jazz lover, a plant lover, and a filmmaker at heart. I may be taking the engineering path for now, but a part of me will always be drawn to stories, cameras, and the magic of bringing an idea to life. I'm still figuring things out, learning as I go, and discovering the many things I could become. And honestly, I think that's one of the most exciting parts of being me",
 ];
 
 // Fanned, swipeable photo stack in a 16:9 holder. Swipe, drag, click, tap a dot, or use arrow keys.
@@ -1348,10 +1345,9 @@ function AboutMeSection({ t, isDark }) {
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
         <User size={13} /> MORE ABOUT ME
       </p>
-      <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">About Me</h2>
+      <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">A little more of me</h2>
       <div className="mt-8">
         <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
-        <h3 className="font-display font-semibold text-xl mt-1">A little more of me</h3>
         <div className="mt-5">
           <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
         </div>
@@ -1378,7 +1374,7 @@ function AboutMeSection({ t, isDark }) {
               key={i}
               style={{ hyphens: "auto", WebkitHyphens: "auto" }}
               className={`font-body text-base sm:text-[17px] leading-[1.8] mt-5 first:mt-0 text-justify ${
-                closing ? `border-l-2 border-red-400 pl-4 font-medium ${t.text}` : t.textMuted
+                closing ? `font-medium ${t.text}` : t.textMuted
               }`}
             >
               {block}
