@@ -379,7 +379,7 @@ const HACKATHON_LINKEDIN = "https://lnkd.in/p/ghcHxX-M";
 const KURYENTE_GITHUB = "https://github.com/dioxaaa/Kuryente-Watch-AppBuilder-Hackaton";
 
 const FEATURED_ACTIVITY = {
-  label: "Latest",
+  label: "Hackathon",
   date: "October 9 - 10, 2026",
   title: "AppBuilders PH Hackathon",
   location: "Cyberzone, SM Makati",
@@ -392,6 +392,21 @@ const FEATURED_ACTIVITY = {
     { label: "See the project on GitHub", short: "GitHub repo", url: KURYENTE_GITHUB },
   ],
 };
+
+const AMA_FACEBOOK = "https://www.facebook.com/amaeducsystem";
+
+const CTIA_ACTIVITY = {
+  label: "Latest",
+  date: "Day 1",
+  title: "Cyber Threat Intelligence Analysis (CTIA) Level III",
+  location: "AMA University, Quezon City",
+  description:
+    "Day 1 of CTIA Level III. A full lab of fellow learners, and the start of going deeper into how security teams track, analyze, and make sense of threats.",
+  image: "ctia-level-3-day-1",
+  links: [{ label: "See AMA on Facebook", short: "AMA on Facebook", url: AMA_FACEBOOK }],
+};
+
+const ACTIVITIES = [CTIA_ACTIVITY, FEATURED_ACTIVITY];
 
 const EXPERIENCE_PATHWAYS = [
   { id: "internship", label: "Internship", caption: "Industry training" },
@@ -492,12 +507,12 @@ const BLOG_BY_SLUG = Object.fromEntries(BLOGS.map((b) => [blogSlug(b), b]));
 const readMinutes = (post) => Math.max(1, Math.ceil(post.body.join(" ").split(/\s+/).filter(Boolean).length / 200));
 
 const ABOUT_PHOTOS = [
-  { name: "About me · Cubes & books", caption: "Cubes & books", image: "aboutme-photo-cubes", pos: "62% 50%" },
-  { name: "About me · Beach day", caption: "Beach day", image: "aboutme-photo-beach", pos: "62% 50%" },
-  { name: "About me · Boat ride", caption: "Boat ride", image: "aboutme-photo-boat", pos: "50% 50%" },
-  { name: "About me · Arduino car", caption: "Arduino car", image: "aboutme-photo-robot", pos: "42% 50%" },
-  { name: "About me · Golden hour", caption: "Golden hour", image: "aboutme-photo-sunset", pos: "78% 50%" },
-  { name: "About me · Out on the grass", caption: "Out on the grass", image: "aboutme-photo-grass", pos: "34% 50%" },
+  { name: "About me · Me", caption: "Me", image: "aboutme-photo-me" },
+  { name: "About me · Writing", caption: "Writing", image: "aboutme-photo-writing" },
+  { name: "About me · Cubing", caption: "Cubing", image: "aboutme-photo-cubing" },
+  { name: "About me · Jazz", caption: "Jazz", image: "aboutme-photo-jazz" },
+  { name: "About me · Plants", caption: "Plants", image: "aboutme-photo-plants" },
+  { name: "About me · Films", caption: "Films", image: "aboutme-photo-films" },
 ];
 
 const EDUCATION = [
@@ -823,55 +838,64 @@ function ActivityLink({ link, t, isDark }) {
   );
 }
 
-function LatestActivities({ t, isDark }) {
-  const f = FEATURED_ACTIVITY;
+function ActivityRow({ f, reverse, t, isDark }) {
   const [swapped, setSwapped] = useState(false);
   const photos = [
-    { src: f.image, alt: `${f.title} group photo`, position: "object-[center_75%]" },
-    { src: f.inset, alt: `${f.title} stage`, position: "object-center" },
+    { src: f.image, alt: f.inset ? `${f.title} group photo` : f.title, position: f.imagePosition || "object-center" },
+    ...(f.inset ? [{ src: f.inset, alt: `${f.title} stage`, position: "object-center" }] : []),
   ];
-  const [main, small] = swapped ? [photos[1], photos[0]] : photos;
+  const [main, small] = swapped && photos[1] ? [photos[1], photos[0]] : photos;
+  return (
+    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+      <div className={`relative ${f.inset ? "pb-10 pr-8 sm:pb-14 sm:pr-14" : ""} ${reverse ? "lg:order-2" : ""}`}>
+        <img src={img(main.src)} alt={main.alt} className={`aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
+        {f.inset && small && (
+          <button
+            type="button"
+            onClick={() => setSwapped((v) => !v)}
+            aria-label="Swap photos"
+            title="Swap photos"
+            className={`group absolute bottom-0 right-0 w-32 sm:w-44 overflow-hidden rounded-2xl ring-4 ${isDark ? "ring-black" : "ring-slate-50"} transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-red-400`}
+          >
+            <img src={img(small.src)} alt={small.alt} className={`block aspect-[4/3] w-full object-cover ${small.position}`} />
+            <span className="absolute bottom-2 left-2 rounded-full bg-black/60 p-1.5 text-white transition-colors group-hover:text-red-400">
+              <ArrowLeftRight size={12} />
+            </span>
+          </button>
+        )}
+      </div>
+
+      <div>
+        <p className={`font-mono text-xs tracking-wide ${t.textMuted}`}>
+          <span className={t.accent}>{f.label}</span> / {f.date}
+        </p>
+        <h3 className={`font-display font-bold text-3xl sm:text-4xl tracking-tight leading-tight ${t.text} mt-4`}>{f.title}</h3>
+        <p className={`inline-flex items-center gap-1.5 font-body font-semibold text-base ${t.accent} mt-3`}>
+          <MapPin size={15} /> {f.location}
+        </p>
+        <p className={`font-body text-base leading-relaxed ${t.textMuted} mt-5 max-w-lg`}>{f.description}</p>
+        <div className="flex flex-nowrap items-center gap-x-6 sm:gap-x-8 mt-8">
+          {f.links.map((link) => (
+            <ActivityLink key={link.label} link={link} t={t} isDark={isDark} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LatestActivities({ t, isDark }) {
   return (
     <section id="activities" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <SectionHeading eyebrow="03 · OUT IN THE COMMUNITY" title="Latest Activities" caption="What I've been building and where I've been." icon={Trophy} t={t} />
 
-      <Reveal>
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div className="relative pb-10 pr-8 sm:pb-14 sm:pr-14">
-            <img src={img(main.src)} alt={main.alt} className={`aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
-            {f.inset && (
-              <button
-                type="button"
-                onClick={() => setSwapped((v) => !v)}
-                aria-label="Swap photos"
-                title="Swap photos"
-                className={`group absolute bottom-0 right-0 w-32 sm:w-44 overflow-hidden rounded-2xl ring-4 ${isDark ? "ring-black" : "ring-slate-50"} transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-red-400`}
-              >
-                <img src={img(small.src)} alt={small.alt} className={`block aspect-[4/3] w-full object-cover ${small.position}`} />
-                <span className="absolute bottom-2 left-2 rounded-full bg-black/60 p-1.5 text-white transition-colors group-hover:text-red-400">
-                  <ArrowLeftRight size={12} />
-                </span>
-              </button>
-            )}
-          </div>
-
-          <div>
-            <p className={`font-mono text-xs tracking-wide ${t.textMuted}`}>
-              <span className={t.accent}>{f.label}</span> / {f.date}
-            </p>
-            <h3 className={`font-display font-bold text-3xl sm:text-4xl tracking-tight leading-tight ${t.text} mt-4`}>{f.title}</h3>
-            <p className={`inline-flex items-center gap-1.5 font-body font-semibold text-base ${t.accent} mt-3`}>
-              <MapPin size={15} /> {f.location}
-            </p>
-            <p className={`font-body text-base leading-relaxed ${t.textMuted} mt-5 max-w-lg`}>{f.description}</p>
-            <div className="flex flex-nowrap items-center gap-x-6 sm:gap-x-8 mt-8">
-              {f.links.map((link) => (
-                <ActivityLink key={link.label} link={link} t={t} isDark={isDark} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </Reveal>
+      <div className="space-y-20 lg:space-y-28">
+        {ACTIVITIES.map((f, i) => (
+          <Reveal key={f.title}>
+            <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
+          </Reveal>
+        ))}
+      </div>
     </section>
   );
 }
@@ -1224,7 +1248,6 @@ function StackCard({ photo, offset, dragging, isDark, onBroken, broken }) {
             alt={active ? photo.caption : ""}
             draggable={false}
             onError={() => onBroken(photo.image)}
-            style={{ objectPosition: photo.pos || "center" }}
             className="h-full w-full object-cover pointer-events-none"
           />
         ) : (
@@ -1682,7 +1705,7 @@ const SKILL_TOTAL = SKILL_GROUPS.reduce((n, g) => n + g.items.length, 0);
 const IMAGE_FIELDS = ["icon", "thumbnail", "thumbnailDark", "gallery", "galleryDark", "image", "inset", "logo"];
 export const IMAGE_SLOTS = (() => {
   const slots = { [PROFILE.photo]: ["Profile photo"] };
-  const sources = [...ALL_SKILL_ITEMS, ...AI_TOOLING, ...ALL_PROJECTS, ...CERTIFICATIONS, FEATURED_ACTIVITY, ...EXPERIENCE, ...AFFILIATIONS, ...BLOGS, ...ABOUT_PHOTOS, ...EDUCATION];
+  const sources = [...ALL_SKILL_ITEMS, ...AI_TOOLING, ...ALL_PROJECTS, ...CERTIFICATIONS, ...ACTIVITIES, ...EXPERIENCE, ...AFFILIATIONS, ...BLOGS, ...ABOUT_PHOTOS, ...EDUCATION];
   for (const item of sources) {
     const name = item.name || item.title || item.company || item.institution || "Item";
     for (const field of IMAGE_FIELDS) {
