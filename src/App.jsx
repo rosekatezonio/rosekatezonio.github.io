@@ -349,7 +349,7 @@ const WEB_APPS_LIST = [
   {
     title: "KuryenteWatch",
     eyebrow: "Household Energy App · Hackathon",
-    meta: "Group Project · AppBuilders PH Hackathon · Oct 2026",
+    meta: "Hackathon · AppBuilders PH · Oct 2026",
     category: "Hackathon",
     status: "Completed",
     description: [
@@ -1248,8 +1248,8 @@ function CertificationSection({ t, isDark }) {
 
   return (
     <section id="certification">
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Learning & achievements</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned, and the learning still on my list.</p>
+      <h1 className="font-display font-bold text-3xl sm:text-5xl">Certifications</h1>
+      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned and the ones I'm working toward.</p>
 
       {groups.map((group) => (
         <div key={group.label} className="mt-10 first:mt-10">
@@ -1478,9 +1478,15 @@ function AboutMeSection({ t, isDark }) {
         <User size={13} /> MORE ABOUT ME
       </p>
       <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">A little more of me</h2>
+      <div className="mt-8">
+        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
+        <div className="mt-5">
+          <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
+        </div>
+      </div>
 
       <div className="max-w-2xl mx-auto">
-        <p className="font-display text-2xl sm:text-3xl font-medium leading-snug mt-10">
+        <p className="font-display text-2xl sm:text-3xl font-medium leading-snug mt-14">
           Hi, I'm <span className={t.accent}>RK</span>!
         </p>
       </div>
@@ -1515,13 +1521,6 @@ function AboutMeSection({ t, isDark }) {
             {ph.caption}
           </span>
         ))}
-      </div>
-
-      <div className="mt-14">
-        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
-        <div className="mt-5">
-          <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
-        </div>
       </div>
 
       <div className="mt-14 max-w-2xl mx-auto">
@@ -1897,13 +1896,69 @@ function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
+const FEATURED_TITLES = ["KuryenteWatch", "Salo Sa Antipolo", "Home Network Device Monitor"];
+const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hackathon"];
+
 function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
+  const [query, setQuery] = useState("");
+  const [track, setTrack] = useState("All");
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [requestClose]);
+
+  const q = query.trim().toLowerCase();
+  const matches = (p) => {
+    if (track !== "All" && trackOf(p.title) !== track && p.category !== track) return false;
+    if (!q) return true;
+    const hay = [p.title, p.eyebrow, p.meta, p.category, ...(p.tags || [])].filter(Boolean).join(" ").toLowerCase();
+    return hay.includes(q);
+  };
+  const filtered = ALL_PROJECTS.filter(matches);
+  const featured = FEATURED_TITLES.map((title) => ALL_PROJECTS.find((p) => p.title === title)).filter(Boolean);
+  const browsing = !q && track === "All";
+
+  const chip = (name) => (
+    <button
+      key={name}
+      onClick={() => setTrack(name)}
+      className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+        track === name ? `border-red-400 ${t.accent}` : `${t.border} ${t.textMuted} hover:border-red-400/60`
+      }`}
+    >
+      {name}
+    </button>
+  );
+
+  const Row = ({ p }) => (
+    <li className={`border-b ${t.border}`}>
+      <a href={`#${slugOf(p.title)}`} className="group flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
+        <div className={`shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg border ${t.border} overflow-hidden ${t.surfaceSolid}`}>
+          {p.thumbnail && <img src={img(thumbFor(p, isDark))} alt="" loading="lazy" className="h-full w-full object-cover" />}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-display font-semibold group-hover:text-red-400 transition-colors">{p.title}</span>
+            {FEATURED_TITLES.includes(p.title) && (
+              <span className={`rounded-full border border-red-400 px-2 py-0.5 text-[10px] font-mono tracking-wider uppercase ${t.accent}`}>Featured</span>
+            )}
+          </div>
+          <p className={`text-sm ${t.textMuted} mt-1 leading-snug`}>{taglineOf(p)}</p>
+          <p className={`text-xs font-mono ${t.textFaint} mt-2`}>
+            {contextOf(p)} · {trackOf(p.title)} · {yearOf(p)} · {p.status}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {(p.tags || []).slice(0, 4).map((tag) => (
+              <span key={tag} className={`rounded-full border ${t.border} px-2 py-0.5 text-[11px] ${t.textFaint}`}>{tag}</span>
+            ))}
+          </div>
+        </div>
+        <span className={`hidden sm:block shrink-0 text-sm ${t.textFaint}`}>{trackOf(p.title)}</span>
+      </a>
+    </li>
+  );
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
@@ -1914,24 +1969,36 @@ function ProjectArchive({ t, isDark, onClose, instant }) {
         <h1 className="font-display font-bold text-3xl sm:text-5xl mt-10">Project Log</h1>
         <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Everything I've built, wired up, and shipped.</p>
 
+        <div className={`mt-8 flex items-center gap-3 border-b ${t.border} pb-3`}>
+          <Search size={16} className={`shrink-0 ${t.textFaint}`} />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search projects or tools..."
+            className="w-full bg-transparent font-body text-sm outline-none placeholder:text-slate-400"
+          />
+          {query && (
+            <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-red-400 transition-colors`} aria-label="Clear search">
+              <X size={15} />
+            </button>
+          )}
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
+
+        {browsing && featured.length > 0 && (
+          <section className="mt-10">
+            <p className={`font-mono text-[11px] tracking-[0.2em] uppercase ${t.accent}`}>Featured</p>
+            <ul className={`mt-3 border-t ${t.border}`}>{featured.map((p) => <Row key={p.title} p={p} />)}</ul>
+          </section>
+        )}
+
         <ul className={`mt-10 border-t ${t.border}`}>
-          {ALL_PROJECTS.map((p) => (
-            <li key={p.title} className={`border-b ${t.border}`}>
-              <a href={`#${slugOf(p.title)}`} className="group flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
-                <div className={`shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg border ${t.border} overflow-hidden ${t.surfaceSolid}`}>
-                  {p.thumbnail && <img src={img(thumbFor(p, isDark))} alt="" loading="lazy" className="h-full w-full object-cover" />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-display font-semibold group-hover:text-red-400 transition-colors">{p.title}</span>
-                  </div>
-                  <p className={`text-sm ${t.textMuted} mt-1 leading-snug`}>{taglineOf(p)}</p>
-                </div>
-                <span className={`hidden sm:block shrink-0 text-sm ${t.textFaint}`}>{trackOf(p.title)}</span>
-              </a>
-            </li>
-          ))}
+          {filtered.filter((p) => !(browsing && FEATURED_TITLES.includes(p.title))).map((p) => <Row key={p.title} p={p} />)}
         </ul>
+        {filtered.length === 0 && (
+          <p className={`mt-6 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
+        )}
       </div>
     </div>
   );
@@ -2112,7 +2179,7 @@ const SIDEBAR_GROUPS = [
       { id: "labs", label: "Projects", Icon: LayoutGrid, count: ALL_PROJECTS.length },
       { id: "experience", label: "Experience", Icon: Briefcase, count: EXPERIENCE.length },
       { id: "affiliation", label: "Affiliation", Icon: Users, count: AFFILIATIONS.length },
-      { id: "certification", label: "Learning", Icon: Award, count: CERTIFICATIONS.length },
+      { id: "certification", label: "Certs", Icon: Award, count: CERTIFICATIONS.length },
     ],
   },
   {
