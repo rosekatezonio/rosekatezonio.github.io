@@ -126,7 +126,6 @@ const SKILLS = [
       { name: "Express", level: "basic", abbr: "EXP", icon: "https://cdn.simpleicons.org/express" },
       { name: "SQLite", level: "basic", abbr: "SQLT", icon: "https://cdn.simpleicons.org/sqlite" },
       { name: "Progressive Web Apps (PWA)", level: "basic", abbr: "PWA", icon: "https://cdn.simpleicons.org/pwa" },
-      { name: "OCR (Tesseract.js)", level: "learning", abbr: "OCR" },
       { name: "Local AI with Ollama", level: "learning", abbr: "AI", icon: "https://cdn.simpleicons.org/ollama" },
       { name: "REST API Integration", level: "basic", abbr: "API" },
     ],
@@ -640,6 +639,24 @@ function Reveal({ children, className = "", delay = 0 }) {
       {children}
     </div>
   );
+}
+
+function useOverlayClose(onClose) {
+  const [closing, setClosing] = useState(false);
+  const saved = useRef(onClose);
+  saved.current = onClose;
+  const timer = useRef(null);
+  const requestClose = useCallback(() => {
+    if (timer.current) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      saved.current();
+      return;
+    }
+    setClosing(true);
+    timer.current = setTimeout(() => saved.current(), 620);
+  }, []);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  return [closing, requestClose];
 }
 
 function NetworkCanvas({ isDark }) {
@@ -1209,7 +1226,6 @@ const ABOUT_ME = [
   "At the end of the day, I'm just someone with a curious mind and a lot of dreams. I'm a future tech professional, a former Wattpad author, a casual cuber, a jazz lover, a plant lover, and a filmmaker at heart. I may be taking the engineering path for now, but a part of me will always be drawn to stories, cameras, and the magic of bringing an idea to life. I'm still figuring things out, learning as I go, and discovering the many things I could become. And honestly, I think that's one of the most exciting parts of being me",
 ];
 
-// Fanned, swipeable photo stack in a 16:9 holder. Swipe, drag, click, tap a dot, or use arrow keys.
 const STACK_X = [0, 48, 72, 84];
 const SWIPE_THRESHOLD = 40;
 
@@ -1421,17 +1437,18 @@ function AboutMeSection({ t, isDark }) {
 }
 
 function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl", children }) {
+  const [closing, requestClose] = useOverlayClose(onClose);
   useEffect(() => {
     if (!listenEsc) return;
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose, listenEsc]);
+  }, [requestClose, listenEsc]);
 
   return (
-    <div id="panel-scroll" className={`fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
       <div className={`${width} mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20`}>
-        <button onClick={onClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-red-400 transition-colors`}>
+        <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-red-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
         <div className="mt-10">{children}</div>
@@ -1584,12 +1601,13 @@ function BlogSection({ t, isDark }) {
 }
 
 function BlogArticle({ t, isDark, post, onBack }) {
+  const [closing, requestClose] = useOverlayClose(onBack);
   const [copied, setCopied] = useState(false);
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onBack();
+    const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onBack]);
+  }, [requestClose]);
 
   const copyLink = () => {
     try {
@@ -1600,9 +1618,9 @@ function BlogArticle({ t, isDark, post, onBack }) {
   };
 
   return (
-    <div id="panel-scroll" className={`fixed inset-0 z-[70] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[70] overflow-y-auto ${t.bg} ${t.text}`}>
       <article className="mx-auto w-full max-w-[680px] px-5 pt-10 sm:pt-14 pb-24">
-        <button onClick={onBack} className={`inline-flex items-center gap-1.5 font-mono text-xs ${t.textMuted} hover:text-red-400 transition-colors`}>
+        <button onClick={requestClose} className={`inline-flex items-center gap-1.5 font-mono text-xs ${t.textMuted} hover:text-red-400 transition-colors`}>
           <ArrowLeftIcon size={13} /> all posts
         </button>
 
@@ -1695,7 +1713,7 @@ const AI_TOOLING = [
 
 const SKILL_GROUPS = [
   { title: "Languages", items: pickSkills(["JavaScript", "HTML", "CSS", "Python", "Lua (Roblox)", "SQL", "R"]) },
-  { title: "Frameworks & Libraries", items: pickSkills(["React", "Tailwind CSS", "Vite", "Node.js", "Express", "Progressive Web Apps (PWA)", "OCR (Tesseract.js)"]) },
+  { title: "Frameworks & Libraries", items: pickSkills(["React", "Tailwind CSS", "Vite", "Node.js", "Express", "Progressive Web Apps (PWA)"]) },
   { title: "Databases", items: pickSkills(["Firebase / Firestore", "MySQL", "PostgreSQL", "Microsoft SQL Server", "SQLite"]) },
   { title: "Platforms & Tooling", items: pickSkills(["Git", "GitHub", "VS Code", "Docker", "Cisco Packet Tracer"]) },
   { title: "AI Tooling", items: [...AI_TOOLING, ...pickSkills(["Local AI with Ollama"])] },
@@ -1742,16 +1760,17 @@ function SkillTile({ item, t, isDark }) {
 }
 
 function SkillsArchive({ t, onClose, isDark }) {
+  const [closing, requestClose] = useOverlayClose(onClose);
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [requestClose]);
 
   return (
-    <div className={`fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-        <button onClick={onClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-red-400 transition-colors`}>
+        <button onClick={requestClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-red-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
         <h1 className="font-display font-bold text-4xl sm:text-6xl mt-12">Tech Stack</h1>
@@ -1777,17 +1796,18 @@ function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
-function ProjectArchive({ t, isDark, onClose }) {
+function ProjectArchive({ t, isDark, onClose, instant }) {
+  const [closing, requestClose] = useOverlayClose(onClose);
   useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && onClose();
+    const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [requestClose]);
 
   return (
-    <div className={`fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
-        <button onClick={onClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-red-400 transition-colors`}>
+        <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-red-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
         <h1 className="font-display font-bold text-3xl sm:text-5xl mt-10">Project Log</h1>
@@ -2214,9 +2234,13 @@ function App() {
 
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [projectSlug, setProjectSlug] = useState(null);
+  const [archiveInstant, setArchiveInstant] = useState(false);
+  const prevHash = useRef("");
   useEffect(() => {
     const sync = () => {
       const h = window.location.hash.slice(1);
+      setArchiveInstant(h === "archive" && !!PROJECT_BY_SLUG[prevHash.current]);
+      prevHash.current = h;
       setArchiveOpen(h === "archive");
       setProjectSlug(PROJECT_BY_SLUG[h] ? h : null);
     };
@@ -2689,7 +2713,7 @@ function App() {
         </div>
       </footer>
 
-      {archiveOpen && <ProjectArchive t={t} isDark={isDark} onClose={closeArchive} />}
+      {archiveOpen && <ProjectArchive t={t} isDark={isDark} onClose={closeArchive} instant={archiveInstant} />}
       {projectSlug && <ProjectDetail key={projectSlug} t={t} isDark={isDark} project={PROJECT_BY_SLUG[projectSlug]} onBack={closeProject} />}
       {panel === "affiliation" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><AffiliationSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "aboutme" && <SectionPanel t={t} onClose={closePanel}><AboutMeSection t={t} isDark={isDark} /></SectionPanel>}
