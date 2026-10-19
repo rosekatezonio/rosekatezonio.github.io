@@ -492,12 +492,12 @@ const BLOG_BY_SLUG = Object.fromEntries(BLOGS.map((b) => [blogSlug(b), b]));
 const readMinutes = (post) => Math.max(1, Math.ceil(post.body.join(" ").split(/\s+/).filter(Boolean).length / 200));
 
 const ABOUT_PHOTOS = [
-  { name: "About me · Me", caption: "Me", image: "aboutme-photo-me" },
-  { name: "About me · Writing", caption: "Writing", image: "aboutme-photo-writing" },
-  { name: "About me · Cubing", caption: "Cubing", image: "aboutme-photo-cubing" },
-  { name: "About me · Jazz", caption: "Jazz", image: "aboutme-photo-jazz" },
-  { name: "About me · Plants", caption: "Plants", image: "aboutme-photo-plants" },
-  { name: "About me · Films", caption: "Films", image: "aboutme-photo-films" },
+  { name: "About me · Cubes & books", caption: "Cubes & books", image: "aboutme-photo-cubes", pos: "62% 50%" },
+  { name: "About me · Beach day", caption: "Beach day", image: "aboutme-photo-beach", pos: "62% 50%" },
+  { name: "About me · Boat ride", caption: "Boat ride", image: "aboutme-photo-boat", pos: "50% 50%" },
+  { name: "About me · Arduino car", caption: "Arduino car", image: "aboutme-photo-robot", pos: "42% 50%" },
+  { name: "About me · Golden hour", caption: "Golden hour", image: "aboutme-photo-sunset", pos: "78% 50%" },
+  { name: "About me · Out on the grass", caption: "Out on the grass", image: "aboutme-photo-grass", pos: "34% 50%" },
 ];
 
 const EDUCATION = [
@@ -1224,6 +1224,7 @@ function StackCard({ photo, offset, dragging, isDark, onBroken, broken }) {
             alt={active ? photo.caption : ""}
             draggable={false}
             onError={() => onBroken(photo.image)}
+            style={{ objectPosition: photo.pos || "center" }}
             className="h-full w-full object-cover pointer-events-none"
           />
         ) : (
