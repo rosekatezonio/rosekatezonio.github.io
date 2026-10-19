@@ -204,10 +204,27 @@ html::-webkit-scrollbar {
 @media (prefers-reduced-motion: reduce) { .bento-swap-in { animation: none; } }
 html, body, #panel-scroll { scrollbar-width: none; -ms-overflow-style: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
-.hero-split { container-type: inline-size; }
-.hero-word { font-size: 17cqw; }
-.hero-tail { font-size: 7.5cqw; }
+.hero-index { container-type: inline-size; }
+.hero-word {
+  font-size: 15cqw;
+  transition: -webkit-text-stroke-width 0.3s ease, -webkit-text-fill-color 0.3s ease;
+}
+.hero-tail { font-size: 7cqw; }
 @media (min-width: 768px) {
-  .hero-word { font-size: 8.2cqw; }
-  .hero-tail { font-size: 3.6cqw; }
+  .hero-word { font-size: 10.5cqw; }
+  .hero-tail { font-size: 3.4cqw; }
+}
+.hero-word-outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: max(1px, 0.2cqw);
+}
+.group\/side:hover .hero-word,
+.group\/side:focus-visible .hero-word {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: max(1px, 0.2cqw);
+}
+.group\/side:hover .hero-word-outline,
+.group\/side:focus-visible .hero-word-outline {
+  -webkit-text-fill-color: currentColor;
+  -webkit-text-stroke-width: 0;
 }

@@ -174,6 +174,17 @@ const RFID_PROJECT = {
   tags: ["VB.NET", "SQL", "RFID", "Hardware Integration"],
   github: "https://github.com/EngrPrenz/Robinson-s-Mall-RFID-Parking-System",
   thumbnail: "asset-06a80c2f",
+  detail: {
+    role: "Group project · hardware + software",
+    problem: "Tracking parking slots and billing by hand is slow and easy to get wrong. Attendants guess, drivers wait, and nothing is recorded.",
+    approach: "Close the loop with RFID: scan a card, see live slot availability, and let the system track occupancy and compute the bill automatically. Hardware, application, and database working as one flow.",
+    challenges: [
+      { title: "Hardware talking to software", fix: "Wired the RFID reader into a custom VB.NET app so every scan lands as a real event instead of a manual input." },
+      { title: "Keeping occupancy truthful", fix: "A SQL database tracks slot state in real time so the availability display and the billing can never disagree." },
+    ],
+    learned: "The full shape of a hardware-integrated project: physical input, application logic, and a database all moving together.",
+    next: "A cleaner interface and support for more than one entrance and exit.",
+  },
 };
 
 const LAB_CATEGORIES = ["All", "Monitoring", "Hardware"];
@@ -200,6 +211,17 @@ const LABS = [
     tags: ["Python", "SQLite", "Ping Sweep", "Telegram/Discord Alerts"],
     github: "https://github.com/arkyxo/home-network-monitor",
     thumbnail: "asset-b2fc0f05",
+    detail: {
+      role: "Solo project",
+      problem: "You can't see who's on your home network. A phone, a laptop, or a stranger can join silently and nobody would ever notice.",
+      approach: "One file, no dependencies: a Python script that ping-sweeps the whole subnet in parallel, compares what it finds against an approved device list, and pings me on Telegram or Discord the moment something unfamiliar shows up.",
+      challenges: [
+        { title: "Sequential scanning was too slow", fix: "Parallel pings so a full /24 sweep finishes in seconds instead of minutes." },
+        { title: "Local failures look like real outages", fix: "A detector that separates ISP failures from a device simply going quiet, plus a SQLite history of uptime, ping, loss, and jitter to check against." },
+      ],
+      learned: "How much network scripting is possible with just the standard library, and that an alert people actually want is worth more than a perfect scan.",
+      next: "Device fingerprinting so unknown devices get a name, not just a flag.",
+    },
   },
   { ...RFID_PROJECT, category: "Hardware" },
 ];
@@ -239,6 +261,17 @@ const WEB_APPS_LIST = [
     thumbnailDark: "cinelookup-dark-1",
     gallery: ["cinelookup-light-1", "cinelookup-light-2", "cinelookup-light-3", "cinelookup-light-4"],
     galleryDark: ["cinelookup-dark-1", "cinelookup-dark-2", "cinelookup-dark-3", "cinelookup-dark-4"],
+    detail: {
+      role: "Solo project · design to deploy",
+      problem: "Movie lists that never change are boring. I wanted a real browsing app with live listings, search, and watchlists that follow the user, not a static page.",
+      approach: "Pull everything from TMDb's API and let Firebase handle identity, so watchlists, ratings, and private lists sync to each account instead of living in one browser.",
+      challenges: [
+        { title: "Wrangling an external API", fix: "Kept API calls behind a thin layer so the listing, detail, and search views all share the same data path." },
+        { title: "Per-user data without a backend", fix: "Firebase auth plus Firestore gives every user their own synced watchlist." },
+      ],
+      learned: "API integration end to end: auth, request flow, and keeping the UI honest about loading and error states.",
+      next: "Polish the discovery side: better recommendations and a tighter watch experience.",
+    },
   },
   {
     title: "Salo Sa Antipolo",
@@ -267,6 +300,18 @@ const WEB_APPS_LIST = [
     github: "https://github.com/EngrPrenz/Salo-sa-SD",
     privateDemo: true,
     thumbnail: "asset-3e6b708c",
+    detail: {
+      role: "Team build · delivered to a real client",
+      problem: "A real restaurant needed more than a demo POS. Orders had to sync across terminals instantly, and the math on every bill had to be correct every single time.",
+      approach: "Firebase everywhere: Firestore keeps every terminal on the same live order stream, while one billing module owns the VAT and 6% service-charge rules so no two receipts can disagree.",
+      challenges: [
+        { title: "Multiple terminals, one truth", fix: "Real-time Firestore listeners so an order taken anywhere updates everywhere." },
+        { title: "Billing math that can't drift", fix: "A single shared computation for VAT and service charge instead of logic scattered across screens." },
+        { title: "Handover, not just delivery", fix: "Shipped with technical documentation and client training so the restaurant can actually run it in production." },
+      ],
+      learned: "What 'production' really means: correctness under a real workload, documentation, and a handover a non-technical owner can run with.",
+      next: "Better offline tolerance for spotty connections and deeper sales reporting.",
+    },
   },
   {
     title: "URSAC Simulation Academy",
@@ -289,6 +334,17 @@ const WEB_APPS_LIST = [
     github: null,
     view: "https://www.roblox.com/games/133137084199842/URSAC-Simulator-Academy",
     thumbnail: "asset-9e429332",
+    detail: {
+      role: "Thesis project · published and maintained",
+      problem: "Explaining a whole university journey is hard to do in a document. A game lets players live it instead.",
+      approach: "A full Roblox experience: custom environments plus a Lua quest system that walks players through enrollment, classes, and campus life, with progression tracking the whole way.",
+      challenges: [
+        { title: "A whole university in one game", fix: "Broke the journey into quests and environments instead of one overwhelming map." },
+        { title: "Launching is the easy part", fix: "After publishing, weekly updates driven by player bug reports keep it stable." },
+      ],
+      learned: "Lua and game design, but mostly that shipped software keeps talking back: player reports became a real maintenance loop.",
+      next: "More questlines and polish on the early-game experience where new players drop off.",
+    },
   },
   {
     title: "KuryenteWatch",
@@ -315,6 +371,18 @@ const WEB_APPS_LIST = [
     github: "https://github.com/dioxaaa/Kuryente-Watch-AppBuilder-Hackaton",
     view: "https://dist-web-ddfpdfbm.devinapps.com",
     thumbnail: "kuryentewatch",
+    detail: {
+      role: "Team build · 24-hour hackathon sprint",
+      problem: "Most households only learn what they spent on electricity when the bill arrives, too late to change anything. Reading the meter is a chore nobody keeps up with, so day-to-day usage stays invisible.",
+      approach: "Make meter reading a two-second habit: snap a photo and let OCR do the rest. Everything runs local-first; readings, estimates, and alerts live on the device, so the app works offline and private data never leaves the phone.",
+      challenges: [
+        { title: "No clean answer for reading meters", fix: "Tesseract.js reads the photo right in the browser; the engine stays out of the precache and is warmed into a runtime cache so installs stay fast." },
+        { title: "Alerts without per-device sensors", fix: "Derived usage-jump alerts from the cumulative meter readings users already submit, no smart plugs needed." },
+        { title: "AI on any phone, with no cloud key", fix: "Ollama when it's reachable and a built-in rule-based assistant when it isn't, so the chat never degrades to an error." },
+      ],
+      learned: "How much architecture a 'simple' 24-hour app hides: an Express + SQLite API, a PWA shell, an OCR pipeline, and two offline paths all had to land in one day.",
+      next: "Tighten OCR accuracy on more meter types and break usage down per appliance.",
+    },
   },
 ];
 
@@ -389,6 +457,7 @@ const FEATURED_ACTIVITY = {
   links: [
     { label: "Read my LinkedIn post", short: "LinkedIn post", url: HACKATHON_LINKEDIN },
     { label: "See the project on GitHub", short: "GitHub repo", url: KURYENTE_GITHUB },
+    { label: "See the project page", short: "Project page", page: "#kuryentewatch" },
   ],
 };
 
@@ -837,9 +906,8 @@ function SectionHeading({ eyebrow, title, subtitle, caption, icon: Icon, t }) {
 function ActivityLink({ link, t, isDark }) {
   return (
     <a
-      href={link.url}
-      target="_blank"
-      rel="noreferrer"
+      href={link.page || link.url}
+      {...(link.page ? {} : { target: "_blank", rel: "noreferrer" })}
       className={`group inline-flex shrink-0 items-center gap-2 whitespace-nowrap border-b pb-1.5 font-body text-sm font-medium ${t.text} ${isDark ? "border-neutral-600" : "border-slate-300"} hover:border-red-400 hover:text-red-400 transition-colors`}
     >
       {link.short ? (
@@ -850,7 +918,11 @@ function ActivityLink({ link, t, isDark }) {
       ) : (
         link.label
       )}
-      <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      {link.page ? (
+        <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+      ) : (
+        <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      )}
     </a>
   );
 }
@@ -1165,18 +1237,29 @@ function ExperienceTimeline({ t, isDark }) {
   );
 }
 
+const PENDING_STATUSES = ["In Progress", "Planned", "Upcoming"];
+const isEarnedCert = (cert) => !PENDING_STATUSES.includes(cert.status);
+
 function CertificationSection({ t, isDark }) {
+  const groups = [
+    { label: "Earned", items: CERTIFICATIONS.filter(isEarnedCert) },
+    { label: "In progress & planned", items: CERTIFICATIONS.filter((c) => !isEarnedCert(c)) },
+  ].filter((g) => g.items.length > 0);
+
   return (
     <section id="certification">
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Certifications</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned and the ones I'm working toward.</p>
+      <h1 className="font-display font-bold text-3xl sm:text-5xl">Learning & achievements</h1>
+      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned, and the learning still on my list.</p>
 
-      <ul className={`mt-10 border-t ${t.border}`}>
-        {CERTIFICATIONS.map((cert) => {
-          const earned = !["In Progress", "Planned", "Upcoming"].includes(cert.status);
-          const StatusIcon = earned ? CheckCircle2 : Clock;
-          return (
-            <li key={cert.name} className={`border-b ${t.border}`}>
+      {groups.map((group) => (
+        <div key={group.label} className="mt-10 first:mt-10">
+          <p className={`font-mono text-[11px] tracking-[0.2em] uppercase ${t.accent}`}>{group.label}</p>
+          <ul className={`mt-3 border-t ${t.border}`}>
+            {group.items.map((cert) => {
+              const earned = isEarnedCert(cert);
+              const StatusIcon = earned ? CheckCircle2 : Clock;
+              return (
+                <li key={cert.name} className={`border-b ${t.border}`}>
               <div className="flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
                 <div className={`shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg border ${t.border} overflow-hidden bg-white p-1.5 flex items-center justify-center`}>
                   {cert.image ? (
@@ -1192,7 +1275,7 @@ function CertificationSection({ t, isDark }) {
                     <span className={`inline-flex items-center gap-1.5 ${earned ? t.text : ""}`}>
                       <StatusIcon size={13} /> {cert.status}
                     </span>
-                    <span>{cert.date}</span>
+                    <span>{earned ? `Completed ${cert.date}` : cert.date !== cert.status ? cert.date : "Date TBA"}</span>
                     {cert.credentialId && <span>ID · {cert.credentialId}</span>}
                     {hasLink(cert.verifyUrl) ? (
                       <a
@@ -1204,26 +1287,35 @@ function CertificationSection({ t, isDark }) {
                         {cert.verifyLabel || "Verify"} <ExternalLink size={12} />
                       </a>
                     ) : (
-                      <span>Verification soon</span>
+                      earned && <span>Verification soon</span>
                     )}
                   </div>
+                  {cert.skills?.length > 0 && (
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {cert.skills.map((s) => (
+                        <span key={s} className={`rounded-full border ${t.border} px-2 py-0.5 text-[11px] ${t.textFaint}`}>{s}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 <span className={`hidden sm:block shrink-0 text-sm ${t.textFaint}`}>{cert.category}</span>
               </div>
             </li>
-          );
-        })}
-      </ul>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
     </section>
   );
 }
 
 const ABOUT_ME = [
-  "I'm a fourth-year Computer Engineering student, still figuring things out as I find my way through the world of technology. I'm learning to write code, understand networks, and discover what happens behind the systems we use every day. I may still have a long way to go, but I guess that's part of the journey.",
-  "Outside the world of code and cables, there's a part of me that has always belonged to stories. I used to write novels on Wattpad, getting lost in worlds of my own making. These days, I write less often, but the storyteller in me never really left. Maybe that's why I've always been drawn to films, too. There's something beautiful about turning an idea into something people can see, hear, and feel. Somewhere along the way, becoming a filmmaker became one of those dreams I couldn't quite let go of.",
-  "When I'm not writing code or daydreaming about stories, you'll probably find me solving a Rubik's Cube, listening to jazz with my headphones on, or admiring plants and imagining the little garden I'd love to have someday.",
-  "I don't have everything figured out just yet. I'm still learning, still exploring, and still discovering the things I could become.",
-  "At the end of the day, I'm just someone with a curious mind and a lot of dreams. I'm a future tech professional, a former Wattpad author, a casual cuber, a jazz lover, a plant lover, and a filmmaker at heart. I may be taking the engineering path for now, but a part of me will always be drawn to stories, cameras, and the magic of bringing an idea to life. I'm still figuring things out, learning as I go, and discovering the many things I could become. And honestly, I think that's one of the most exciting parts of being me",
+  "I'm a fourth-year Computer Engineering student at the University of Rizal System, Antipolo. I build web apps end to end: a restaurant POS delivered to a real client, a 24-hour hackathon energy app, an RFID parking system, and a published Roblox game. I also keep the network side sharp through a SOC analyst internship and certifications in network security.",
+  "I like work where software meets infrastructure: interfaces people enjoy using, and a clear picture of everything carrying them underneath.",
+  "## Outside of work",
+  "There's a part of me that has always belonged to stories. I used to write novels on Wattpad and still daydream about films; becoming a filmmaker is one of those dreams I never quite let go of. Away from the keyboard, you'll find me solving a Rubik's Cube, listening to jazz, or admiring the little garden I'd love to grow someday.",
+  "Still learning, still exploring, still discovering what I could become, and honestly, that's one of the most exciting parts of being me.",
 ];
 
 const STACK_X = [0, 48, 72, 84];
@@ -1386,15 +1478,9 @@ function AboutMeSection({ t, isDark }) {
         <User size={13} /> MORE ABOUT ME
       </p>
       <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">A little more of me</h2>
-      <div className="mt-8">
-        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
-        <div className="mt-5">
-          <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
-        </div>
-      </div>
 
       <div className="max-w-2xl mx-auto">
-        <p className="font-display text-2xl sm:text-3xl font-medium leading-snug mt-14">
+        <p className="font-display text-2xl sm:text-3xl font-medium leading-snug mt-10">
           Hi, I'm <span className={t.accent}>RK</span>!
         </p>
       </div>
@@ -1421,6 +1507,21 @@ function AboutMeSection({ t, isDark }) {
             </p>
           );
         })}
+      </div>
+
+      <div className="mt-6 max-w-2xl mx-auto flex flex-wrap gap-2">
+        {ABOUT_PHOTOS.filter((ph) => ph.caption !== "Me").map((ph) => (
+          <span key={ph.caption} className={`rounded-full border ${t.border} px-3 py-1 font-body text-xs ${t.textMuted}`}>
+            {ph.caption}
+          </span>
+        ))}
+      </div>
+
+      <div className="mt-14">
+        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
+        <div className="mt-5">
+          <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
+        </div>
       </div>
 
       <div className="mt-14 max-w-2xl mx-auto">
@@ -1869,6 +1970,7 @@ function ProjectDetail({ t, isDark, project: p, onBack }) {
             <p className={`text-sm ${t.textMuted}`}>
               {trackOf(p.title)} · {yearOf(p)}
             </p>
+            {p.detail?.role && <p className={`mt-1 text-sm ${t.textFaint}`}>{p.detail.role}</p>}
           </div>
           <div className="flex flex-wrap items-center gap-5 text-sm">
             {links.map((l) => (
@@ -1908,6 +2010,20 @@ function ProjectDetail({ t, isDark, project: p, onBack }) {
           <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
         </section>
 
+        {p.detail?.problem && (
+          <section className="mt-10">
+            <h2 className="font-display font-semibold text-lg">The problem</h2>
+            <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{p.detail.problem}</p>
+          </section>
+        )}
+
+        {p.detail?.approach && (
+          <section className="mt-10">
+            <h2 className="font-display font-semibold text-lg">Goal & approach</h2>
+            <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{p.detail.approach}</p>
+          </section>
+        )}
+
         {p.highlights && p.highlights.length > 0 && (
           <section className="mt-10">
             <h2 className="font-display font-semibold text-lg">Highlights</h2>
@@ -1930,6 +2046,38 @@ function ProjectDetail({ t, isDark, project: p, onBack }) {
             ))}
           </div>
         </section>
+
+        {p.detail?.challenges?.length > 0 && (
+          <section className="mt-10">
+            <h2 className="font-display font-semibold text-lg">Challenges & fixes</h2>
+            <ul className={`mt-3 border-t ${t.border}`}>
+              {p.detail.challenges.map((c) => (
+                <li key={c.title} className={`border-b ${t.border} py-4`}>
+                  <p className="font-medium">{c.title}</p>
+                  <p className={`mt-1 leading-relaxed ${t.textMuted}`}>{c.fix}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(p.detail?.learned || p.detail?.next) && (
+          <section className="mt-10">
+            <h2 className="font-display font-semibold text-lg">Takeaways & next steps</h2>
+            {p.detail.learned && (
+              <p className={`mt-3 leading-relaxed ${t.textMuted}`}>
+                <span className={`font-medium ${t.text}`}>Learned: </span>
+                {p.detail.learned}
+              </p>
+            )}
+            {p.detail.next && (
+              <p className={`mt-3 leading-relaxed ${t.textMuted}`}>
+                <span className={`font-medium ${t.text}`}>Improve next: </span>
+                {p.detail.next}
+              </p>
+            )}
+          </section>
+        )}
 
         {next && next !== p && (
           <a href={`#${slugOf(next.title)}`} className={`group mt-14 pt-6 border-t ${t.border} flex items-center justify-between gap-4`}>
@@ -1964,7 +2112,7 @@ const SIDEBAR_GROUPS = [
       { id: "labs", label: "Projects", Icon: LayoutGrid, count: ALL_PROJECTS.length },
       { id: "experience", label: "Experience", Icon: Briefcase, count: EXPERIENCE.length },
       { id: "affiliation", label: "Affiliation", Icon: Users, count: AFFILIATIONS.length },
-      { id: "certification", label: "Certs", Icon: Award, count: CERTIFICATIONS.length },
+      { id: "certification", label: "Learning", Icon: Award, count: CERTIFICATIONS.length },
     ],
   },
   {
@@ -2452,22 +2600,39 @@ function App() {
         <div className="relative max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24 w-full">
           <h1 className="sr-only">Websites on One Side. Networks on the Other.</h1>
 
-          <div className="hero-split group/hero grid grid-cols-1 md:grid-cols-2 gap-y-14 md:gap-x-8">
+          <div className="hero-index group/hero">
             {HERO_SIDES.map((side, i) => (
-              <Reveal key={side.id} delay={110 + i * 60} className="min-w-0">
-                <div className="group/side block w-full text-left transition-opacity duration-500 md:group-hover/hero:opacity-30 md:hover:!opacity-100">
-                  <h2 className="font-display font-bold tracking-[-0.04em] leading-[0.88]">
-                    <span
-                      className={`hero-word block whitespace-nowrap ${t.accent} transition-transform duration-500 group-hover/side:translate-x-2`}
-                    >
-                      {side.word}
+              <Reveal key={side.id} delay={110 + i * 60}>
+                <button
+                  onClick={() => {
+                    switchProjectTab(side.id);
+                    scrollToId("labs");
+                  }}
+                  className={`group/side block w-full border-t ${t.border} py-7 sm:py-9 text-left last:border-b transition-opacity duration-500 md:group-hover/hero:opacity-40 md:hover:!opacity-100`}
+                >
+                  <span className="flex items-center justify-between gap-4">
+                    <span className={`font-mono text-[11px] tracking-widest ${t.accent}`}>
+                      0{i + 1} · {side.label.toUpperCase()}
                     </span>
-                    <span className={`hero-tail mt-3 block whitespace-nowrap font-semibold tracking-[-0.03em] ${t.text}`}>
-                      {side.tail}
+                    <ArrowRight
+                      size={18}
+                      className={`${t.textFaint} shrink-0 transition-all duration-300 group-hover/side:translate-x-1.5 group-hover/side:text-red-400`}
+                    />
+                  </span>
+                  <span
+                    className={`hero-word mt-3 block whitespace-nowrap font-display font-bold tracking-[-0.04em] leading-[0.95] ${i === 1 ? "hero-word-outline" : ""} ${t.text}`}
+                  >
+                    {side.word}
+                  </span>
+                  <span
+                    className={`hero-tail mt-2 flex items-baseline justify-between gap-4 whitespace-nowrap font-display font-semibold tracking-[-0.03em] ${t.textMuted}`}
+                  >
+                    {side.tail}
+                    <span className={`font-mono text-[11px] font-normal tracking-widest ${t.textFaint}`}>
+                      {side.count} {side.count === 1 ? "ENTRY" : "ENTRIES"}
                     </span>
-                  </h2>
-                  <span aria-hidden="true" className="mt-8 block h-[3px] w-12 rounded-full bg-red-400 transition-all duration-500 group-hover/side:w-full" />
-                </div>
+                  </span>
+                </button>
               </Reveal>
             ))}
           </div>
