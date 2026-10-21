@@ -26,6 +26,7 @@ function makeIcon(paths) {
 
 const CodeBrackets = makeIcon(<><path d="m16 18 6-6-6-6" /><path d="m8 6-6 6 6 6" /></>);
 const NetworkNodes = makeIcon(<><rect x="16" y="16" width="6" height="6" rx="1" /><rect x="2" y="16" width="6" height="6" rx="1" /><rect x="9" y="2" width="6" height="6" rx="1" /><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3" /><path d="M12 12V8" /></>);
+const ShieldCheck = makeIcon(<><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></>);
 const Mail = makeIcon(<><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></>);
 const Github = makeIcon(<path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21" />);
 const GithubIcon = Github;
@@ -595,27 +596,10 @@ const EDUCATION = [
   },
 ];
 
-const HERO_SIDES = [
-  {
-    id: "webapps",
-    word: "Websites",
-    tail: "on One Side.",
-    label: "Software",
-    count: WEB_APPS.length,
-    blurb: "Web apps and interfaces, built end to end.",
-    chips: ["React", "Firebase", "Tailwind"],
-    Icon: CodeBrackets,
-  },
-  {
-    id: "labs",
-    word: "Networks",
-    tail: "on the Other.",
-    label: "Networking",
-    count: LABS.length,
-    blurb: "Topologies, routing and the infrastructure underneath.",
-    chips: ["Cisco", "VLANs", "Routing"],
-    Icon: NetworkNodes,
-  },
+const HERO_PILLS = [
+  { id: "software", label: "software-developer", Icon: CodeBrackets, tilt: "-2deg" },
+  { id: "networking", label: "networking-engineer", Icon: NetworkNodes, tilt: "1.5deg" },
+  { id: "cybersecurity", label: "cybersecurity-enthusiast", Icon: ShieldCheck, tilt: "-1deg" },
 ];
 
 const theme = {
@@ -2510,45 +2494,45 @@ function App() {
       </header>
 
       <section id="hero" className="relative pt-16 lg:pt-0 flex items-center overflow-hidden" style={{ minHeight: "92vh" }}>
-        <div className="relative max-w-6xl mx-auto px-5 sm:px-8 py-16 sm:py-24 w-full">
-          <h1 className="sr-only">Websites on One Side. Networks on the Other.</h1>
+        <div className="relative max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-24 w-full text-center">
+          <h1 className="sr-only">Rose Kate Zonio. Websites on one side, networks on the other.</h1>
 
-          <div className="hero-index group/hero">
-            {HERO_SIDES.map((side, i) => (
-              <Reveal key={side.id} delay={110 + i * 60}>
-                <button
-                  onClick={() => {
-                    switchProjectTab(side.id);
-                    scrollToId("labs");
-                  }}
-                  className={`group/side block w-full border-t ${t.border} py-7 sm:py-9 text-left last:border-b transition-opacity duration-500 md:group-hover/hero:opacity-40 md:hover:!opacity-100`}
-                >
-                  <span className="flex items-center justify-between gap-4">
-                    <span className={`font-mono text-[11px] tracking-widest ${t.accent}`}>
-                      0{i + 1} · {side.label.toUpperCase()}
-                    </span>
-                    <ArrowRight
-                      size={18}
-                      className={`${t.textFaint} shrink-0 transition-all duration-300 group-hover/side:translate-x-1.5 group-hover/side:text-red-400`}
-                    />
-                  </span>
+          <Reveal delay={80}>
+            <div className={`hero-frame ${isDark ? "hero-frame-dark" : "hero-frame-light"}`}>
+              <span aria-hidden="true" className="hero-handle hero-handle-tl" />
+              <span aria-hidden="true" className="hero-handle hero-handle-tr" />
+              <span aria-hidden="true" className="hero-handle hero-handle-bl" />
+              <span aria-hidden="true" className="hero-handle hero-handle-br" />
+
+              <p aria-hidden="true" className={`hero-name font-display font-bold uppercase ${t.text}`}>
+                <span className="block">Rose Kate</span>
+                <span className="block">Zonio</span>
+              </p>
+
+              <div className="mt-6 sm:mt-8 flex flex-col items-center gap-4 sm:gap-5">
+                {HERO_PILLS.map((pill) => (
                   <span
-                    className={`hero-word mt-3 block whitespace-nowrap font-display font-bold tracking-[-0.04em] leading-[0.95] ${i === 1 ? "hero-word-outline" : ""} ${t.text}`}
+                    key={pill.id}
+                    className={`hero-pill ${isDark ? "hero-pill-dark" : "hero-pill-light"}`}
+                    style={{ "--tilt": pill.tilt }}
                   >
-                    {side.word}
+                    <pill.Icon size={16} className="shrink-0" />
+                    {pill.label}
                   </span>
-                  <span
-                    className={`hero-tail mt-2 flex items-baseline justify-between gap-4 whitespace-nowrap font-display font-semibold tracking-[-0.03em] ${t.textMuted}`}
-                  >
-                    {side.tail}
-                    <span className={`font-mono text-[11px] font-normal tracking-widest ${t.textFaint}`}>
-                      {side.count} {side.count === 1 ? "ENTRY" : "ENTRIES"}
-                    </span>
-                  </span>
-                </button>
-              </Reveal>
-            ))}
-          </div>
+                ))}
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal delay={240}>
+            <h2 className={`mt-12 sm:mt-14 font-display font-bold text-2xl sm:text-4xl leading-tight tracking-tight ${t.text}`}>
+              Websites on one side.
+              <br className="hidden sm:block" /> Networks on the other.
+            </h2>
+            <p className={`mx-auto mt-4 max-w-xl font-body text-sm sm:text-lg leading-relaxed ${t.textMuted}`}>
+              Building web apps, labbing out network topologies, and exploring how the two fit together.
+            </p>
+          </Reveal>
         </div>
       </section>
 
