@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import "./styles.css";   // your custom CSS first...
-import "./tailwind.css"; // ...then Tailwind, same order the CDN version used
+import "./styles.css";
+import "./tailwind.css";
 import App from "./App.jsx";
 
 const Admin = lazy(() => import("./Admin.jsx"));

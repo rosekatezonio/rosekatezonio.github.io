@@ -575,12 +575,7 @@ const BLOG_BY_SLUG = Object.fromEntries(BLOGS.map((b) => [blogSlug(b), b]));
 const readMinutes = (post) => Math.max(1, Math.ceil(post.body.join(" ").split(/\s+/).filter(Boolean).length / 200));
 
 const ABOUT_PHOTOS = [
-  { name: "About me · Me", caption: "Me", image: "aboutme-photo-me" },
-  { name: "About me · Writing", caption: "Writing", image: "aboutme-photo-writing" },
-  { name: "About me · Cubing", caption: "Cubing", image: "aboutme-photo-cubing" },
-  { name: "About me · Jazz", caption: "Jazz", image: "aboutme-photo-jazz" },
-  { name: "About me · Plants", caption: "Plants", image: "aboutme-photo-plants" },
-  { name: "About me · Films", caption: "Films", image: "aboutme-photo-films" },
+  { name: "About me · Photo", caption: "Me", image: "aboutme-photo-main" },
 ];
 
 const EDUCATION = [
@@ -1318,154 +1313,16 @@ const ABOUT_ME = [
   "Still learning, still exploring, still discovering what I could become, and honestly, that's one of the most exciting parts of being me.",
 ];
 
-const STACK_X = [0, 48, 72, 84];
-const SWIPE_THRESHOLD = 40;
-
-function StackCard({ photo, offset, dragging, isDark, onBroken, broken }) {
-  const abs = Math.abs(offset);
+function AboutPhoto({ photo, isDark }) {
   const src = img(photo.image);
-  const show = src && !broken;
-  const active = offset === 0;
-  const dir = offset < 0 ? -1 : 1;
-  const x = STACK_X[Math.min(abs, STACK_X.length - 1)] * dir;
-  const visible = abs <= 3;
-
+  if (!src) return null;
   return (
-    <div
-      data-offset={offset}
-      aria-hidden={!active}
-      className="absolute left-1/2 top-1/2 h-[84%] aspect-[4/5] select-none"
-      style={{
-        transform: `translate(-50%, -50%) translateX(calc(${x}% + var(--drag, 0px))) translateY(${abs * 2}%) rotate(${offset * 5}deg) scale(${1 - abs * 0.07})`,
-        zIndex: 10 - abs,
-        opacity: visible ? 1 : 0,
-        pointerEvents: visible ? "auto" : "none",
-        transition: dragging ? "opacity 300ms ease" : "transform 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 300ms ease",
-        cursor: active ? "grab" : "pointer",
-      }}
-    >
+    <div className="mx-auto w-full max-w-3xl">
       <div
-        className={`relative h-full w-full overflow-hidden rounded-2xl border-[3px] shadow-xl ${
-          isDark ? "border-neutral-800 bg-neutral-900" : "border-white bg-slate-100"
-        }`}
-        style={{ filter: active ? "none" : `brightness(${isDark ? 0.7 : 0.92})`, transition: "filter 400ms ease" }}
+        className={`overflow-hidden rounded-2xl border-[3px] shadow-xl ${isDark ? "border-neutral-800 bg-neutral-900" : "border-white bg-slate-100"}`}
+        style={{ aspectRatio: "1456 / 735" }}
       >
-        {show ? (
-          <img
-            src={src}
-            alt={active ? photo.caption : ""}
-            draggable={false}
-            onError={() => onBroken(photo.image)}
-            className="h-full w-full object-cover pointer-events-none"
-          />
-        ) : (
-          <div className={`absolute inset-0 flex flex-col items-center justify-center gap-2 ${isDark ? "text-neutral-500" : "text-slate-400"}`}>
-            <ImageIcon size={22} />
-            <span className="font-mono text-[10px] tracking-widest uppercase">Photo soon</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function PhotoStack({ photos, t, isDark }) {
-  const n = photos.length;
-  const [active, setActive] = useState(Math.min(2, n - 1));
-  const [broken, setBroken] = useState({});
-  const [dragging, setDragging] = useState(false);
-  const [dragX, setDragX] = useState(0);
-  const drag = useRef({ id: null, startX: 0, startY: 0, moved: false, offset: null });
-
-  const wrap = useCallback((i) => ((i % n) + n) % n, [n]);
-  const go = useCallback((i) => setActive(wrap(i)), [wrap]);
-  const half = Math.floor(n / 2);
-  const offsetOf = (i) => ((i - active + n + half) % n) - half;
-
-  const onPointerDown = (e) => {
-    if (e.pointerType === "mouse" && e.button !== 0) return;
-    const card = e.target.closest("[data-offset]");
-    drag.current = { id: e.pointerId, startX: e.clientX, startY: e.clientY, moved: false, offset: card ? Number(card.dataset.offset) : null };
-    e.currentTarget.setPointerCapture?.(e.pointerId);
-    setDragging(true);
-  };
-
-  const onPointerMove = (e) => {
-    const d = drag.current;
-    if (d.id !== e.pointerId) return;
-    const dx = e.clientX - d.startX;
-    if (Math.abs(dx) > 6) d.moved = true;
-    setDragX(dx * 0.6);
-  };
-
-  const finish = (e, cancelled) => {
-    const d = drag.current;
-    if (d.id !== e.pointerId) return;
-    const dx = e.clientX - d.startX;
-    drag.current = { ...d, id: null };
-    setDragging(false);
-    setDragX(0);
-    if (cancelled) return;
-    if (d.moved && Math.abs(dx) >= SWIPE_THRESHOLD) {
-      go(active + (dx < 0 ? 1 : -1));
-    } else if (!d.moved && d.offset !== null) {
-      go(d.offset === 0 ? active + 1 : active + d.offset);
-    }
-  };
-
-  const onKeyDown = (e) => {
-    if (e.key === "ArrowRight") { e.preventDefault(); go(active + 1); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); go(active - 1); }
-  };
-
-  if (!n) return null;
-
-  return (
-    <div>
-      <div
-        role="group"
-        aria-roledescription="carousel"
-        aria-label="Photos of me"
-        tabIndex={0}
-        onKeyDown={onKeyDown}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={(e) => finish(e, false)}
-        onPointerCancel={(e) => finish(e, true)}
-        className="relative w-full aspect-video overflow-x-clip rounded-2xl"
-        style={{ touchAction: "pan-y", "--drag": `${dragX}px` }}
-      >
-        <div className="absolute inset-0">
-          {photos.map((photo, i) => (
-            <StackCard
-              key={photo.image}
-              photo={photo}
-              offset={offsetOf(i)}
-              dragging={dragging}
-              isDark={isDark}
-              broken={!!broken[photo.image]}
-              onBroken={(k) => setBroken((b) => ({ ...b, [k]: true }))}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col items-center gap-2">
-        <div className="flex items-center gap-2" role="tablist" aria-label="Choose photo">
-          {photos.map((photo, i) => (
-            <button
-              key={photo.image}
-              role="tab"
-              aria-selected={i === active}
-              aria-label={`Show ${photo.caption}`}
-              onClick={() => go(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === active ? `w-6 ${t.accentBg}` : `w-1.5 ${isDark ? "bg-neutral-700 hover:bg-neutral-500" : "bg-slate-300 hover:bg-slate-400"}`
-              }`}
-            />
-          ))}
-        </div>
-        <p className={`font-mono text-[11px] ${t.textFaint}`}>Swipe or click the stack to shuffle</p>
+        <img src={src} alt={photo.caption} draggable={false} className="h-full w-full object-cover" />
       </div>
     </div>
   );
@@ -1479,10 +1336,7 @@ function AboutMeSection({ t, isDark }) {
       </p>
       <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">A little more of me</h2>
       <div className="mt-8">
-        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Snapshots</p>
-        <div className="mt-5">
-          <PhotoStack photos={ABOUT_PHOTOS} t={t} isDark={isDark} />
-        </div>
+        <AboutPhoto photo={ABOUT_PHOTOS[0]} isDark={isDark} />
       </div>
 
       <div className="max-w-2xl mx-auto">
@@ -1513,14 +1367,6 @@ function AboutMeSection({ t, isDark }) {
             </p>
           );
         })}
-      </div>
-
-      <div className="mt-6 max-w-2xl mx-auto flex flex-wrap gap-2">
-        {ABOUT_PHOTOS.filter((ph) => ph.caption !== "Me").map((ph) => (
-          <span key={ph.caption} className={`rounded-full border ${t.border} px-3 py-1 font-body text-xs ${t.textMuted}`}>
-            {ph.caption}
-          </span>
-        ))}
       </div>
 
       <div className="mt-14 max-w-2xl mx-auto">
