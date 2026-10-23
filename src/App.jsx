@@ -676,6 +676,21 @@ function useReveal(threshold = 0.15) {
   return [ref, visible];
 }
 
+function HeroPill({ pill, isDark }) {
+  const [wiggle, setWiggle] = useState(false);
+  return (
+    <span
+      className={`hero-pill ${isDark ? "hero-pill-dark" : "hero-pill-light"} ${wiggle ? "hero-pill-wiggle" : ""}`}
+      style={{ "--tilt": pill.tilt }}
+      onClick={() => setWiggle(true)}
+      onAnimationEnd={() => setWiggle(false)}
+    >
+      <pill.Icon size={16} className="shrink-0" />
+      {pill.label}
+    </span>
+  );
+}
+
 function Reveal({ children, className = "", delay = 0 }) {
   const [ref, visible] = useReveal();
   return (
@@ -716,64 +731,36 @@ function NetworkCanvas({ isDark }) {
     const container = containerRef.current;
     if (!canvas || !container) return;
     const ctx = canvas.getContext("2d");
-    const reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let width, height, dpr;
-    let nodes = [];
-    let packets = [];
-    let rafId;
 
     const NODE_COUNT_BASE = 42;
     const MAX_DIST = 170;
 
-    function resize() {
-      width = container.clientWidth;
-      height = container.clientHeight;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let width = 0;
+    let height = 0;
+    let nodes = [];
+
+    function seeded(seed) {
+      let a = seed;
+      return () => {
+        a |= 0;
+        a = (a + 0x6d2b79f5) | 0;
+        let t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function draw() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = width * dpr;
       canvas.height = height * dpr;
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-
-    function init() {
-      resize();
-      const count = isDark
-        ? Math.round(Math.min(NODE_COUNT_BASE * 1.6, Math.max(22, (width * height) / 22000)))
-        : Math.round(Math.min(NODE_COUNT_BASE * 0.7, Math.max(12, (width * height) / 50000)));
-      nodes = Array.from({ length: count }, () => ({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.25,
-        vy: (Math.random() - 0.5) * 0.25,
-        r: Math.random() * 1.4 + 1.6,
-      }));
-      packets = [];
-    }
-
-    function maybeSpawnPacket(edges) {
-      if (edges.length === 0) return;
-      if (Math.random() < 0.02 && packets.length < 10) {
-        const e = edges[Math.floor(Math.random() * edges.length)];
-        packets.push({ a: e.a, b: e.b, t: 0, speed: 0.006 + Math.random() * 0.006 });
-      }
-    }
-
-    function draw() {
       ctx.clearRect(0, 0, width, height);
+
       const lineColor = isDark ? "160, 160, 160" : "90, 90, 90";
       const nodeColor = isDark ? "200, 200, 200" : "90, 90, 90";
-      const packetColor = isDark ? "255, 255, 255" : "0, 0, 0";
-
-      const edges = [];
-      for (let i = 0; i < nodes.length; i++) {
-        const n = nodes[i];
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > width) n.vx *= -1;
-        if (n.y < 0 || n.y > height) n.vy *= -1;
-      }
 
       for (let i = 0; i < nodes.length; i++) {
         for (let j = i + 1; j < nodes.length; j++) {
@@ -788,25 +775,8 @@ function NetworkCanvas({ isDark }) {
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
             ctx.stroke();
-            edges.push({ a, b });
           }
         }
-      }
-
-      if (!reduced && isDark) maybeSpawnPacket(edges);
-
-      packets = packets.filter((p) => p.t <= 1);
-      for (const p of packets) {
-        p.t += p.speed;
-        const x = p.a.x + (p.b.x - p.a.x) * p.t;
-        const y = p.a.y + (p.b.y - p.a.y) * p.t;
-        ctx.beginPath();
-        ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${packetColor}, 0.9)`;
-        ctx.shadowColor = `rgba(${packetColor}, 0.8)`;
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.shadowBlur = 0;
       }
 
       for (const n of nodes) {
@@ -817,25 +787,37 @@ function NetworkCanvas({ isDark }) {
       }
     }
 
-    function loop() {
+    function build(nextWidth, nextHeight) {
+      width = nextWidth;
+      height = nextHeight;
+      const rand = seeded(isDark ? 7919 : 104729);
+      const count = isDark
+        ? Math.round(Math.min(NODE_COUNT_BASE * 1.6, Math.max(22, (width * height) / 22000)))
+        : Math.round(Math.min(NODE_COUNT_BASE * 0.7, Math.max(12, (width * height) / 50000)));
+      nodes = Array.from({ length: count }, () => ({
+        x: rand() * width,
+        y: rand() * height,
+        r: rand() * 1.4 + 1.6,
+      }));
       draw();
-      rafId = requestAnimationFrame(loop);
     }
 
-    init();
-    if (reduced) {
-      draw();
-    } else {
-      loop();
+    function measure() {
+      const w = container.clientWidth;
+      const h = Math.max(container.clientHeight, window.screen ? window.screen.height : 0);
+      return { w, h };
     }
+
+    const first = measure();
+    build(first.w, first.h);
 
     const ro = new ResizeObserver(() => {
-      init();
+      const next = measure();
+      if (next.w !== width || next.h > height) build(next.w, next.h);
     });
     ro.observe(container);
 
     return () => {
-      cancelAnimationFrame(rafId);
       ro.disconnect();
     };
   }, [isDark]);
@@ -2499,38 +2481,28 @@ function App() {
 
           <Reveal delay={80}>
             <div className={`hero-frame ${isDark ? "hero-frame-dark" : "hero-frame-light"}`}>
-              <span aria-hidden="true" className="hero-handle hero-handle-tl" />
-              <span aria-hidden="true" className="hero-handle hero-handle-tr" />
-              <span aria-hidden="true" className="hero-handle hero-handle-bl" />
-              <span aria-hidden="true" className="hero-handle hero-handle-br" />
+              <div className="hero-body">
+                <p aria-hidden="true" className={`hero-name font-display font-bold uppercase ${t.text}`}>
+                  <span className="block">Rose Kate</span>
+                  <span className="block">Zonio</span>
+                </p>
 
-              <p aria-hidden="true" className={`hero-name font-display font-bold uppercase ${t.text}`}>
-                <span className="block">Rose Kate</span>
-                <span className="block">Zonio</span>
-              </p>
-
-              <div className="mt-6 sm:mt-8 flex flex-col items-center gap-4 sm:gap-5">
-                {HERO_PILLS.map((pill) => (
-                  <span
-                    key={pill.id}
-                    className={`hero-pill ${isDark ? "hero-pill-dark" : "hero-pill-light"}`}
-                    style={{ "--tilt": pill.tilt }}
-                  >
-                    <pill.Icon size={16} className="shrink-0" />
-                    {pill.label}
-                  </span>
-                ))}
+                <div className="mt-6 sm:mt-8 flex flex-col items-center gap-4 sm:gap-5">
+                  {HERO_PILLS.map((pill) => (
+                    <HeroPill key={pill.id} pill={pill} isDark={isDark} />
+                  ))}
+                </div>
               </div>
             </div>
           </Reveal>
 
           <Reveal delay={240}>
-            <h2 className={`mt-12 sm:mt-14 font-display font-bold text-2xl sm:text-4xl leading-tight tracking-tight ${t.text}`}>
+            <h2 className={`mt-12 sm:mt-14 font-display font-bold text-[clamp(1.35rem,6.2vw,2.25rem)] leading-tight tracking-tight ${t.text}`}>
               Websites on one side.
-              <br className="hidden sm:block" /> Networks on the other.
+              <br /> Networks on the other.
             </h2>
             <p className={`mx-auto mt-4 max-w-xl font-body text-sm sm:text-lg leading-relaxed ${t.textMuted}`}>
-              Building web apps, labbing out network topologies, and exploring how the two fit together.
+              Check the sidebar/menu for more information: certifications, blogs, and affiliations.
             </p>
           </Reveal>
         </div>
@@ -2586,10 +2558,6 @@ function App() {
                 );
               })}
             </div>
-            <p className={`mt-10 flex items-center gap-2 font-body text-xs sm:text-[13px] ${t.textFaint}`}>
-              <PanelLeft size={14} className="shrink-0" />
-              <span>Check the sidebar/menu for more information: certifications, blogs, and affiliations.</span>
-            </p>
           </Reveal>
         </div>
       </section>
