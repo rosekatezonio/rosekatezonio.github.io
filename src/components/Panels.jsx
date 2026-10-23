@@ -340,7 +340,7 @@ export function BlogArticle({ t, isDark, post, onBack }) {
           <img src={img(post.image)} alt={post.title} className={`mt-8 aspect-[16/10] w-full rounded-lg object-cover ${post.position}`} />
         )}
 
-        <div className="font-serif-read mt-10 text-[19px] sm:text-[21px] leading-[1.75]">
+        <div className="font-serif-read mt-10 text-[19px] sm:text-[21px] leading-[1.75] text-justify">
           {post.body.map((block, i) =>
             block.startsWith("## ") ? (
               <h2 key={i} className="font-display font-bold text-2xl sm:text-[28px] leading-snug tracking-tight mt-12 mb-1">{block.slice(3)}</h2>
