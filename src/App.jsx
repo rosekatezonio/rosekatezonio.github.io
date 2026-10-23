@@ -2487,7 +2487,7 @@ function App() {
                   <span className="block">Zonio</span>
                 </p>
 
-                <div className="mt-6 sm:mt-8 flex flex-col items-center gap-4 sm:gap-5">
+                <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3 sm:gap-4">
                   {HERO_PILLS.map((pill) => (
                     <HeroPill key={pill.id} pill={pill} isDark={isDark} />
                   ))}
@@ -2501,9 +2501,6 @@ function App() {
               Websites on one side.
               <br /> Networks on the other.
             </h2>
-            <p className={`mx-auto mt-4 max-w-xl font-body text-sm sm:text-lg leading-relaxed ${t.textMuted}`}>
-              Check the sidebar/menu for more information: certifications, blogs, and affiliations.
-            </p>
           </Reveal>
         </div>
       </section>
