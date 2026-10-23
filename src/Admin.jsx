@@ -3,7 +3,7 @@ import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db, firebaseReady, googleProvider } from "./firebase.js";
 import { localImages, optimized } from "./images.js";
-import { IMAGE_SLOTS } from "./App.jsx";
+import { IMAGE_SLOTS } from "./data.js";
 
 const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL || "").toLowerCase();
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -12,7 +12,7 @@ const KEY_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
 
 const btn = "inline-flex items-center justify-center gap-2 rounded-lg border px-3 py-1.5 text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 const btnPlain = `${btn} border-neutral-700 text-neutral-300 hover:border-neutral-500 hover:text-white`;
-const btnAccent = `${btn} border-red-400 text-red-400 hover:bg-red-400/10`;
+const btnAccent = `${btn} border-accent-400 text-accent-400 hover:bg-accent-400/10`;
 
 async function uploadToCloudinary(file, filename) {
   const body = new FormData();
@@ -61,7 +61,7 @@ function Shell({ children }) {
 function Notice({ title, children }) {
   return (
     <Shell>
-      <a href="#" className="text-sm text-neutral-400 hover:text-red-400 transition-colors">← Back to site</a>
+      <a href="#" className="text-sm text-neutral-400 hover:text-accent-400 transition-colors">← Back to site</a>
       <div className="mt-10 max-w-md rounded-2xl border border-neutral-800 p-6">
         <h1 className="font-display text-2xl font-bold">{title}</h1>
         <div className="mt-3 text-sm leading-relaxed text-neutral-400">{children}</div>
@@ -186,7 +186,7 @@ export default function Admin() {
         <button type="button" onClick={() => signInWithPopup(auth, googleProvider).catch((e) => setStatus({ error: true, text: e.message }))} className={`${btnAccent} mt-5`}>
           Sign in with Google
         </button>
-        {status?.error && <p className="mt-4 text-red-400">{status.text}</p>}
+        {status?.error && <p className="mt-4 text-accent-400">{status.text}</p>}
       </Notice>
     );
   }
@@ -205,7 +205,7 @@ export default function Admin() {
     <Shell>
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-neutral-800 pb-6">
         <div>
-          <a href="#" className="text-sm text-neutral-400 hover:text-red-400 transition-colors">← Back to site</a>
+          <a href="#" className="text-sm text-neutral-400 hover:text-accent-400 transition-colors">← Back to site</a>
           <h1 className="mt-3 font-display text-3xl font-bold">Images</h1>
           <p className="mt-1 text-sm text-neutral-500">{slots.length} images · {slots.length - pending.length} on Cloudinary · signed in as {user.email}</p>
         </div>
@@ -213,13 +213,13 @@ export default function Admin() {
       </header>
 
       {!cloudinaryReady && (
-        <p className="mt-6 rounded-lg border border-red-400 px-4 py-3 text-sm text-red-400">
+        <p className="mt-6 rounded-lg border border-accent-400 px-4 py-3 text-sm text-accent-400">
           Add VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET to .env to enable uploads.
         </p>
       )}
 
       {status && (
-        <p className={`mt-6 rounded-lg border px-4 py-3 text-sm ${status.error ? "border-red-400 text-red-400" : "border-neutral-700 text-neutral-300"}`}>{status.text}</p>
+        <p className={`mt-6 rounded-lg border px-4 py-3 text-sm ${status.error ? "border-accent-400 text-accent-400" : "border-neutral-700 text-neutral-300"}`}>{status.text}</p>
       )}
 
       <section className="mt-6 grid gap-4 md:grid-cols-2">
@@ -244,7 +244,7 @@ export default function Admin() {
               value={newKey}
               onChange={(e) => setNewKey(e.target.value)}
               placeholder="new-project-thumb"
-              className="min-w-0 flex-1 rounded-lg border border-neutral-700 bg-transparent px-3 py-1.5 text-sm outline-none focus:border-red-400"
+              className="min-w-0 flex-1 rounded-lg border border-neutral-700 bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent-400"
             />
             <UploadButton label="Upload" accent disabled={locked || !newKey.trim()} onFile={addNew} />
           </div>
@@ -256,7 +256,7 @@ export default function Admin() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Search by key or project"
-          className="w-full sm:w-72 rounded-lg border border-neutral-700 bg-transparent px-3 py-1.5 text-sm outline-none focus:border-red-400"
+          className="w-full sm:w-72 rounded-lg border border-neutral-700 bg-transparent px-3 py-1.5 text-sm outline-none focus:border-accent-400"
         />
         {unused.length > 0 && <p className="text-xs text-neutral-500">{unused.length} not used in App.jsx yet</p>}
       </div>
@@ -272,7 +272,7 @@ export default function Admin() {
               <div className="min-w-0 flex-1">
                 <p className="font-mono text-sm text-neutral-200 break-all">{s.key}</p>
                 <p className="mt-0.5 text-xs text-neutral-500">{s.labels.length ? s.labels.join(", ") : "Not used in App.jsx"}</p>
-                <p className={`mt-1 inline-block rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${s.remoteUrl ? "border-red-400 text-red-400" : "border-neutral-700 text-neutral-400"}`}>
+                <p className={`mt-1 inline-block rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider ${s.remoteUrl ? "border-accent-400 text-accent-400" : "border-neutral-700 text-neutral-400"}`}>
                   {s.remoteUrl ? "Cloudinary" : s.localUrl ? "Bundled only" : "Missing"}
                 </p>
               </div>
