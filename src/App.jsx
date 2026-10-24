@@ -12,7 +12,7 @@ import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJou
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true); // dark theme by default
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("theme-light", !isDark);
