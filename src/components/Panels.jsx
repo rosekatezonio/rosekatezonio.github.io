@@ -113,7 +113,7 @@ export function AboutPhoto({ photo, isDark }) {
 
 export function AboutMeSection({ t, isDark }) {
   return (
-    <section id="aboutme" className="max-w-4xl mx-auto">
+    <section id="aboutme" className="max-w-2xl mx-auto">
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
         <User size={13} /> MORE ABOUT ME
       </p>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { img } from "../images.js";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
 import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
@@ -47,6 +47,7 @@ export function ExperienceTimeline({ t, isDark }) {
 
 
 export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
+  const [photoColor, setPhotoColor] = useState(false);
   const tiles = [
     { big: "Resume", label: "Download CV", onClick: openResumes },
     { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
@@ -70,13 +71,20 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={180}>
-              <div className={`group mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border ${t.border}`}>
+              <div
+                className={`group mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border cursor-pointer ${t.border}`}
+                onClick={() => setPhotoColor((v) => !v)}
+              >
                 <img
                   src={img("aboutme-photo-main")}
                   alt="Rose Kate Zonio"
                   loading="lazy"
                   decoding="async"
-                  className="h-full w-full object-cover grayscale contrast-110 transition-[filter] duration-500 group-hover:grayscale-0 group-hover:contrast-100"
+                  className={`h-full w-full object-cover transition-[filter] duration-500 ${
+                    photoColor
+                      ? "grayscale-0 contrast-100"
+                      : "grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100"
+                  }`}
                 />
               </div>
             </Reveal>

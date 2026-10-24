@@ -1,5 +1,5 @@
-:root { --accent-300: 212 212 212; --accent-400: 255 255 255; --on-accent: 0 0 0; }
-:root.theme-light { --accent-300: 64 64 64; --accent-400: 0 0 0; --on-accent: 255 255 255; }
+:root { --accent-300: 251 146 60; --accent-400: 249 115 22; --on-accent: 0 0 0; }
+:root.theme-light { --accent-300: 234 88 12; --accent-400: 234 88 12; --on-accent: 255 255 255; }
 html { scroll-behavior: smooth; }
 .font-display { font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif; }
 .font-serif-read { font-family: 'Source Serif 4', Charter, Georgia, 'Times New Roman', serif; }
