@@ -1,21 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useReveal, useOverlayClose } from "../hooks.js";
 import { ArrowRight, ArrowUp, ArrowUpRight } from "../icons.jsx";
-
-export function HeroPill({ pill, isDark }) {
-  const [wiggle, setWiggle] = useState(false);
-  return (
-    <span
-      className={`hero-pill ${isDark ? "hero-pill-dark" : "hero-pill-light"} ${wiggle ? "hero-pill-wiggle" : ""}`}
-      style={{ "--tilt": pill.tilt }}
-      onClick={() => setWiggle(true)}
-      onAnimationEnd={() => setWiggle(false)}
-    >
-      <pill.Icon size={16} className="shrink-0" />
-      {pill.label}
-    </span>
-  );
-}
 
 export function Reveal({ children, className = "", delay = 0 }) {
   const [ref, visible] = useReveal();

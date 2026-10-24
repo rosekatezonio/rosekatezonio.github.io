@@ -1,8 +1,8 @@
 import React from "react";
 import { img } from "../images.js";
-import { Reveal, HeroPill, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
+import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
 import { PROFILE, HERO_PILLS, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
-import { User, Wrench, Code2, Network, ArrowRight, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
+import { Wrench, Code2, Network, ArrowRight, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
 
 export function ExperienceTimeline({ t, isDark }) {
@@ -46,100 +46,114 @@ export function ExperienceTimeline({ t, isDark }) {
 }
 
 
-export function HeroSection({ t, isDark }) {
+export function HeroSection({ t, mailtoUrl, openResumes }) {
+  const tiles = [
+    { big: "Resume", label: "Download CV", onClick: openResumes },
+    { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
+    { big: "Email", label: PROFILE.email, href: mailtoUrl },
+    { big: "GitHub", label: "See my code", href: PROFILE.github, external: true },
+  ];
   return (
-    <section id="hero" className="relative pt-16 lg:pt-0 flex items-center overflow-hidden" style={{ minHeight: "92vh" }}>
-      <div className="relative max-w-3xl mx-auto px-5 sm:px-8 py-16 sm:py-24 w-full text-center">
-        <h1 className="sr-only">Rose Kate Zonio. Websites on one side, networks on the other.</h1>
+    <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden" style={{ minHeight: "92vh" }}>
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-16 sm:py-20">
+        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-12 items-start">
 
-        <Reveal delay={80}>
-          <div className={`hero-frame ${isDark ? "hero-frame-dark" : "hero-frame-light"}`}>
-            <div className="hero-body">
-              <p aria-hidden="true" className={`hero-name font-display font-bold uppercase ${t.text}`}>
-                <span className="block">Rose Kate</span>
-                <span className="block">Zonio</span>
-              </p>
-
-              <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3 sm:gap-4">
+          <div>
+            <Reveal delay={60}>
+              <h2 className="hero-role font-display font-bold uppercase">
+                <span className={`block ${t.text}`}>Software &</span>
+                <span className={`block hero-outline ${t.accent}`}>Networking</span>
+              </h2>
+              <ul className="mt-6 sm:mt-7 flex flex-wrap gap-2.5">
                 {HERO_PILLS.map((pill) => (
-                  <HeroPill key={pill.id} pill={pill} isDark={isDark} />
+                  <li key={pill.id} className={`inline-flex items-center gap-2 rounded-full border ${t.border} px-3.5 py-1.5 font-mono text-[11px] sm:text-xs ${t.textMuted}`}>
+                    <pill.Icon size={13} className={`${t.accent} shrink-0`} />
+                    {pill.label}
+                  </li>
                 ))}
+              </ul>
+            </Reveal>
+
+            <Reveal delay={180}>
+              <div className={`group mt-10 aspect-[16/9] overflow-hidden rounded-md border ${t.border}`}>
+                <img
+                  src={img("aboutme-photo-main")}
+                  alt="Rose Kate Zonio"
+                  loading="lazy"
+                  decoding="async"
+                  className="h-full w-full object-cover grayscale contrast-110 transition-[filter] duration-500 group-hover:grayscale-0 group-hover:contrast-100"
+                />
               </div>
+              <p className={`mt-4 flex items-center gap-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] ${t.textMuted}`}>
+                <ArrowRight size={13} className={`${t.accent} shrink-0`} />
+                {PROFILE.role} · {PROFILE.location}
+              </p>
+            </Reveal>
+          </div>
+
+          <div className="flex flex-col gap-10 sm:gap-12 lg:text-right">
+            <Reveal delay={120}>
+              <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.textFaint}`}>
+                01 / From {PROFILE.location}
+              </p>
+            </Reveal>
+
+            <Reveal delay={220}>
+              <div className="space-y-5 font-mono text-xs sm:text-sm uppercase tracking-[0.16em] leading-relaxed">
+                <p className={t.textMuted}>Websites on one side.<br />Networks on the other.</p>
+                <p className={t.textFaint}>Computer Engineering student who builds software and understands the network it runs on.</p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={320} className="lg:mt-4">
+              <h1 className="hero-name font-display font-bold uppercase">
+                <span className={`block ${t.text}`}>Rose Kate</span>
+                <span className={`block hero-outline ${t.accent}`}>Zonio</span>
+              </h1>
+              <a
+                href="#aboutme"
+                className={`group mt-5 inline-flex items-center gap-2 rounded-full border ${t.border} px-4 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] ${t.textMuted} hover:text-accent-400 hover:border-accent-400/60 transition-colors`}
+              >
+                More about me
+                <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            </Reveal>
+          </div>
+        </div>
+
+        <Reveal delay={440}>
+          <div id="about" className={`mt-14 sm:mt-16 border-t ${t.border} pt-8 scroll-mt-24`}>
+            <p className={`font-mono text-[11px] uppercase tracking-[0.22em] ${t.textFaint} mb-6`}>Reach me</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-8">
+              {tiles.map((item) => {
+                const inner = (
+                  <>
+                    <ArrowUpRight size={14} className={`absolute right-0 top-1 ${t.textFaint} transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-400`} />
+                    <p className={`font-display text-xl sm:text-[28px] font-medium leading-tight tracking-tight ${t.text} transition-colors group-hover:text-accent-400`}>
+                      {item.big}
+                    </p>
+                    <p className={`font-body text-[12px] sm:text-sm ${t.textMuted} mt-1.5`}>{item.label}</p>
+                  </>
+                );
+                return item.onClick ? (
+                  <button key={item.big} type="button" onClick={item.onClick} className="group relative block pr-5 text-left">
+                    {inner}
+                  </button>
+                ) : (
+                  <a
+                    key={item.big}
+                    href={item.href}
+                    {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                    className="group relative block pr-5"
+                  >
+                    {inner}
+                  </a>
+                );
+              })}
             </div>
           </div>
         </Reveal>
 
-        <Reveal delay={240}>
-          <h2 className={`mt-12 sm:mt-14 font-display font-bold text-[clamp(1.35rem,6.2vw,2.25rem)] leading-tight tracking-tight ${t.text}`}>
-            Websites on one side.
-            <br /> Networks on the other.
-          </h2>
-        </Reveal>
-
-        <Reveal delay={360}>
-          <p className={`mt-6 font-mono text-xs sm:text-sm tracking-[0.2em] uppercase ${t.accent}`}>
-            Seeking OJT / internship · Available now
-          </p>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-
-export function AboutSection({ t, isDark, mailtoUrl, openResumes }) {
-  return (
-    <section id="about" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
-      <div className="grid lg:grid-cols-5 gap-10 lg:gap-14 items-start">
-        <Reveal className="lg:col-span-5">
-          <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-            <User size={13} /> 01 · WHO I AM
-          </p>
-          <h2 className={`font-display text-3xl sm:text-4xl font-bold ${t.text} mb-6`}>About Me</h2>
-          <p className={`font-display text-xl sm:text-2xl font-medium leading-snug ${t.text}`}>
-            Hi, I'm <span className={t.accent}>RK</span>. I'm a Computer Engineering student who builds
-            software and understands the network it runs on.{" "}
-            <a
-              href="#aboutme"
-              className={`group relative inline-block whitespace-nowrap pr-6 underline decoration-1 underline-offset-4 transition-colors ${isDark ? "text-neutral-300 hover:text-white" : "text-slate-600 hover:text-black"}`}
-            >
-              More about me
-              <ArrowRight size={14} className="absolute right-0 top-1.5 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
-          </p>
-          <div className="mt-10 grid max-w-3xl grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:gap-8">
-            {[
-              { big: "Resume", label: "Download CV", onClick: openResumes },
-              { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
-              { big: "Email", label: PROFILE.email, href: mailtoUrl, external: false },
-              { big: "GitHub", label: "See my code", href: PROFILE.github, external: true },
-            ].map((item) => {
-              const inner = (
-                <>
-                  <ArrowUpRight size={14} className={`absolute right-0 top-1 ${t.textFaint} transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-400`} />
-                  <p className={`font-display text-xl sm:text-[28px] font-medium leading-tight tracking-tight ${t.text} transition-colors group-hover:text-accent-400`}>
-                    {item.big}
-                  </p>
-                  <p className={`font-body text-[12px] sm:text-sm ${t.textMuted} mt-1.5`}>{item.label}</p>
-                </>
-              );
-              return item.onClick ? (
-                <button key={item.big} onClick={item.onClick} className="group relative block pr-5 text-left">
-                  {inner}
-                </button>
-              ) : (
-                <a
-                  key={item.big}
-                  href={item.href}
-                  {...(item.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  className="group relative block pr-5"
-                >
-                  {inner}
-                </a>
-              );
-            })}
-          </div>
-        </Reveal>
       </div>
     </section>
   );

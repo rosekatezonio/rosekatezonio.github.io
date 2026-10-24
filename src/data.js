@@ -505,9 +505,9 @@ export const EDUCATION = [
 ];
 
 export const HERO_PILLS = [
-  { id: "software", label: "software-developer", Icon: CodeBrackets, tilt: "-2deg" },
-  { id: "networking", label: "networking-engineer", Icon: NetworkNodes, tilt: "1.5deg" },
-  { id: "cybersecurity", label: "cybersecurity-enthusiast", Icon: ShieldCheck, tilt: "-1deg" },
+  { id: "software", label: "software-developer", Icon: CodeBrackets },
+  { id: "networking", label: "networking-engineer", Icon: NetworkNodes },
+  { id: "cybersecurity", label: "cybersecurity-enthusiast", Icon: ShieldCheck },
 ];
 
 export const theme = {

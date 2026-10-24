@@ -6,7 +6,7 @@ import { Sun, Moon, Menu, X, ArrowUp, Github, Linkedin, Mail, Download } from ".
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel } from "./components/ui.jsx";
-import { HeroSection, AboutSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
+import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
 import { LatestActivities, GithubActivity } from "./components/Sections.jsx";
 import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, BlogSection, BlogArticle } from "./components/Panels.jsx";
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
@@ -229,8 +229,7 @@ function App() {
         </nav>
       </header>
 
-      <HeroSection t={t} isDark={isDark} />
-      <AboutSection t={t} isDark={isDark} mailtoUrl={mailtoUrl} openResumes={openResumes} />
+      <HeroSection t={t} mailtoUrl={mailtoUrl} openResumes={openResumes} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
       <LatestActivities t={t} isDark={isDark} />
       <ProjectsSection
