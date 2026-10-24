@@ -1,7 +1,7 @@
 import React from "react";
 import { img } from "../images.js";
 import { Reveal, HeroPill, renderDescription, SectionHeading } from "./ui.jsx";
-import { PROFILE, HERO_PILLS, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, hasLink, thumbFor } from "../data.js";
+import { PROFILE, HERO_PILLS, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
 import { User, Wrench, Code2, Network, ArrowRight, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
 
@@ -200,7 +200,7 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
 
 
 export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, onToggleReveal, onOpenArchive }) {
-  const featured = (projectTab === "labs" ? LABS : WEB_APPS).slice(0, 3);
+  const featured = (projectTab === "labs" ? LABS : WEB_APPS).filter((p) => p.title === HOME_PROJECT_BY_TAB[projectTab]);
   return (
     <section id="labs" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <div className="text-center mb-10 sm:mb-14">

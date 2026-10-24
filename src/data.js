@@ -597,5 +597,6 @@ export const IMAGE_SLOTS = (() => {
   return slots;
 })();
 
+export const HOME_PROJECT_BY_TAB = { webapps: "URSAC Simulation Academy", labs: "Home Network Device Monitor" };
 export const FEATURED_TITLES = ["KuryenteWatch", "Salo Sa Antipolo", "Home Network Device Monitor"];
 export const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hackathon"];
