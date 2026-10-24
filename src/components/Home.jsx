@@ -47,7 +47,11 @@ export function ExperienceTimeline({ t, isDark }) {
 
 
 export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
-  const [photoColor, setPhotoColor] = useState(false);
+  // Hover previews color (mouse only). Click flips whatever is currently shown.
+  const [photoHover, setPhotoHover] = useState(false);
+  const [photoOverride, setPhotoOverride] = useState(null); // null | "color" | "gray"
+  const photoColor = photoOverride ? photoOverride === "color" : photoHover;
+  const togglePhoto = () => setPhotoOverride(photoColor ? "gray" : "color");
   const tiles = [
     { big: "Resume", label: "Download CV", onClick: openResumes },
     { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
@@ -72,8 +76,24 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
 
             <Reveal delay={180}>
               <div
-                className={`group mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border cursor-pointer ${t.border}`}
-                onClick={() => setPhotoColor((v) => !v)}
+                role="button"
+                tabIndex={0}
+                aria-pressed={photoColor}
+                aria-label={photoColor ? "Photo is in color. Click to make it black and white" : "Photo is black and white. Click to show color"}
+                className={`mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border cursor-pointer select-none ${t.border}`}
+                onClick={togglePhoto}
+                onPointerEnter={(e) => e.pointerType === "mouse" && setPhotoHover(true)}
+                onPointerLeave={() => {
+                  setPhotoHover(false);
+                  // a forced-black state ends when the cursor leaves, so hover works again next time
+                  setPhotoOverride((o) => (o === "gray" ? null : o));
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    togglePhoto();
+                  }
+                }}
               >
                 <img
                   src={img("aboutme-photo-main")}
@@ -81,9 +101,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
                   loading="lazy"
                   decoding="async"
                   className={`h-full w-full object-cover transition-[filter] duration-500 ${
-                    photoColor
-                      ? "grayscale-0 contrast-100"
-                      : "grayscale contrast-110 group-hover:grayscale-0 group-hover:contrast-100"
+                    photoColor ? "grayscale-0 contrast-100" : "grayscale contrast-110"
                   }`}
                 />
               </div>
