@@ -229,57 +229,59 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
           const GroupIcon = projectTab === "labs" ? Network : Code2;
           return (
             <Reveal key={item.title}>
-              <div className="grid sm:grid-cols-12 items-center gap-y-6">
-                <div className={`sm:row-start-1 ${flip ? "sm:col-start-6 sm:col-end-13" : "sm:col-start-1 sm:col-end-8"}`}>
-                  <div className={`group relative aspect-[16/10] rounded-lg overflow-hidden border ${t.border} ${t.surface}`}>
-                    {item.thumbnail ? (
-                      <>
-                        <img
-                          src={img(thumbFor(item, isDark))}
-                          alt={`${item.title} preview`}
-                          loading="lazy"
-                          decoding="async"
-                          onClick={() => onToggleReveal(item.title)}
-                          className={`absolute left-2 top-2 sm:left-2.5 sm:top-2.5 h-[calc(100%-1rem)] w-[calc(100%-1rem)] sm:h-[calc(100%-1.25rem)] sm:w-[calc(100%-1.25rem)] rounded-md object-cover object-top cursor-pointer transition-[filter] duration-500 ease-out ${
-                            revealed[item.title] ? "grayscale-0 contrast-100" : "grayscale contrast-125"
-                          } group-hover:grayscale-0 group-hover:contrast-100`}
-                        />
-                        <span
-                          className={`absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 font-mono text-[10px] tracking-widest uppercase px-2 py-1 rounded bg-black/50 text-white/80 transition-opacity duration-300 pointer-events-none ${
-                            revealed[item.title] ? "opacity-0" : "opacity-100 sm:group-hover:opacity-0"
-                          }`}
-                        >
-                          {revealed[item.title] ? "" : "Tap or hover"}
-                        </span>
-                      </>
-                    ) : (
-                      <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 bg-accent-400/10 ${t.accent}`}>
-                        <GroupIcon size={40} />
-                        <span className="relative font-mono text-xs tracking-widest uppercase">{item.eyebrow}</span>
-                      </div>
-                    )}
+              <div className="fade-bottom -mx-4 max-h-[30rem] overflow-hidden px-4 lg:max-h-[26rem]">
+                <div className="grid sm:grid-cols-12 items-center gap-y-6">
+                  <div className={`sm:row-start-1 ${flip ? "sm:col-start-6 sm:col-end-13" : "sm:col-start-1 sm:col-end-8"}`}>
+                    <div className={`group relative aspect-[16/10] rounded-lg overflow-hidden border ${t.border} ${t.surface}`}>
+                      {item.thumbnail ? (
+                        <>
+                          <img
+                            src={img(thumbFor(item, isDark))}
+                            alt={`${item.title} preview`}
+                            loading="lazy"
+                            decoding="async"
+                            onClick={() => onToggleReveal(item.title)}
+                            className={`absolute left-2 top-2 sm:left-2.5 sm:top-2.5 h-[calc(100%-1rem)] w-[calc(100%-1rem)] sm:h-[calc(100%-1.25rem)] sm:w-[calc(100%-1.25rem)] rounded-md object-cover object-top cursor-pointer transition-[filter] duration-500 ease-out ${
+                              revealed[item.title] ? "grayscale-0 contrast-100" : "grayscale contrast-125"
+                            } group-hover:grayscale-0 group-hover:contrast-100`}
+                          />
+                          <span
+                            className={`absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 font-mono text-[10px] tracking-widest uppercase px-2 py-1 rounded bg-black/50 text-white/80 transition-opacity duration-300 pointer-events-none ${
+                              revealed[item.title] ? "opacity-0" : "opacity-100 sm:group-hover:opacity-0"
+                            }`}
+                          >
+                            {revealed[item.title] ? "" : "Tap or hover"}
+                          </span>
+                        </>
+                      ) : (
+                        <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 bg-accent-400/10 ${t.accent}`}>
+                          <GroupIcon size={40} />
+                          <span className="relative font-mono text-xs tracking-widest uppercase">{item.eyebrow}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className={`relative z-10 sm:row-start-1 ${flip ? "sm:col-start-1 sm:col-end-8" : "sm:col-start-6 sm:col-end-13 sm:text-right"}`}>
-                  <p className={`font-mono text-xs tracking-wide ${t.accent}`}>{item.eyebrow}</p>
-                  <h3 className={`font-display font-bold text-2xl sm:text-[28px] mt-1 ${t.text}`}>{item.title}</h3>
-                  <div className={`hidden lg:block mt-5 rounded-lg border ${t.border} p-5 shadow-xl font-body text-sm leading-relaxed ${t.textMuted} ${isDark ? "bg-neutral-800/95" : "bg-white"} text-left`}>
-                    {renderDescription(item.description, t)}
-                  </div>
-                  <ul className={`mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
-                    {item.tags.map((tag) => <li key={tag}>{tag}</li>)}
-                  </ul>
-                  <div className={`mt-4 flex items-center gap-4 ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
-                    {hasLink(item.github) && (
-                      <a href={item.github} target="_blank" rel="noreferrer" aria-label={`${item.title} on GitHub`} className="hover:text-accent-400 transition-colors"><Github size={19} /></a>
-                    )}
-                    {hasLink(item.view) && (
-                      <a href={item.view} target="_blank" rel="noreferrer" aria-label={`${item.title} preview`} className="hover:text-accent-400 transition-colors"><ExternalLink size={19} /></a>
-                    )}
-                    {item.privateDemo && (
-                      <span role="img" aria-disabled="true" aria-label={`${item.title} live demo unavailable, private project`} title="Live demo unavailable: private project" className="opacity-30 cursor-not-allowed"><ExternalLink size={19} /></span>
-                    )}
+                  <div {...{ inert: "" }} className={`relative z-10 sm:row-start-1 ${flip ? "sm:col-start-1 sm:col-end-8" : "sm:col-start-6 sm:col-end-13 sm:text-right"}`}>
+                    <p className={`font-mono text-xs tracking-wide ${t.accent}`}>{item.eyebrow}</p>
+                    <h3 className={`font-display font-bold text-2xl sm:text-[28px] mt-1 ${t.text}`}>{item.title}</h3>
+                    <div className={`hidden lg:block mt-5 rounded-lg border ${t.border} p-5 shadow-xl font-body text-sm leading-relaxed ${t.textMuted} ${isDark ? "bg-neutral-800/95" : "bg-white"} text-left`}>
+                      {renderDescription(item.description, t)}
+                    </div>
+                    <ul className={`mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
+                      {item.tags.map((tag) => <li key={tag}>{tag}</li>)}
+                    </ul>
+                    <div className={`mt-4 flex items-center gap-4 ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
+                      {hasLink(item.github) && (
+                        <a href={item.github} target="_blank" rel="noreferrer" aria-label={`${item.title} on GitHub`} className="hover:text-accent-400 transition-colors"><Github size={19} /></a>
+                      )}
+                      {hasLink(item.view) && (
+                        <a href={item.view} target="_blank" rel="noreferrer" aria-label={`${item.title} preview`} className="hover:text-accent-400 transition-colors"><ExternalLink size={19} /></a>
+                      )}
+                      {item.privateDemo && (
+                        <span role="img" aria-disabled="true" aria-label={`${item.title} live demo unavailable, private project`} title="Live demo unavailable: private project" className="opacity-30 cursor-not-allowed"><ExternalLink size={19} /></span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -288,7 +290,7 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
         })}
       </div>
 
-      <div className="mt-20 text-center">
+      <div className="mt-8 text-center">
         <ViewMore t={t} onClick={onOpenArchive}>View all my projects ({ALL_PROJECTS.length})</ViewMore>
       </div>
     </section>
