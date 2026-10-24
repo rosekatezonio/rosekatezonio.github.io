@@ -12,9 +12,9 @@ export function ActivityRow({ f, reverse, t, isDark }) {
   ];
   const [main, small] = swapped && photos[1] ? [photos[1], photos[0]] : photos;
   return (
-    <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-      <div className={`relative ${f.inset ? "pb-10 pr-8 sm:pb-14 sm:pr-14" : ""} ${reverse ? "lg:order-2" : ""}`}>
-        <img src={img(main.src)} alt={main.alt} className={`aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
+    <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+      <div className={`relative w-full max-w-md mx-auto lg:max-w-none ${f.inset ? "pb-10 pr-8 sm:pb-14 sm:pr-14" : ""} ${reverse ? "lg:order-2" : ""}`}>
+        <img src={img(main.src)} alt={main.alt} className={`aspect-[16/9] sm:aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
         {f.inset && small && (
           <button
             type="button"
@@ -31,16 +31,16 @@ export function ActivityRow({ f, reverse, t, isDark }) {
         )}
       </div>
 
-      <div>
+      <div className="text-center lg:text-left">
         <p className={`font-mono text-xs tracking-wide ${t.textMuted}`}>
           <span className={t.accent}>{f.label}</span> / {f.date}
         </p>
-        <h3 className={`font-display font-bold text-3xl sm:text-4xl tracking-tight leading-tight ${t.text} mt-4`}>{f.title}</h3>
+        <h3 className={`font-display font-bold text-[26px] sm:text-4xl tracking-tight leading-tight text-balance ${t.text} mt-4`}>{f.title}</h3>
         <p className={`inline-flex items-center gap-1.5 font-body font-semibold text-base ${t.accent} mt-3`}>
           <MapPin size={15} /> {f.location}
         </p>
-        <p className={`font-body text-base leading-relaxed ${t.textMuted} mt-5 max-w-lg`}>{f.description}</p>
-        <div className="flex flex-nowrap items-center gap-x-6 sm:gap-x-8 mt-8">
+        <p className={`font-body text-base leading-relaxed text-left ${t.textMuted} mt-5 max-w-lg mx-auto lg:mx-0`}>{f.description}</p>
+        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3 sm:gap-x-8 mt-8">
           {f.links.map((link) => (
             <ActivityLink key={link.label} link={link} t={t} isDark={isDark} />
           ))}

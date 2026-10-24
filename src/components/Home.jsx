@@ -98,7 +98,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={220}>
-              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed">
+              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-center lg:text-right">
                 <p className={t.text}>Websites on one side. Networks on the other.</p>
                 <p className={`hidden sm:block normal-case ${t.textMuted}`}>
                   I build web experiences, configure networks, and explore practical cybersecurity solutions.
@@ -126,7 +126,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={400} className="lg:mt-auto">
-              <h1 className="hero-name hidden sm:inline-flex flex-col items-center self-center lg:self-end font-display font-bold uppercase">
+              <h1 className="hero-name hidden lg:inline-flex flex-col items-center self-center lg:self-end font-display font-bold uppercase">
                 <span className={t.text}>Rose Kate</span>
                 <span className="flex w-full items-baseline justify-between">
                   <span className={`hero-handle ${t.textMuted}`}>(@arkyxo)</span>

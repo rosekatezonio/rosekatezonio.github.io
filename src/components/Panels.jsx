@@ -85,7 +85,7 @@ export function ActivitiesJourney({ t, isDark }) {
       <h1 className="font-display font-bold text-3xl sm:text-5xl">Activities</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>The journey so far: where I've been and what I've been building, newest first.</p>
 
-      <div className="mt-14 space-y-20 lg:space-y-28">
+      <div className="mt-14 space-y-14 lg:space-y-28">
         {ACTIVITIES.map((f, i) => (
           <Reveal key={f.title}>
             <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
@@ -107,11 +107,18 @@ export function AboutPhoto({ photo, isDark }) {
       >
         <img src={src} alt={photo.caption} draggable={false} className="h-full w-full object-cover" />
       </div>
+      <p className={`mt-3 text-center font-mono text-[11px] uppercase tracking-[0.22em] ${isDark ? "text-neutral-500" : "text-slate-400"}`}>
+        Frame 01 · {photo.caption} · between takes
+      </p>
     </div>
   );
 }
 
 export function AboutMeSection({ t, isDark }) {
+  const outsideIdx = ABOUT_ME.findIndex((b) => b.startsWith("## "));
+  const mainBlocks = outsideIdx === -1 ? ABOUT_ME : ABOUT_ME.slice(0, outsideIdx);
+  const outsideTitle = outsideIdx === -1 ? "" : ABOUT_ME[outsideIdx].slice(3);
+  const outsideBlocks = outsideIdx === -1 ? [] : ABOUT_ME.slice(outsideIdx + 1);
   return (
     <section id="aboutme" className="max-w-2xl mx-auto">
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
@@ -128,29 +135,36 @@ export function AboutMeSection({ t, isDark }) {
         </p>
       </div>
 
-      <div className="mt-6 max-w-2xl mx-auto">
-        {ABOUT_ME.map((block, i) => {
-          if (block.startsWith("## ")) {
-            return (
-              <h3 key={i} className="font-display font-semibold text-xl sm:text-2xl leading-snug tracking-tight mt-10">
-                {block.slice(3)}
-              </h3>
-            );
-          }
-          const closing = i === ABOUT_ME.length - 1;
-          return (
-            <p
-              key={i}
-              style={{ hyphens: "auto", WebkitHyphens: "auto" }}
-              className={`font-body text-base sm:text-[17px] leading-[1.8] mt-5 first:mt-0 text-justify ${
-                closing ? `font-medium ${t.text}` : t.textMuted
-              }`}
-            >
-              {block}
-            </p>
-          );
-        })}
+      <div className="mt-8 max-w-2xl mx-auto space-y-7">
+        {mainBlocks.map((block, i) => (
+          <p
+            key={i}
+            style={{ hyphens: "auto", WebkitHyphens: "auto" }}
+            className={`font-body text-base sm:text-[17px] leading-[1.8] text-justify ${t.textMuted}`}
+          >
+            {block}
+          </p>
+        ))}
       </div>
+
+      {outsideBlocks.length > 0 && (
+        <div className={`mt-14 max-w-2xl mx-auto rounded-xl border ${t.border} px-6 py-7 sm:px-8 sm:py-8`}>
+          <p className={`font-mono text-[11px] tracking-[0.25em] uppercase ${t.accent}`}>{outsideTitle}</p>
+          <div className="mt-6 space-y-6">
+            {outsideBlocks.map((block, i) => (
+              <p
+                key={i}
+                style={{ hyphens: "auto", WebkitHyphens: "auto" }}
+                className={`font-body text-base sm:text-[17px] leading-[1.8] text-justify ${
+                  i === outsideBlocks.length - 1 ? `font-medium ${t.text}` : t.textMuted
+                }`}
+              >
+                {block}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="mt-14 max-w-2xl mx-auto">
         <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Foundation</p>
