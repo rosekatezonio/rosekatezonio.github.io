@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { img } from "../images.js";
 import { ACTIVITIES, PROFILE } from "../data.js";
-import { Reveal, SectionHeading, ActivityLink } from "./ui.jsx";
+import { Reveal, SectionHeading, ActivityLink, ViewMore } from "./ui.jsx";
 import { Trophy, Github, MapPin, ArrowLeftRight, ArrowRight } from "../icons.jsx";
 
 export function ActivityRow({ f, reverse, t, isDark }) {
@@ -51,17 +51,21 @@ export function ActivityRow({ f, reverse, t, isDark }) {
 }
 
 export function LatestActivities({ t, isDark }) {
+  const [first] = ACTIVITIES;
   return (
     <section id="activities" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <SectionHeading eyebrow="03 · OUT IN THE COMMUNITY" title="Latest Activities" caption="What I've been building and where I've been." icon={Trophy} t={t} />
 
-      <div className="space-y-20 lg:space-y-28">
-        {ACTIVITIES.map((f, i) => (
-          <Reveal key={f.title}>
-            <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
-          </Reveal>
-        ))}
-      </div>
+      <Reveal>
+        <div {...{ inert: "" }} className="fade-bottom max-h-[28rem] overflow-hidden lg:max-h-[24rem]">
+          <ActivityRow f={first} reverse={false} t={t} isDark={isDark} />
+        </div>
+        <div className="mt-8 flex justify-center">
+          <ViewMore t={t} href="#activities">
+            View more<span className="sr-only"> activities</span>
+          </ViewMore>
+        </div>
+      </Reveal>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useReveal, useOverlayClose } from "../hooks.js";
-import { ArrowRight, ArrowUpRight } from "../icons.jsx";
+import { ArrowRight, ArrowUp, ArrowUpRight } from "../icons.jsx";
 
 export function HeroPill({ pill, isDark }) {
   const [wiggle, setWiggle] = useState(false);
@@ -98,5 +98,18 @@ export function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl"
         <div className="mt-10">{children}</div>
       </div>
     </div>
+  );
+}
+
+export function ViewMore({ t, href, onClick, children }) {
+  const Tag = href ? "a" : "button";
+  return (
+    <Tag
+      {...(href ? { href } : { type: "button", onClick })}
+      className={`group inline-flex items-center gap-2 font-body text-sm font-medium ${t.textMuted} hover:text-accent-400 transition-colors`}
+    >
+      <ArrowUp size={15} className="transition-transform group-hover:-translate-y-0.5" />
+      {children}
+    </Tag>
   );
 }

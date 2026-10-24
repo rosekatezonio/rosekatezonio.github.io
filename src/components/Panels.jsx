@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { img } from "../images.js";
 import { useOverlayClose } from "../hooks.js";
 import { ActivityLink, Reveal } from "./ui.jsx";
-import { CERTIFICATIONS, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, BLOGS, BLOG_PAGE_SIZE, blogSlug, readMinutes, PROFILE, hasLink, eduProgress, initialsOf } from "../data.js";
+import { ActivityRow } from "./Sections.jsx";
+import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, BLOGS, BLOG_PAGE_SIZE, blogSlug, readMinutes, PROFILE, hasLink, eduProgress, initialsOf } from "../data.js";
 import { CheckCircle2, Clock, ExternalLink, ArrowUpRight, ArrowLeftIcon, ArrowRight, User } from "../icons.jsx";
 
 export const PENDING_STATUSES = ["In Progress", "Planned", "Upcoming"];
@@ -74,6 +75,23 @@ export function CertificationSection({ t, isDark }) {
           </ul>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function ActivitiesJourney({ t, isDark }) {
+  return (
+    <section id="activities-journey">
+      <h1 className="font-display font-bold text-3xl sm:text-5xl">Activities</h1>
+      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>The journey so far: where I've been and what I've been building, newest first.</p>
+
+      <div className="mt-14 space-y-20 lg:space-y-28">
+        {ACTIVITIES.map((f, i) => (
+          <Reveal key={f.title}>
+            <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
+          </Reveal>
+        ))}
+      </div>
     </section>
   );
 }

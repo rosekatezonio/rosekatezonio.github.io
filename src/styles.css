@@ -271,3 +271,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 }
 .hero-pill-wiggle { animation: hero-wiggle 0.4s ease-in-out; }
 @media (prefers-reduced-motion: reduce) { .hero-pill-wiggle { animation: none; } }
+
+.fade-bottom {
+  -webkit-mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 50%, transparent 100%);
+}

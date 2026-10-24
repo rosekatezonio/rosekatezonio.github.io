@@ -1,6 +1,6 @@
 import React from "react";
 import { img } from "../images.js";
-import { Reveal, HeroPill, renderDescription, SectionHeading } from "./ui.jsx";
+import { Reveal, HeroPill, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
 import { PROFILE, HERO_PILLS, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
 import { User, Wrench, Code2, Network, ArrowRight, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
@@ -186,12 +186,7 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
         </Reveal>
 
         <div className="mt-12 text-center">
-          <button
-            onClick={onOpenSkills}
-            className={`inline-flex items-center gap-2 rounded-lg border border-accent-400 px-6 py-3 font-mono text-sm ${t.accent} hover:bg-accent-400/10 transition-colors`}
-          >
-            View more skills ({SKILL_TOTAL}) <ArrowRight size={15} />
-          </button>
+          <ViewMore t={t} onClick={onOpenSkills}>View more skills ({SKILL_TOTAL})</ViewMore>
         </div>
       </div>
     </section>
@@ -294,12 +289,7 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
       </div>
 
       <div className="mt-20 text-center">
-        <button
-          onClick={onOpenArchive}
-          className={`inline-flex items-center gap-2 rounded-lg border border-accent-400 px-6 py-3 font-mono text-sm ${t.accent} hover:bg-accent-400/10 transition-colors`}
-        >
-          View all my projects ({ALL_PROJECTS.length}) <ArrowRight size={15} />
-        </button>
+        <ViewMore t={t} onClick={onOpenArchive}>View all my projects ({ALL_PROJECTS.length})</ViewMore>
       </div>
     </section>
   );
