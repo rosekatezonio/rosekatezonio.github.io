@@ -64,7 +64,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
                 <span className={`block ${t.text}`}>Software &</span>
                 <span className={`block hero-outline ${t.accent}`}>Networking</span>
               </h2>
-              <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.22em] ${t.textFaint} sm:hidden`}>
+              <p className={`mt-4 text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} sm:hidden`}>
                 01 / From {PROFILE.location}
               </p>
               <ul className="mt-4 sm:mt-5 hidden sm:flex flex-wrap gap-2">
@@ -90,14 +90,14 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
               <div className="mt-4 flex items-center gap-x-5 sm:gap-x-8">
                 <a
                   href="#aboutme"
-                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.textMuted} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-xs tracking-[0.1em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   More about me
                   <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
                 </a>
                 <a
                   href="#labs"
-                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.textMuted} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-xs tracking-[0.1em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   View selected projects
                   <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
@@ -114,8 +114,8 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={220}>
-              <div className="space-y-4 font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed">
-                <p className={t.textMuted}>Websites on one side. Networks on the other.</p>
+              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed">
+                <p className={t.text}>Websites on one side. Networks on the other.</p>
                 <p className={t.textFaint}>Computer Engineering student who builds software and understands the network it runs on.</p>
               </div>
             </Reveal>
@@ -130,7 +130,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             <Reveal delay={400}>
               <div className={`relative w-full max-w-[440px] lg:ml-auto rounded-lg border ${t.border} p-6 pr-[150px] text-left`}>
                 <div className="flex items-center justify-between gap-3">
-                  <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.accent}`}>Last played</p>
+                  <p className={`font-mono text-xs uppercase tracking-[0.22em] ${t.accent}`}>Last played</p>
                   <Spotify size={17} className={t.textMuted} />
                 </div>
                 <p className={`mt-3 font-display text-lg sm:text-xl font-semibold leading-tight ${t.text}`}>{SPOTIFY_TRACK.title}</p>
@@ -139,7 +139,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
                   href={SPOTIFY_TRACK.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`group mt-4 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] ${t.accent} hover:opacity-75 transition-opacity`}
+                  className={`group mt-4 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] ${t.accent} hover:opacity-75 transition-opacity`}
                 >
                   View track
                   <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
