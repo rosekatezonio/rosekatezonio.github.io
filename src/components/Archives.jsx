@@ -63,6 +63,56 @@ export function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
+function ProjectCard({ p, t, isDark }) {
+  const featured = FEATURED_TITLES.includes(p.title);
+  const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
+  return (
+    <li>
+      <a
+        href={`#${slugOf(p.title)}`}
+        className={`group flex h-full flex-col overflow-hidden rounded-2xl border ${t.border} ${t.surfaceSolid} card-glow`}
+      >
+        <div className={`relative aspect-[16/10] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
+          {thumb && (
+            <img
+              src={thumb}
+              alt={`${p.title} preview`}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+            />
+          )}
+          {featured && (
+            <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-white backdrop-blur">
+              Featured
+            </span>
+          )}
+          <span className="absolute right-3 top-3 rounded-full bg-black/70 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white backdrop-blur">
+            {yearOf(p)}
+          </span>
+        </div>
+
+        <div className="flex flex-1 flex-col p-5 sm:p-6">
+          <p className={`font-mono text-[11px] tracking-wide ${t.accent}`}>{taglineOf(p)}</p>
+          <h2 className="mt-1.5 font-display text-xl font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
+          <p className={`mt-1.5 font-mono text-[11px] ${t.textFaint}`}>
+            {contextOf(p)} · {trackOf(p.title)} · {p.status}
+          </p>
+          <p className={`mt-4 line-clamp-2 text-sm leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
+          <span className={`mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium ${t.text} transition-colors group-hover:text-accent-400`}>
+            View project <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
+        </div>
+      </a>
+    </li>
+  );
+}
+
+const featuredRank = (p) => {
+  const i = FEATURED_TITLES.indexOf(p.title);
+  return i === -1 ? FEATURED_TITLES.length : i;
+};
+
 export function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   const [query, setQuery] = useState("");
@@ -80,15 +130,14 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
     const hay = [p.title, p.eyebrow, p.meta, p.category, ...(p.tags || [])].filter(Boolean).join(" ").toLowerCase();
     return hay.includes(q);
   };
-  const filtered = ALL_PROJECTS.filter(matches);
-  const featured = FEATURED_TITLES.map((title) => ALL_PROJECTS.find((p) => p.title === title)).filter(Boolean);
-  const browsing = !q && track === "All";
+  const filtered = ALL_PROJECTS.filter(matches).sort((a, b) => featuredRank(a) - featuredRank(b));
 
   const chip = (name) => (
     <button
       key={name}
       onClick={() => setTrack(name)}
-      className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+      aria-pressed={track === name}
+      className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
         track === name ? `border-accent-400 ${t.accent}` : `${t.border} ${t.textMuted} hover:border-accent-400/60`
       }`}
     >
@@ -96,69 +145,47 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
     </button>
   );
 
-  const Row = ({ p }) => (
-    <li className={`border-b ${t.border}`}>
-      <a href={`#${slugOf(p.title)}`} className="group flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
-        <div className={`shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg border ${t.border} overflow-hidden ${t.surfaceSolid}`}>
-          {p.thumbnail && <img src={img(thumbFor(p, isDark))} alt="" loading="lazy" className="h-full w-full object-cover" />}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-display font-semibold group-hover:text-accent-400 transition-colors">{p.title}</span>
-            {FEATURED_TITLES.includes(p.title) && (
-              <span className={`rounded-full border border-accent-400 px-2 py-0.5 text-[10px] font-mono tracking-wider uppercase ${t.accent}`}>Featured</span>
-            )}
-          </div>
-          <p className={`text-sm ${t.textMuted} mt-1 leading-snug`}>{taglineOf(p)}</p>
-          <p className={`text-xs font-mono ${t.textFaint} mt-2`}>
-            {contextOf(p)} · {trackOf(p.title)} · {yearOf(p)} · {p.status}
-          </p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {(p.tags || []).slice(0, 4).map((tag) => (
-              <span key={tag} className={`rounded-full border ${t.border} px-2 py-0.5 text-[11px] ${t.textFaint}`}>{tag}</span>
-            ))}
-          </div>
-        </div>
-        <span className={`hidden sm:block shrink-0 text-sm ${t.textFaint}`}>{trackOf(p.title)}</span>
-      </a>
-    </li>
-  );
-
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
-      <div className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
-        <h1 className="font-display font-bold text-3xl sm:text-5xl mt-10">Project Log</h1>
-        <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Everything I've built, wired up, and shipped.</p>
 
-        <div className={`mt-8 flex items-center gap-3 border-b ${t.border} pb-3`}>
-          <Search size={16} className={`shrink-0 ${t.textFaint}`} />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search projects or tools..."
-            className="w-full bg-transparent font-body text-sm outline-none placeholder:text-slate-400"
-          />
-          {query && (
-            <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
-              <X size={15} />
-            </button>
-          )}
+        <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <div>
+            <h1 className="font-display font-bold text-3xl sm:text-5xl">Project Log</h1>
+            <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Everything I've built, wired up, and shipped.</p>
+          </div>
+          <p className={`font-mono text-xs ${t.textFaint}`}>
+            {filtered.length} of {ALL_PROJECTS.length} projects
+          </p>
         </div>
-        <div className="mt-4 flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
 
-        {browsing && featured.length > 0 && (
-          <section className="mt-10">
-            <p className={`font-mono text-[11px] tracking-[0.2em] uppercase ${t.accent}`}>Featured</p>
-            <ul className={`mt-3 border-t ${t.border}`}>{featured.map((p) => <Row key={p.title} p={p} />)}</ul>
-          </section>
-        )}
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
+          <div className={`flex items-center gap-3 border-b ${t.border} pb-2 sm:w-72`}>
+            <Search size={16} className={`shrink-0 ${t.textFaint}`} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search projects or tools..."
+              aria-label="Search projects or tools"
+              className="w-full bg-transparent font-body text-sm outline-none placeholder:text-slate-400"
+            />
+            {query && (
+              <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
+                <X size={15} />
+              </button>
+            )}
+          </div>
+        </div>
 
-        <ul className={`mt-10 border-t ${t.border}`}>
-          {filtered.filter((p) => !(browsing && FEATURED_TITLES.includes(p.title))).map((p) => <Row key={p.title} p={p} />)}
+        <ul className="mt-10 grid gap-6 sm:grid-cols-2">
+          {filtered.map((p) => (
+            <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
+          ))}
         </ul>
         {filtered.length === 0 && (
           <p className={`mt-6 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
