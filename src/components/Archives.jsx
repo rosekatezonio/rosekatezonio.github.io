@@ -3,7 +3,7 @@ import { img } from "../images.js";
 import { useOverlayClose } from "../hooks.js";
 import { renderDescription } from "./ui.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
-import { ArrowRight, ArrowUpRight, Search, X } from "../icons.jsx";
+import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
 export function SkillTile({ item, t, isDark }) {
   const [broken, setBroken] = useState(false);
@@ -72,7 +72,7 @@ function ProjectCard({ p, t, isDark }) {
         href={`#${slugOf(p.title)}`}
         className={`group flex h-full flex-col overflow-hidden rounded-2xl border ${t.border} ${t.surfaceSolid} card-glow`}
       >
-        <div className={`relative aspect-[16/10] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
+        <div className={`relative aspect-[16/9] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
           {thumb && (
             <img
               src={thumb}
@@ -87,19 +87,13 @@ function ProjectCard({ p, t, isDark }) {
               Featured
             </span>
           )}
-          <span className="absolute right-3 top-3 rounded-full bg-black/70 px-2.5 py-1 font-mono text-[10px] tracking-wider text-white backdrop-blur">
-            {yearOf(p)}
-          </span>
         </div>
 
-        <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <p className={`font-mono text-[11px] tracking-wide ${t.accent}`}>{taglineOf(p)}</p>
-          <h2 className="mt-1.5 font-display text-xl font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
-          <p className={`mt-1.5 font-mono text-[11px] ${t.textFaint}`}>
-            {contextOf(p)} · {trackOf(p.title)} · {p.status}
-          </p>
-          <p className={`mt-4 line-clamp-2 text-sm leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
-          <span className={`mt-auto inline-flex items-center gap-1.5 pt-6 text-sm font-medium ${t.text} transition-colors group-hover:text-accent-400`}>
+        <div className="flex flex-1 flex-col p-4">
+          <h2 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
+          <p className={`mt-1 font-mono text-[11px] ${t.textMuted}`}>{monthYearOf(p)}</p>
+          <p className={`mt-2.5 line-clamp-2 text-[13px] leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
+          <span className={`mt-auto inline-flex items-center gap-1.5 pt-4 text-[13px] font-medium ${t.text} transition-colors group-hover:text-accent-400`}>
             View project <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
           </span>
         </div>
@@ -113,10 +107,23 @@ const featuredRank = (p) => {
   return i === -1 ? FEATURED_TITLES.length : i;
 };
 
+const monthYearOf = (p) => {
+  const m = (p.meta || "").match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s+20\d{2}/);
+  return m ? m[0] : yearOf(p);
+};
+
+const SORTS = [
+  ["newest", "Newest first"],
+  ["oldest", "Oldest first"],
+  ["az", "A-Z"],
+  ["za", "Z-A"],
+];
+
 export function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   const [query, setQuery] = useState("");
   const [track, setTrack] = useState("All");
+  const [sort, setSort] = useState("newest");
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
@@ -130,14 +137,22 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
     const hay = [p.title, p.eyebrow, p.meta, p.category, ...(p.tags || [])].filter(Boolean).join(" ").toLowerCase();
     return hay.includes(q);
   };
-  const filtered = ALL_PROJECTS.filter(matches).sort((a, b) => featuredRank(a) - featuredRank(b));
+  const filtered = ALL_PROJECTS.filter(matches);
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === "az") return a.title.localeCompare(b.title);
+    if (sort === "za") return b.title.localeCompare(a.title);
+    const ya = parseInt(yearOf(a), 10) || 0;
+    const yb = parseInt(yearOf(b), 10) || 0;
+    if (ya !== yb) return sort === "oldest" ? ya - yb : yb - ya;
+    return featuredRank(a) - featuredRank(b);
+  });
 
   const chip = (name) => (
     <button
       key={name}
       onClick={() => setTrack(name)}
       aria-pressed={track === name}
-      className={`rounded-full border px-3.5 py-1.5 text-sm transition-colors ${
+      className={`rounded-full border px-3 py-1 text-[13px] transition-colors ${
         track === name ? `border-accent-400 ${t.accent}` : `${t.border} ${t.textMuted} hover:border-accent-400/60`
       }`}
     >
@@ -147,14 +162,14 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
-      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+      <div className="max-w-4xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
 
-        <div className="mt-10 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+        <div className="mt-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
           <div>
-            <h1 className="font-display font-bold text-3xl sm:text-5xl">Project Log</h1>
+            <h1 className="font-display font-bold text-2xl sm:text-4xl">Project Log</h1>
             <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Everything I've built, wired up, and shipped.</p>
           </div>
           <p className={`font-mono text-xs ${t.textFaint}`}>
@@ -162,16 +177,15 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
           </p>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
-          <div className={`flex items-center gap-3 border-b ${t.border} pb-2 sm:w-72`}>
+        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
+          <div className={`flex items-center gap-3 rounded-xl border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5 sm:max-w-xs sm:flex-1`}>
             <Search size={16} className={`shrink-0 ${t.textFaint}`} />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search projects or tools..."
-              aria-label="Search projects or tools"
+              placeholder="Search projects..."
+              aria-label="Search projects"
               className="w-full bg-transparent font-body text-sm outline-none placeholder:text-slate-400"
             />
             {query && (
@@ -180,14 +194,31 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
               </button>
             )}
           </div>
+          <div className="flex items-center gap-4 sm:ml-auto">
+            <div className="relative">
+              <select
+                value={sort}
+                onChange={(e) => setSort(e.target.value)}
+                aria-label="Sort projects"
+                className={`appearance-none rounded-xl border ${t.border} ${t.surfaceSolid} py-2.5 pl-3.5 pr-9 font-body text-[13px] outline-none cursor-pointer`}
+              >
+                {SORTS.map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              <ArrowDown size={14} className={`pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 ${t.textFaint}`} />
+            </div>
+            <span className={`font-mono text-[11px] whitespace-nowrap ${t.textFaint}`}>{sorted.length} ITEMS</span>
+          </div>
         </div>
+        <div className="mt-3 flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
 
-        <ul className="mt-10 grid gap-6 sm:grid-cols-2">
-          {filtered.map((p) => (
+        <ul className="mt-8 grid gap-5 sm:grid-cols-2">
+          {sorted.map((p) => (
             <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
           ))}
         </ul>
-        {filtered.length === 0 && (
+        {sorted.length === 0 && (
           <p className={`mt-6 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
         )}
       </div>

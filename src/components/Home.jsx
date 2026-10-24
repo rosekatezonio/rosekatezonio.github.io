@@ -1,8 +1,8 @@
 import React from "react";
 import { img } from "../images.js";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
-import { PROFILE, HERO_PILLS, SPOTIFY_TRACK, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
-import { Wrench, Code2, Network, ArrowUpRight, Github, ExternalLink, Briefcase, Spotify } from "../icons.jsx";
+import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
+import { Wrench, Code2, Network, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
 
 export function ExperienceTimeline({ t, isDark }) {
@@ -54,9 +54,9 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
     { big: "GitHub", label: "See my code", href: PROFILE.github, external: true },
   ];
   return (
-    <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden" style={{ minHeight: "92vh" }}>
+    <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center" style={{ minHeight: "92vh" }}>
       <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-12 sm:py-16">
-        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-10 items-start">
+        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-10 items-stretch">
 
           <div className="min-w-0">
             <Reveal delay={60}>
@@ -67,14 +67,6 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
               <p className={`mt-4 text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} sm:hidden`}>
                 01 / From {PROFILE.location}
               </p>
-              <ul className="mt-4 sm:mt-5 hidden sm:flex flex-wrap gap-2">
-                {HERO_PILLS.map((pill) => (
-                  <li key={pill.id} className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border ${t.border} px-3 py-1.5 font-mono text-[10px] ${t.textMuted} whitespace-nowrap`}>
-                    <pill.Icon size={12} className={`${t.accent} shrink-0`} />
-                    {pill.label}
-                  </li>
-                ))}
-              </ul>
             </Reveal>
 
             <Reveal delay={180}>
@@ -86,22 +78,6 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
                   decoding="async"
                   className="h-full w-full object-cover grayscale contrast-110 transition-[filter] duration-500 group-hover:grayscale-0 group-hover:contrast-100"
                 />
-              </div>
-              <div className="mt-4 flex items-center gap-x-5 sm:gap-x-8">
-                <a
-                  href="#aboutme"
-                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-xs tracking-[0.1em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
-                >
-                  More about me
-                  <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
-                </a>
-                <a
-                  href="#labs"
-                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-xs tracking-[0.1em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
-                >
-                  View selected projects
-                  <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
-                </a>
               </div>
             </Reveal>
           </div>
@@ -116,51 +92,39 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             <Reveal delay={220}>
               <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed">
                 <p className={t.text}>Websites on one side. Networks on the other.</p>
-                <p className={t.textFaint}>Computer Engineering student who builds software and understands the network it runs on.</p>
+                <p className={`hidden sm:block normal-case ${t.textMuted}`}>
+                  I build web experiences, configure networks, and explore practical cybersecurity solutions.
+                </p>
               </div>
             </Reveal>
 
-            <Reveal delay={320} className="lg:mt-4">
-              <h1 className="hero-name hidden sm:block font-display font-bold uppercase text-center lg:text-right">
-                <span className={`inline lg:block ${t.text}`}>Rose Kate </span>
-                <span className={`inline lg:block hero-outline ${t.accent}`}>Zonio</span>
-              </h1>
-            </Reveal>
-
-            <Reveal delay={400}>
-              <div className={`relative w-full max-w-[440px] lg:ml-auto rounded-lg border ${t.border} p-6 pr-[150px] text-left`}>
-                <div className="flex items-center justify-between gap-3">
-                  <p className={`font-mono text-xs uppercase tracking-[0.22em] ${t.accent}`}>Last played</p>
-                  <Spotify size={17} className={t.textMuted} />
-                </div>
-                <p className={`mt-3 font-display text-lg sm:text-xl font-semibold leading-tight ${t.text}`}>{SPOTIFY_TRACK.title}</p>
-                <p className={`mt-1 font-body text-sm ${t.textMuted}`}>{SPOTIFY_TRACK.artist}</p>
+            <Reveal delay={320} className="mt-4 lg:mt-8">
+              <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
                 <a
-                  href={SPOTIFY_TRACK.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`group mt-4 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.2em] ${t.accent} hover:opacity-75 transition-opacity`}
+                  href="#aboutme"
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-xl font-medium uppercase leading-tight sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
-                  View track
-                  <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  More about me
+                  <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
                 </a>
-                <div className="absolute bottom-4 right-4 size-[128px]" aria-hidden="true">
-                <svg viewBox="0 0 100 100" className="size-full animate-[spin_10s_linear_infinite]">
-                  <defs>
-                    <clipPath id="vinyl-label"><circle cx="50" cy="50" r="16" /></clipPath>
-                  </defs>
-                  <circle cx="50" cy="50" r="47" className="fill-neutral-900 stroke-neutral-700" strokeWidth="1" />
-                  <circle cx="50" cy="50" r="40" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
-                  <circle cx="50" cy="50" r="33" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
-                  <circle cx="50" cy="50" r="26" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
-                  <circle cx="50" cy="50" r="16" className={isDark ? "fill-neutral-800" : "fill-neutral-100"} />
-                  {img(SPOTIFY_TRACK.cover) && (
-                    <image href={img(SPOTIFY_TRACK.cover)} x="34" y="34" width="32" height="32" preserveAspectRatio="xMidYMid slice" clipPath="url(#vinyl-label)" />
-                  )}
-                  <circle cx="50" cy="50" r="3" className="fill-neutral-200" />
-                </svg>
-                </div>
+                <a
+                  href="#labs"
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-xl font-medium uppercase leading-tight sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
+                >
+                  View selected projects
+                  <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
+                </a>
               </div>
+            </Reveal>
+
+            <Reveal delay={400} className="lg:mt-auto">
+              <h1 className="hero-name hidden sm:inline-flex flex-col items-center self-center lg:self-end font-display font-bold uppercase">
+                <span className={t.text}>Rose Kate</span>
+                <span className="flex w-full items-baseline justify-between">
+                  <span className={`hero-handle ${t.textMuted}`}>(@arkyxo)</span>
+                  <span className={`hero-outline ${t.accent}`}>Zonio</span>
+                </span>
+              </h1>
             </Reveal>
           </div>
         </div>
