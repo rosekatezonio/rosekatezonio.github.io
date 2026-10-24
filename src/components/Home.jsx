@@ -1,8 +1,8 @@
 import React from "react";
 import { img } from "../images.js";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
-import { PROFILE, HERO_PILLS, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
-import { Wrench, Code2, Network, ArrowRight, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
+import { PROFILE, HERO_PILLS, SPOTIFY_TRACK, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
+import { Wrench, Code2, Network, ArrowUpRight, Github, ExternalLink, Briefcase, Spotify } from "../icons.jsx";
 
 
 export function ExperienceTimeline({ t, isDark }) {
@@ -46,7 +46,7 @@ export function ExperienceTimeline({ t, isDark }) {
 }
 
 
-export function HeroSection({ t, mailtoUrl, openResumes }) {
+export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
   const tiles = [
     { big: "Resume", label: "Download CV", onClick: openResumes },
     { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
@@ -55,19 +55,22 @@ export function HeroSection({ t, mailtoUrl, openResumes }) {
   ];
   return (
     <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden" style={{ minHeight: "92vh" }}>
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-16 sm:py-20">
-        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-12 items-start">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-12 sm:py-16">
+        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-10 items-start">
 
-          <div>
+          <div className="min-w-0">
             <Reveal delay={60}>
-              <h2 className="hero-role font-display font-bold uppercase">
+              <h2 className="hero-role font-display font-bold uppercase text-center lg:text-left">
                 <span className={`block ${t.text}`}>Software &</span>
                 <span className={`block hero-outline ${t.accent}`}>Networking</span>
               </h2>
-              <ul className="mt-6 sm:mt-7 flex flex-wrap gap-2.5">
+              <p className={`mt-4 text-center font-mono text-[10px] uppercase tracking-[0.22em] ${t.textFaint} sm:hidden`}>
+                01 / From {PROFILE.location}
+              </p>
+              <ul className="mt-4 sm:mt-5 hidden sm:flex flex-wrap gap-2">
                 {HERO_PILLS.map((pill) => (
-                  <li key={pill.id} className={`inline-flex items-center gap-2 rounded-full border ${t.border} px-3.5 py-1.5 font-mono text-[11px] sm:text-xs ${t.textMuted}`}>
-                    <pill.Icon size={13} className={`${t.accent} shrink-0`} />
+                  <li key={pill.id} className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border ${t.border} px-3 py-1.5 font-mono text-[10px] ${t.textMuted} whitespace-nowrap`}>
+                    <pill.Icon size={12} className={`${t.accent} shrink-0`} />
                     {pill.label}
                   </li>
                 ))}
@@ -75,7 +78,7 @@ export function HeroSection({ t, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={180}>
-              <div className={`group mt-10 aspect-[16/9] overflow-hidden rounded-md border ${t.border}`}>
+              <div className={`group mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border ${t.border}`}>
                 <img
                   src={img("aboutme-photo-main")}
                   alt="Rose Kate Zonio"
@@ -84,45 +87,86 @@ export function HeroSection({ t, mailtoUrl, openResumes }) {
                   className="h-full w-full object-cover grayscale contrast-110 transition-[filter] duration-500 group-hover:grayscale-0 group-hover:contrast-100"
                 />
               </div>
-              <p className={`mt-4 flex items-center gap-3 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] ${t.textMuted}`}>
-                <ArrowRight size={13} className={`${t.accent} shrink-0`} />
-                {PROFILE.role} · {PROFILE.location}
-              </p>
+              <div className="mt-4 flex items-center gap-x-5 sm:gap-x-8">
+                <a
+                  href="#aboutme"
+                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.textMuted} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
+                >
+                  More about me
+                  <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
+                </a>
+                <a
+                  href="#labs"
+                  className={`group inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.18em] uppercase ${t.textMuted} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}
+                >
+                  View selected projects
+                  <ArrowUpRight size={15} className={`${t.accent} shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
+                </a>
+              </div>
             </Reveal>
           </div>
 
-          <div className="flex flex-col gap-10 sm:gap-12 lg:text-right">
-            <Reveal delay={120}>
+          <div className="flex min-w-0 flex-col gap-7 sm:gap-10 lg:text-right">
+            <Reveal delay={120} className="hidden lg:block">
               <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.textFaint}`}>
                 01 / From {PROFILE.location}
               </p>
             </Reveal>
 
             <Reveal delay={220}>
-              <div className="space-y-5 font-mono text-xs sm:text-sm uppercase tracking-[0.16em] leading-relaxed">
-                <p className={t.textMuted}>Websites on one side.<br />Networks on the other.</p>
+              <div className="space-y-4 font-mono text-[10px] tracking-[0.14em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed">
+                <p className={t.textMuted}>Websites on one side. Networks on the other.</p>
                 <p className={t.textFaint}>Computer Engineering student who builds software and understands the network it runs on.</p>
               </div>
             </Reveal>
 
             <Reveal delay={320} className="lg:mt-4">
-              <h1 className="hero-name font-display font-bold uppercase">
-                <span className={`block ${t.text}`}>Rose Kate</span>
-                <span className={`block hero-outline ${t.accent}`}>Zonio</span>
+              <h1 className="hero-name hidden sm:block font-display font-bold uppercase text-center lg:text-right">
+                <span className={`inline lg:block ${t.text}`}>Rose Kate </span>
+                <span className={`inline lg:block hero-outline ${t.accent}`}>Zonio</span>
               </h1>
-              <a
-                href="#aboutme"
-                className={`group mt-5 inline-flex items-center gap-2 rounded-full border ${t.border} px-4 py-2 font-mono text-[11px] sm:text-xs uppercase tracking-[0.18em] ${t.textMuted} hover:text-accent-400 hover:border-accent-400/60 transition-colors`}
-              >
-                More about me
-                <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </a>
+            </Reveal>
+
+            <Reveal delay={400}>
+              <div className={`relative w-full max-w-[440px] lg:ml-auto rounded-lg border ${t.border} p-6 pr-[150px] text-left`}>
+                <div className="flex items-center justify-between gap-3">
+                  <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.accent}`}>Last played</p>
+                  <Spotify size={17} className={t.textMuted} />
+                </div>
+                <p className={`mt-3 font-display text-lg sm:text-xl font-semibold leading-tight ${t.text}`}>{SPOTIFY_TRACK.title}</p>
+                <p className={`mt-1 font-body text-sm ${t.textMuted}`}>{SPOTIFY_TRACK.artist}</p>
+                <a
+                  href={SPOTIFY_TRACK.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`group mt-4 inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.2em] ${t.accent} hover:opacity-75 transition-opacity`}
+                >
+                  View track
+                  <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </a>
+                <div className="absolute bottom-4 right-4 size-[128px]" aria-hidden="true">
+                <svg viewBox="0 0 100 100" className="size-full animate-[spin_10s_linear_infinite]">
+                  <defs>
+                    <clipPath id="vinyl-label"><circle cx="50" cy="50" r="16" /></clipPath>
+                  </defs>
+                  <circle cx="50" cy="50" r="47" className="fill-neutral-900 stroke-neutral-700" strokeWidth="1" />
+                  <circle cx="50" cy="50" r="40" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
+                  <circle cx="50" cy="50" r="33" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
+                  <circle cx="50" cy="50" r="26" fill="none" strokeWidth="0.8" className={isDark ? "stroke-neutral-400" : "stroke-neutral-500"} />
+                  <circle cx="50" cy="50" r="16" className={isDark ? "fill-neutral-800" : "fill-neutral-100"} />
+                  {img(SPOTIFY_TRACK.cover) && (
+                    <image href={img(SPOTIFY_TRACK.cover)} x="34" y="34" width="32" height="32" preserveAspectRatio="xMidYMid slice" clipPath="url(#vinyl-label)" />
+                  )}
+                  <circle cx="50" cy="50" r="3" className="fill-neutral-200" />
+                </svg>
+                </div>
+              </div>
             </Reveal>
           </div>
         </div>
 
         <Reveal delay={440}>
-          <div id="about" className={`mt-14 sm:mt-16 border-t ${t.border} pt-8 scroll-mt-24`}>
+          <div id="about" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>
             <p className={`font-mono text-[11px] uppercase tracking-[0.22em] ${t.textFaint} mb-6`}>Reach me</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-8">
               {tiles.map((item) => {

@@ -510,6 +510,13 @@ export const HERO_PILLS = [
   { id: "cybersecurity", label: "cybersecurity-enthusiast", Icon: ShieldCheck },
 ];
 
+export const SPOTIFY_TRACK = {
+  title: "Last Night on Earth",
+  artist: "Green Day",
+  url: "https://open.spotify.com/track/5TpPSTItCwtZ8Sltr3vdzm",
+  cover: "last-night-on-earth",
+};
+
 export const theme = {
   dark: {
     bg: "bg-black",

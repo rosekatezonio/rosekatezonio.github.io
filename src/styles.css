@@ -205,9 +205,13 @@ html::-webkit-scrollbar {
 html, body, #panel-scroll { scrollbar-width: none; -ms-overflow-style: none; }
 html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
-.hero-role,
-.hero-name {
+.hero-role {
   font-size: clamp(2.4rem, 8.6vw, 5.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.045em;
+}
+.hero-name {
+  font-size: clamp(1.9rem, 8.6vw, 5.25rem);
   line-height: 0.95;
   letter-spacing: -0.045em;
 }

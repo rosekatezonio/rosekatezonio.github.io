@@ -229,7 +229,7 @@ function App() {
         </nav>
       </header>
 
-      <HeroSection t={t} mailtoUrl={mailtoUrl} openResumes={openResumes} />
+      <HeroSection t={t} isDark={isDark} mailtoUrl={mailtoUrl} openResumes={openResumes} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
       <LatestActivities t={t} isDark={isDark} />
       <ProjectsSection
