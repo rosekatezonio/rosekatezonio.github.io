@@ -67,36 +67,31 @@ function ProjectCard({ p, t, isDark }) {
   const featured = FEATURED_TITLES.includes(p.title);
   const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
   return (
-    <li>
+    <li className="min-w-0">
       <a
         href={`#${slugOf(p.title)}`}
-        className={`group flex h-full flex-col overflow-hidden rounded-2xl border ${t.border} ${t.surfaceSolid} card-glow`}
+        className={`group flex h-full items-center gap-3.5 rounded-xl border ${t.border} ${t.surfaceSolid} p-2.5 card-glow`}
       >
-        <div className={`relative aspect-[16/9] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
+        <div className={`h-12 w-14 shrink-0 overflow-hidden rounded-lg border ${t.border} min-[380px]:h-14 min-[380px]:w-20 sm:h-16 sm:w-24 ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
           {thumb && (
             <img
               src={thumb}
               alt={`${p.title} preview`}
               loading="lazy"
               decoding="async"
-              className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+              className="h-full w-full object-cover object-top"
             />
           )}
-          {featured && (
-            <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-white backdrop-blur">
-              Featured
-            </span>
-          )}
         </div>
-
-        <div className="flex flex-1 flex-col p-4">
-          <h2 className="font-display text-lg font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
-          <p className={`mt-1 font-mono text-[11px] ${t.textMuted}`}>{monthYearOf(p)}</p>
-          <p className={`mt-2.5 line-clamp-2 text-[13px] leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
-          <span className={`mt-auto inline-flex items-center gap-1.5 pt-4 text-[13px] font-medium ${t.text} transition-colors group-hover:text-accent-400`}>
-            View project <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-          </span>
+        <div className="min-w-0 flex-1">
+          <h2 className="line-clamp-2 font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
+          <p className={`mt-0.5 font-mono text-[11px] ${t.textMuted}`}>
+            {monthYearOf(p)}
+            {featured && <span className="text-accent-400"> · Featured</span>}
+          </p>
+          <p className={`mt-1 line-clamp-1 text-[12px] ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
         </div>
+        <ArrowRight size={14} className={`shrink-0 ${t.textFaint} transition-all group-hover:translate-x-0.5 group-hover:text-accent-400`} />
       </a>
     </li>
   );
@@ -112,18 +107,10 @@ const monthYearOf = (p) => {
   return m ? m[0] : yearOf(p);
 };
 
-const SORTS = [
-  ["newest", "Newest first"],
-  ["oldest", "Oldest first"],
-  ["az", "A-Z"],
-  ["za", "Z-A"],
-];
-
 export function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   const [query, setQuery] = useState("");
   const [track, setTrack] = useState("All");
-  const [sort, setSort] = useState("newest");
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
@@ -139,26 +126,11 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
   };
   const filtered = ALL_PROJECTS.filter(matches);
   const sorted = [...filtered].sort((a, b) => {
-    if (sort === "az") return a.title.localeCompare(b.title);
-    if (sort === "za") return b.title.localeCompare(a.title);
     const ya = parseInt(yearOf(a), 10) || 0;
     const yb = parseInt(yearOf(b), 10) || 0;
-    if (ya !== yb) return sort === "oldest" ? ya - yb : yb - ya;
+    if (ya !== yb) return yb - ya;
     return featuredRank(a) - featuredRank(b);
   });
-
-  const chip = (name) => (
-    <button
-      key={name}
-      onClick={() => setTrack(name)}
-      aria-pressed={track === name}
-      className={`rounded-full border px-3 py-1 text-[13px] transition-colors ${
-        track === name ? `border-accent-400 ${t.accent}` : `${t.border} ${t.textMuted} hover:border-accent-400/60`
-      }`}
-    >
-      {name}
-    </button>
-  );
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
@@ -197,23 +169,22 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
           <div className="flex items-center gap-4 sm:ml-auto">
             <div className="relative">
               <select
-                value={sort}
-                onChange={(e) => setSort(e.target.value)}
-                aria-label="Sort projects"
-                className={`appearance-none rounded-xl border ${t.border} ${t.surfaceSolid} py-2.5 pl-3.5 pr-9 font-body text-[13px] outline-none cursor-pointer`}
+                value={track}
+                onChange={(e) => setTrack(e.target.value)}
+                aria-label="Filter projects"
+                className={`h-11 appearance-none rounded-2xl border ${t.border} bg-transparent pl-4 pr-10 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
               >
-                {SORTS.map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
+                {TRACK_FILTERS.map((name) => (
+                  <option key={name} value={name} className={`${t.surfaceSolid} ${t.text}`}>{name}</option>
                 ))}
               </select>
-              <ArrowDown size={14} className={`pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 ${t.textFaint}`} />
+              <ArrowDown size={14} className={`pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
             </div>
             <span className={`font-mono text-[11px] whitespace-nowrap ${t.textFaint}`}>{sorted.length} ITEMS</span>
           </div>
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">{TRACK_FILTERS.map(chip)}</div>
 
-        <ul className="mt-8 grid gap-5 sm:grid-cols-2">
+        <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
           {sorted.map((p) => (
             <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
           ))}

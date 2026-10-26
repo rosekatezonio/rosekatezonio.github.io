@@ -158,7 +158,7 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
           title={`Visits in ${monthLabel()}`}
           aria-label={`${visitText} visits in ${monthLabel()}`}
         >
-          <Eye size={collapsed ? 15 : 16} className="shrink-0" />
+          <Eye size={collapsed ? 15 : 16} className="shrink-0 text-accent-400" />
           <span className={`font-mono tabular-nums ${collapsed ? "text-[10px]" : "text-xs"}`}>{visitText}</span>
         </div>
         <div className={collapsed ? "flex flex-col gap-2" : "flex items-center gap-2"}>

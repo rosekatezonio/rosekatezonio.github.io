@@ -541,8 +541,8 @@ export const theme = {
     text: "text-slate-900",
     textMuted: "text-slate-600",
     textFaint: "text-slate-400",
-    accent: "text-accent-600",
-    accentBg: "bg-accent-500",
+    accent: "text-accent-400",
+    accentBg: "bg-accent-400",
     navBg: "bg-white/80",
     ring: "ring-slate-200",
   },
@@ -605,5 +605,5 @@ export const IMAGE_SLOTS = (() => {
 })();
 
 export const HOME_PROJECT_BY_TAB = { webapps: "URSAC Simulation Academy", labs: "Home Network Device Monitor" };
-export const FEATURED_TITLES = ["KuryenteWatch", "Salo Sa Antipolo", "Home Network Device Monitor"];
-export const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hackathon"];
+export const FEATURED_TITLES = ["Home Network Device Monitor", "URSAC Simulation Academy"];
+export const TRACK_FILTERS = ["All", "Software", "Hardware", "Hackathon"];
