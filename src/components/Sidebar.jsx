@@ -1,6 +1,7 @@
 import React from "react";
 import { PROFILE, RESUME_URL, SKILL_TOTAL, BLOGS, ALL_PROJECTS, EXPERIENCE, AFFILIATIONS, CERTIFICATIONS } from "../data.js";
-import { House, User, Layers, Trophy, BookOpen, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight } from "../icons.jsx";
+import { House, User, Layers, Trophy, BookOpen, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight, Eye } from "../icons.jsx";
+import { useMonthlyVisits, monthLabel } from "../visits.js";
 
 export const SIDEBAR_GROUPS = [
   {
@@ -37,6 +38,8 @@ export const SIDEBAR_GROUPS = [
 
 export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse, activeId, onNavigate, onToggleTheme, mailtoUrl, mobile = false, open = false, onClose }) {
   const collapsed = !mobile && collapsedPref;
+  const visits = useMonthlyVisits();
+  const visitText = visits == null ? "—" : visits.toLocaleString("en-US");
   const hoverText = isDark ? "hover:text-neutral-100" : "hover:text-slate-900";
   const hoverBg = isDark ? "hover:bg-white/5" : "hover:bg-slate-900/[0.04]";
   const activeBg = isDark ? "bg-white/[0.06]" : "bg-slate-900/[0.05]";
@@ -150,22 +153,14 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
       </nav>
 
       <div className={`shrink-0 border-t ${t.border} ${collapsed ? "py-3 flex flex-col items-center gap-2" : "px-5 py-3 flex items-center justify-between"}`}>
-        {!collapsed && (
-          <div className="min-w-0 pr-3">
-            <p className={`font-body text-[11px] leading-snug ${t.textFaint}`}>
-              For work, collabs &amp; everything else, reach me at
-            </p>
-            <a
-              href={mailtoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`mt-1.5 inline-flex max-w-full items-center gap-1.5 font-mono text-[11px] ${t.textMuted} hover:text-accent-400 transition-colors`}
-            >
-              <Mail size={12} className="shrink-0" />
-              <span className="truncate">{PROFILE.email}</span>
-            </a>
-          </div>
-        )}
+        <div
+          className={`flex items-center ${collapsed ? "flex-col gap-1" : "gap-2 min-w-0 pr-3"} ${t.textMuted}`}
+          title={`Visits in ${monthLabel()}`}
+          aria-label={`${visitText} visits in ${monthLabel()}`}
+        >
+          <Eye size={collapsed ? 15 : 16} className="shrink-0" />
+          <span className={`font-mono tabular-nums ${collapsed ? "text-[10px]" : "text-xs"}`}>{visitText}</span>
+        </div>
         <div className={collapsed ? "flex flex-col gap-2" : "flex items-center gap-2"}>
           <button aria-label="Toggle theme" title="Toggle theme" onClick={onToggleTheme} className={iconBtn}>
             <Contrast size={15} />
