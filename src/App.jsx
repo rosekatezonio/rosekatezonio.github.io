@@ -8,7 +8,7 @@ import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel } from "./components/ui.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
 import { LatestActivities, GithubActivity } from "./components/Sections.jsx";
-import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, BlogSection, BlogArticle } from "./components/Panels.jsx";
+import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, BlogSection, BlogArticle, ExperienceHistory } from "./components/Panels.jsx";
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
 function App() {
@@ -95,7 +95,7 @@ function App() {
   useEffect(() => {
     const sync = () => {
       const h = window.location.hash.slice(1);
-      if (h === "affiliation" || h === "blogs" || h === "certification" || h === "aboutme" || h === "activities") {
+      if (h === "affiliation" || h === "blogs" || h === "certification" || h === "aboutme" || h === "activities" || h === "experience") {
         setPanel(h);
         setPostSlug(null);
       } else if (h.startsWith("blogs/") && BLOG_BY_SLUG[h.slice(6)]) {
@@ -266,6 +266,7 @@ function App() {
       {panel === "aboutme" && <SectionPanel t={t} onClose={closePanel}><AboutMeSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "certification" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><CertificationSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "activities" && <SectionPanel t={t} onClose={closePanel}><ActivitiesJourney t={t} isDark={isDark} /></SectionPanel>}
+      {panel === "experience" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
       {panel === "blogs" && <SectionPanel t={t} onClose={closePanel} listenEsc={!postSlug}><BlogSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "blogs" && postSlug && <BlogArticle key={postSlug} t={t} isDark={isDark} post={BLOG_BY_SLUG[postSlug]} onBack={backToPosts} />}
       {skillsOpen && <SkillsArchive t={t} onClose={closeSkills} isDark={isDark} />}

@@ -392,6 +392,21 @@ export const PATHWAY_ICONS = { internship: GraduationCap, work: Briefcase };
 
 export const EXPERIENCE = [
   {
+    company: "ATSOCA Learning & Consultancy OPC",
+    pathway: "internship",
+    position: "Tech Intern",
+    employment: "Internship",
+    location: "Sta. Mesa",
+    period: "Oct 2026 - Present",
+    duration: "Oct 2026 - Present",
+    type: "Software & IT · Internship",
+    description: [
+      "Support internal databases, dashboards, forms, and automated workflows for the Tech Department.",
+      "Assist with website and landing page updates and with data encoding and validation for daily operations.",
+      "Help identify repetitive tasks that can be improved through AI and automation solutions.",
+    ],
+  },
+  {
     company: "TechBizAcademy",
     pathway: "internship",
     position: "SOC Analyst Intern",
@@ -418,6 +433,8 @@ export const EXPERIENCE = [
       "Provided IT support and hardware troubleshooting, and handled data entry and digital filing for the department, all while studying Computer Engineering full-time.",
   },
 ];
+
+export const experienceYear = (exp) => (String(exp.period || exp.duration || "").match(/\d{4}/) || [""])[0];
 
 export const AFFILIATIONS = [
   {

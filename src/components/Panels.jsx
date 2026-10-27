@@ -3,6 +3,7 @@ import { img } from "../images.js";
 import { useOverlayClose } from "../hooks.js";
 import { ActivityLink, Reveal } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
+import { ExperienceTimeline } from "./Home.jsx";
 import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, BLOGS, BLOG_PAGE_SIZE, blogSlug, readMinutes, PROFILE, hasLink, eduProgress, initialsOf } from "../data.js";
 import { CheckCircle2, Clock, ExternalLink, ArrowUpRight, ArrowLeftIcon, ArrowRight, User } from "../icons.jsx";
 
@@ -75,6 +76,18 @@ export function CertificationSection({ t, isDark }) {
           </ul>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function ExperienceHistory({ t, isDark }) {
+  return (
+    <section id="experience-history">
+      <h1 className="font-display font-bold text-3xl sm:text-5xl">Experience</h1>
+      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Internships and work experience, newest first.</p>
+      <div className="mt-14">
+        <ExperienceTimeline t={t} isDark={isDark} />
+      </div>
     </section>
   );
 }

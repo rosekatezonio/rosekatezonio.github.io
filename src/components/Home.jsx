@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { img } from "../images.js";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
-import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
-import { Wrench, Code2, Network, ArrowUpRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
+import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
+import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
 
 export function ExperienceTimeline({ t, isDark }) {
@@ -34,8 +34,17 @@ export function ExperienceTimeline({ t, isDark }) {
 
               <h4 className="font-display font-medium text-base mt-6">{exp.position}</h4>
               {exp.period && <p className={`font-mono text-[11px] uppercase tracking-wider ${t.textFaint} mt-1.5`}>{exp.period}</p>}
-              {exp.description && (
-                <p className={`text-sm leading-relaxed ${t.textMuted} mt-4 max-w-xl`}>{exp.description}</p>
+              {Array.isArray(exp.description) ? (
+                <ul className={`mt-4 max-w-xl space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
+                  {exp.description.map((line) => (
+                    <li key={line} className="relative pl-4">
+                      <span aria-hidden="true" className="absolute left-0 top-[0.55em] h-1 w-1 rounded-full bg-current opacity-60" />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                exp.description && <p className={`text-sm leading-relaxed ${t.textMuted} mt-4 max-w-xl`}>{exp.description}</p>
               )}
             </li>
           </Reveal>
@@ -352,12 +361,39 @@ export function ExperienceSection({ t, isDark }) {
       <SectionHeading
         eyebrow="05 · TIMELINE"
         title="Experience"
-        caption="Internships and work experience."
         icon={Briefcase}
         t={t}
       />
 
-      <ExperienceTimeline t={t} isDark={isDark} />
+      <Reveal>
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center justify-between gap-4 pb-5">
+            <p className={`font-mono text-xs tracking-wide ${t.textFaint}`}>Internships and work experience.</p>
+            <a
+              href="#experience"
+              className={`group inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] ${t.textMuted} hover:text-accent-400 transition-colors`}
+            >
+              Full history
+              <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+            </a>
+          </div>
+
+          <ul className={`border-t ${t.border}`}>
+            {EXPERIENCE.map((exp, i) => (
+              <li
+                key={`${exp.company}-${i}`}
+                className={`grid grid-cols-[3.5rem_1fr] sm:grid-cols-[6.5rem_1fr_auto] items-baseline gap-x-4 gap-y-1 border-b ${t.border} py-3.5 sm:py-4`}
+              >
+                <span className={`font-mono text-[11px] ${t.textFaint}`}>{experienceYear(exp)}</span>
+                <span className={`font-body text-sm sm:text-[15px] font-medium ${t.text}`}>{exp.position}</span>
+                <span className={`col-start-2 sm:col-start-3 font-body text-xs sm:text-sm ${t.textMuted} sm:text-right`}>
+                  {exp.company}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Reveal>
     </section>
   );
 }
