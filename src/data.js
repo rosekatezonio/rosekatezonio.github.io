@@ -395,6 +395,7 @@ export const EXPERIENCE = [
     company: "ATSOCA Learning & Consultancy OPC",
     pathway: "internship",
     position: "Tech Intern",
+    logo: "atsoca-logo",
     employment: "Internship",
     location: "Sta. Mesa",
     period: "Oct 2026 - Present",
