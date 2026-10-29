@@ -11,7 +11,7 @@ export const SIDEBAR_GROUPS = [
   {
     label: "About Me",
     items: [
-      { id: "about", label: "About", Icon: User },
+      { id: "aboutme", label: "About", Icon: User },
       { id: "skills", label: "Skills", Icon: Layers, count: SKILL_TOTAL },
       { id: "activities", label: "Activities", Icon: Trophy },
       { id: "blogs", label: "Blogs", Icon: BookOpen, count: BLOGS.length },
@@ -63,7 +63,7 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
         {!collapsed && (
           <button
             onClick={() => onNavigate("hero")}
-            aria-label={`${PROFILE.name}, back to top`}
+            aria-label={`${PROFILE.fullName}, back to top`}
             className={`font-display font-bold text-xl tracking-tight ${t.text} hover:text-accent-400 transition-colors`}
           >
             {PROFILE.name}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { img } from "../images.js";
+import { PortfolioImage } from "../images.jsx";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
 import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
@@ -19,7 +19,7 @@ export function ExperienceTimeline({ t, isDark }) {
 
               <div className={`absolute left-0 top-0 h-10 w-10 sm:h-11 sm:w-11 overflow-hidden rounded-lg border ${t.border} ${isDark ? "bg-neutral-950" : "bg-white"} flex items-center justify-center ${t.textMuted}`}>
                 {exp.logo ? (
-                  <img src={img(exp.logo)} alt={`${exp.company} logo`} className="h-full w-full object-cover" />
+                  <PortfolioImage imageKey={exp.logo} alt={`${exp.company} logo`} fallbackLabel={exp.company} className="h-full w-full object-cover" />
                 ) : (
                   <RoleIcon size={18} />
                 )}
@@ -104,8 +104,8 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
                   }
                 }}
               >
-                <img
-                  src={img("aboutme-photo-main")}
+                <PortfolioImage
+                  imageKey="aboutme-photo-main"
                   alt="Rose Kate Zonio"
                   loading="lazy"
                   decoding="async"
@@ -127,7 +127,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             <Reveal delay={220}>
               <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-center lg:text-right">
                 <p className={t.text}>Websites on one side. Networks on the other.</p>
-                <p className={`hidden sm:block normal-case ${t.textMuted}`}>
+                <p className={`normal-case text-xs sm:text-sm ${t.textMuted}`}>
                   I build web experiences, configure networks, and explore practical cybersecurity solutions.
                 </p>
               </div>
@@ -153,7 +153,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
             </Reveal>
 
             <Reveal delay={400} className="lg:mt-auto">
-              <h1 className="hero-name hidden lg:inline-flex flex-col items-center self-center lg:self-end font-display font-bold uppercase">
+              <h1 className="hero-name mt-3 hidden w-full flex-col items-center self-center font-display font-bold uppercase lg:mt-0 lg:inline-flex lg:w-auto lg:self-end">
                 <span className={t.text}>Rose Kate</span>
                 <span className="flex w-full items-baseline justify-between">
                   <span className={`hero-handle ${t.textMuted}`}>(@arkyxo)</span>
@@ -165,7 +165,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
         </div>
 
         <Reveal delay={440}>
-          <div id="about" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>
+          <div id="contact" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>
             <p className={`font-mono text-[11px] uppercase tracking-[0.22em] ${t.textFaint} mb-6`}>Reach me</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-8">
               {tiles.map((item) => {
@@ -234,7 +234,7 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
                   } flex items-center justify-center p-2`}
                 >
                   <div className="h-full w-full rounded-lg bg-white flex items-center justify-center p-1.5 shadow-sm">
-                    <img src={img(item.icon)} alt={item.name} className="h-full w-full object-contain" />
+                    <PortfolioImage imageKey={item.icon} alt={item.name} fallbackLabel={item.name} className="h-full w-full object-contain" />
                   </div>
                 </div>
               ))}
@@ -251,7 +251,7 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
 }
 
 
-export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, onToggleReveal, onOpenArchive }) {
+export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, onToggleReveal, onOpenArchive, onOpenProject }) {
   const featured = (projectTab === "labs" ? LABS : WEB_APPS).filter((p) => p.title === HOME_PROJECT_BY_TAB[projectTab]);
   return (
     <section id="labs" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
@@ -292,9 +292,10 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
                     <div className={`group relative aspect-[16/10] rounded-lg overflow-hidden border ${t.border} ${t.surface}`}>
                       {item.thumbnail ? (
                         <>
-                          <img
-                            src={img(thumbFor(item, isDark))}
+                          <PortfolioImage
+                            imageKey={thumbFor(item, isDark)}
                             alt={`${item.title} preview`}
+                            fallbackLabel={item.title}
                             loading="lazy"
                             decoding="async"
                             onClick={() => onToggleReveal(item.title)}
@@ -319,16 +320,28 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
                     </div>
                   </div>
 
-                  <div {...{ inert: "" }} className={`relative z-10 sm:row-start-1 ${flip ? "sm:col-start-1 sm:col-end-8" : "sm:col-start-6 sm:col-end-13 sm:text-right"}`}>
+                  <div className={`relative z-10 sm:row-start-1 ${flip ? "sm:col-start-1 sm:col-end-8" : "sm:col-start-6 sm:col-end-13 sm:text-right"}`}>
                     <p className={`font-mono text-xs tracking-wide ${t.accent}`}>{item.eyebrow}</p>
                     <h3 className={`font-display font-bold text-2xl sm:text-[28px] mt-1 ${t.text}`}>{item.title}</h3>
                     <div className={`hidden lg:block mt-5 rounded-lg border ${t.border} p-5 shadow-xl font-body text-sm leading-relaxed ${t.textMuted} ${isDark ? "bg-neutral-800/95" : "bg-white"} text-left`}>
                       {renderDescription(item.description, t)}
                     </div>
+                    {item.detail?.role && (
+                      <p className={`mt-4 font-mono text-[11px] leading-relaxed ${t.textFaint}`}>
+                        <span className={t.accent}>ROLE</span> / {item.detail.role}
+                      </p>
+                    )}
                     <ul className={`mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
                       {item.tags.map((tag) => <li key={tag}>{tag}</li>)}
                     </ul>
-                    <div className={`mt-4 flex items-center gap-4 ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
+                    <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-3 ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
+                      <button
+                        type="button"
+                        onClick={() => onOpenProject(item.title)}
+                        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-accent-400 transition-colors"
+                      >
+                        Read case study <ArrowRight size={13} />
+                      </button>
                       {hasLink(item.github) && (
                         <a href={item.github} target="_blank" rel="noreferrer" aria-label={`${item.title} on GitHub`} className="hover:text-accent-400 transition-colors"><Github size={19} /></a>
                       )}

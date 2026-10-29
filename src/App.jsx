@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useRemoteImages } from "./images.js";
-import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, BLOG_BY_SLUG, RESUME_URL } from "./data.js";
+import { useRemoteImages } from "./images.jsx";
+import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, BLOG_BY_SLUG, RESUME_URL, slugOf } from "./data.js";
 import { useScrollProgress } from "./hooks.js";
 import { Sun, Moon, Menu, X, ArrowUp, Github, Linkedin, Mail, Download } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
@@ -118,7 +118,7 @@ function App() {
   const backToPosts = useCallback(() => { window.location.hash = "blogs"; }, []);
   const navigateTo = useCallback(
     (id) => {
-      if (id === "affiliation" || id === "blogs" || id === "certification") {
+      if (id === "affiliation" || id === "blogs" || id === "certification" || id === "aboutme") {
         window.location.hash = id;
         setMenuOpen(false);
       } else {
@@ -201,7 +201,7 @@ function App() {
         <nav className="max-w-6xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
           <button
             onClick={() => scrollToId("hero")}
-            aria-label={`${PROFILE.name}, back to top`}
+            aria-label={`${PROFILE.fullName}, back to top`}
             className={`font-display font-bold text-xl tracking-tight ${t.text} hover:text-accent-400 transition-colors`}
           >
             {PROFILE.name}
@@ -235,6 +235,7 @@ function App() {
       <ProjectsSection
         t={t}
         isDark={isDark}
+        onOpenProject={(title) => { window.location.hash = slugOf(title); }}
         projectTab={projectTab}
         onSwitchTab={switchProjectTab}
         revealed={revealed}
@@ -247,7 +248,7 @@ function App() {
       <footer className={`border-t ${t.border}`}>
         <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className={`font-mono text-xs ${t.textFaint}`}>
-            © {new Date().getFullYear()} {PROFILE.name}. Built with React + Tailwind CSS.
+            © {new Date().getFullYear()} {PROFILE.fullName}. Built with React + Tailwind CSS.
           </p>
           <div className="flex items-center gap-4">
             <a href={PROFILE.github} className={`${t.textFaint} hover:text-accent-400`} aria-label="GitHub"><Github size={16} /></a>

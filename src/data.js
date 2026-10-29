@@ -3,6 +3,7 @@ import { CodeBrackets, NetworkNodes, ShieldCheck, Code2, Network, GraduationCap,
 
 export const PROFILE = {
   name: "RK",
+  fullName: "Rose Kate Zonio",
   role: "Software & Networking/IT",
   subrole: "Computer Engineering · Software & Networking/IT",
   email: "rkzonio1@gmail.com",
@@ -18,7 +19,7 @@ export const hasLink = (u) => !!u && u !== "#";
 export const RESUME_URL = cvPdf;
 
 export const NAV_LINKS = [
-  { id: "about", label: "About" },
+  { id: "aboutme", label: "About" },
   { id: "skills", label: "Skills" },
   { id: "activities", label: "Activities" },
   { id: "labs", label: "Projects" },
@@ -303,7 +304,7 @@ export const WEB_APPS_LIST = [
   },
 ];
 
-export const SOFTWARE_ORDER = ["URSAC Simulation Academy", "Salo Sa Antipolo", "KuryenteWatch", "CineLookUp"];
+export const SOFTWARE_ORDER = ["Salo Sa Antipolo", "URSAC Simulation Academy", "KuryenteWatch", "CineLookUp"];
 export const WEB_APPS = [...WEB_APPS_LIST].sort((a, b) => SOFTWARE_ORDER.indexOf(a.title) - SOFTWARE_ORDER.indexOf(b.title));
 
 export const yearOf = (p) => (p.meta && (p.meta.match(/(\d{4})/) || [])[1]) || "-";
@@ -622,6 +623,6 @@ export const IMAGE_SLOTS = (() => {
   return slots;
 })();
 
-export const HOME_PROJECT_BY_TAB = { webapps: "URSAC Simulation Academy", labs: "Home Network Device Monitor" };
-export const FEATURED_TITLES = ["Home Network Device Monitor", "URSAC Simulation Academy"];
+export const HOME_PROJECT_BY_TAB = { webapps: "Salo Sa Antipolo", labs: "Home Network Device Monitor" };
+export const FEATURED_TITLES = ["Home Network Device Monitor", "Salo Sa Antipolo"];
 export const TRACK_FILTERS = ["All", "Software", "Hardware", "Hackathon"];

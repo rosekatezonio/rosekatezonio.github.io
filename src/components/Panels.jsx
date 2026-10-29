@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { img } from "../images.js";
+import { PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
 import { ActivityLink, Reveal } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
@@ -33,7 +33,7 @@ export function CertificationSection({ t, isDark }) {
               <div className="flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
                 <div className={`shrink-0 w-16 h-11 sm:w-20 sm:h-14 rounded-lg border ${t.border} overflow-hidden bg-white p-1.5 flex items-center justify-center`}>
                   {cert.image ? (
-                    <img src={img(cert.image)} alt={`${cert.name} badge`} className="max-h-full max-w-full object-contain" />
+                    <PortfolioImage imageKey={cert.image} alt={`${cert.name} badge`} fallbackLabel={cert.name} className="max-h-full max-w-full object-contain" />
                   ) : (
                     <StatusIcon size={20} className="text-slate-400" />
                   )}
@@ -110,15 +110,13 @@ export function ActivitiesJourney({ t, isDark }) {
 }
 
 export function AboutPhoto({ photo, isDark }) {
-  const src = img(photo.image);
-  if (!src) return null;
   return (
     <div className="mx-auto w-full max-w-3xl">
       <div
         className={`overflow-hidden rounded-2xl border-[3px] shadow-xl ${isDark ? "border-neutral-800 bg-neutral-900" : "border-white bg-slate-100"}`}
         style={{ aspectRatio: "1456 / 735" }}
       >
-        <img src={src} alt={photo.caption} draggable={false} className="h-full w-full object-cover" />
+        <PortfolioImage imageKey={photo.image} alt={photo.caption} fallbackLabel={photo.caption} draggable={false} className="h-full w-full object-cover" />
       </div>
       <p className={`mt-3 text-center font-mono text-[11px] uppercase tracking-[0.22em] ${isDark ? "text-neutral-500" : "text-slate-400"}`}>
         Frame 01 · {photo.caption} · between takes
@@ -204,7 +202,7 @@ export function AffiliationSection({ t, isDark }) {
             <div className="flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
               <div className={`shrink-0 aspect-square w-14 sm:w-16 rounded-lg border ${t.border} overflow-hidden bg-white p-1.5 flex items-center justify-center`}>
                 {org.logo ? (
-                  <img src={img(org.logo)} alt={`${org.company} logo`} className="max-h-full max-w-full object-contain" />
+                  <PortfolioImage imageKey={org.logo} alt={`${org.company} logo`} fallbackLabel={org.company} className="max-h-full max-w-full object-contain" />
                 ) : (
                   <span className="font-display font-semibold text-sm text-slate-900">{org.abbr}</span>
                 )}
@@ -240,7 +238,7 @@ export function AffiliationSection({ t, isDark }) {
 export function BlogAuthor({ t, size = 24 }) {
   return (
     <span className="inline-flex items-center gap-2">
-      <img src={img(PROFILE.photo)} alt="" style={{ width: size, height: size }} className="rounded-full object-cover" />
+      <PortfolioImage imageKey={PROFILE.photo} alt="" fallbackLabel="RK" style={{ width: size, height: size }} className="rounded-full object-cover" />
       <span className={`font-body text-[13px] ${t.text}`}>{PROFILE.name}</span>
     </span>
   );
@@ -309,9 +307,10 @@ export function BlogSection({ t, isDark }) {
                 <span>{readMinutes(post)} min read</span>
               </p>
             </div>
-            <img
-              src={img(post.image)}
+            <PortfolioImage
+              imageKey={post.image}
               alt=""
+              fallbackLabel={post.title}
               loading="lazy"
               className={`h-20 w-20 sm:h-28 sm:w-40 shrink-0 rounded-md object-cover ${post.position}`}
             />
@@ -364,7 +363,7 @@ export function BlogArticle({ t, isDark, post, onBack }) {
 
         <div className={`mt-8 flex items-center justify-between gap-4 border-y ${t.border} py-4`}>
           <div className="flex items-center gap-3 min-w-0">
-            <img src={img(PROFILE.photo)} alt="" className="h-11 w-11 rounded-full object-cover" />
+            <PortfolioImage imageKey={PROFILE.photo} alt="" fallbackLabel="RK" className="h-11 w-11 rounded-full object-cover" />
             <div className="min-w-0">
               <p className="font-body text-sm font-medium leading-tight">{PROFILE.name}</p>
               <p className={`font-body text-[13px] ${t.textMuted} mt-0.5`}>
@@ -382,7 +381,7 @@ export function BlogArticle({ t, isDark, post, onBack }) {
         </div>
 
         {post.hero && (
-          <img src={img(post.image)} alt={post.title} className={`mt-8 aspect-[16/10] w-full rounded-lg object-cover ${post.position}`} />
+          <PortfolioImage imageKey={post.image} alt={post.title} fallbackLabel={post.title} className={`mt-8 aspect-[16/10] w-full rounded-lg object-cover ${post.position}`} />
         )}
 
         <div className="font-serif-read mt-10 text-[19px] sm:text-[21px] leading-[1.75] text-justify">
@@ -417,7 +416,7 @@ export function EducationRow({ edu, t, isDark }) {
     <li className={`flex items-center gap-4 border-b ${t.border} py-4`}>
       <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-white p-1 ring-1 ring-black/10 flex items-center justify-center">
         {edu.logo ? (
-          <img src={img(edu.logo)} alt={edu.institution} className="h-full w-full object-contain" />
+          <PortfolioImage imageKey={edu.logo} alt={edu.institution} fallbackLabel={edu.institution} className="h-full w-full object-contain" />
         ) : (
           <span className="font-mono text-xs font-bold text-accent-500">{initialsOf(edu.institution)}</span>
         )}

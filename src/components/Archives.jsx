@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { img } from "../images.js";
+import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
 import { renderDescription } from "./ui.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
@@ -73,15 +73,14 @@ function ProjectCard({ p, t, isDark }) {
         className={`group flex h-full items-center gap-3.5 rounded-xl border ${t.border} ${t.surfaceSolid} p-2.5 card-glow`}
       >
         <div className={`h-12 w-14 shrink-0 overflow-hidden rounded-lg border ${t.border} min-[380px]:h-14 min-[380px]:w-20 sm:h-16 sm:w-24 ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
-          {thumb && (
-            <img
-              src={thumb}
-              alt={`${p.title} preview`}
-              loading="lazy"
-              decoding="async"
-              className="h-full w-full object-cover object-top"
-            />
-          )}
+          <PortfolioImage
+            src={thumb}
+            alt={`${p.title} preview`}
+            fallbackLabel={p.title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover object-top"
+          />
         </div>
         <div className="min-w-0 flex-1">
           <h2 className="line-clamp-2 font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
@@ -245,7 +244,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
         {images.length > 0 && (
           <>
             <div className={`mt-8 rounded-2xl border ${t.border} overflow-hidden ${t.surfaceSolid}`}>
-              <img src={img(images[slide])} alt={`${p.title} screenshot ${slide + 1}`} className="w-full h-auto block" />
+              <PortfolioImage imageKey={images[slide]} alt={`${p.title} screenshot ${slide + 1}`} fallbackLabel={p.title} className="w-full h-auto block" />
             </div>
             {images.length > 1 && (
               <div className="mt-4 flex items-center justify-between">

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { img } from "../images.js";
+import { PortfolioImage } from "../images.jsx";
 import { ACTIVITIES, PROFILE } from "../data.js";
 import { Reveal, SectionHeading, ActivityLink, ViewMore } from "./ui.jsx";
 import { Trophy, Github, MapPin, ArrowLeftRight, ArrowRight } from "../icons.jsx";
@@ -14,7 +14,7 @@ export function ActivityRow({ f, reverse, t, isDark }) {
   return (
     <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
       <div className={`relative w-full max-w-md mx-auto lg:max-w-none ${f.inset ? "pb-10 pr-8 sm:pb-14 sm:pr-14" : ""} ${reverse ? "lg:order-2" : ""}`}>
-        <img src={img(main.src)} alt={main.alt} className={`aspect-[16/9] sm:aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
+        <PortfolioImage imageKey={main.src} alt={main.alt} fallbackLabel={main.alt} className={`aspect-[16/9] sm:aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
         {f.inset && small && (
           <button
             type="button"
@@ -23,7 +23,7 @@ export function ActivityRow({ f, reverse, t, isDark }) {
             title="Swap photos"
             className={`group absolute bottom-0 right-0 w-32 sm:w-44 overflow-hidden rounded-2xl ring-4 ${isDark ? "ring-black" : "ring-slate-50"} transition-transform hover:scale-[1.03] focus-visible:outline-none focus-visible:ring-accent-400`}
           >
-            <img src={img(small.src)} alt={small.alt} className={`block aspect-[4/3] w-full object-cover ${small.position}`} />
+            <PortfolioImage imageKey={small.src} alt={small.alt} fallbackLabel={small.alt} className={`block aspect-[4/3] w-full object-cover ${small.position}`} />
             <span className="absolute bottom-2 left-2 rounded-full bg-black/60 p-1.5 text-white transition-colors group-hover:text-accent-400">
               <ArrowLeftRight size={12} />
             </span>
@@ -170,9 +170,10 @@ export function GithubActivity({ t, isDark }) {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">
-              <img
-                src={img(PROFILE.photo)}
+              <PortfolioImage
+                imageKey={PROFILE.photo}
                 alt={`${PROFILE.githubUsername} avatar`}
+                fallbackLabel="RK"
                 className={`h-10 w-10 shrink-0 rounded-full object-cover border ${t.border}`}
               />
               <div className="min-w-0">

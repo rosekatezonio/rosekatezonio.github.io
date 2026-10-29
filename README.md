@@ -58,14 +58,13 @@ VITE_FIREBASE_PROJECT_ID=
 VITE_FIREBASE_APP_ID=
 VITE_CLOUDINARY_CLOUD_NAME=
 VITE_CLOUDINARY_UPLOAD_PRESET=
-VITE_ADMIN_EMAIL=
 ```
 
 On GitHub, these same names must exist under Settings -> Secrets and variables -> Actions; the deploy workflow injects them at build time.
 
 ## Admin panel
 
-Visit `/#admin` and sign in with the Google account matching `VITE_ADMIN_EMAIL`. It manages the images served across the site (Firestore documents pointing at Cloudinary uploads, with local assets as fallback).
+Visit `/#admin` and sign in with the Google account matching the email in `PROFILE.email` in `src/data.js`. The Firestore security rule uses the same address. If you use a different admin account, update the email in both `src/data.js` and `firestore.rules`, then deploy the updated Firestore rules. The panel manages images served across the site (Firestore documents pointing at Cloudinary uploads, with bundled assets and styled placeholders as fallbacks).
 
 ## Notes
 

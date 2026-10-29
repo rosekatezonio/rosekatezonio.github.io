@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "firebase/firestore";
 import { auth, db, firebaseReady, googleProvider } from "./firebase.js";
-import { localImages, optimized } from "./images.js";
+import { PROFILE } from "./data.js";
+import { localImages, optimized } from "./images.jsx";
 import { IMAGE_SLOTS } from "./data.js";
 
-const ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL || "").toLowerCase();
+const ADMIN_EMAIL = PROFILE.email.toLowerCase();
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 const KEY_PATTERN = /^[a-z0-9][a-z0-9-]*$/;
