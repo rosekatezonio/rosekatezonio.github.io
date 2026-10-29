@@ -209,8 +209,8 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes, onOpenAbout }) 
                 href={`#${item.id}`}
                 className={`group flex min-h-16 items-center justify-between gap-2 px-3 py-4 sm:px-6 ${index > 0 ? `border-l ${t.border}` : ""} ${t.textMuted} transition-colors hover:text-accent-400`}
               >
-                <span className="whitespace-nowrap font-mono text-[9px] uppercase tracking-normal sm:text-xs sm:tracking-[0.18em]">{item.label}</span>
-                <span aria-hidden="true" className="hidden shrink-0 text-accent-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:inline">↗</span>
+                <span className="whitespace-nowrap font-mono text-[11px] uppercase tracking-normal sm:text-[13px] sm:tracking-[0.14em]">{item.label}</span>
+                <span aria-hidden="true" className="hidden shrink-0 text-base text-accent-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:inline">↗</span>
               </a>
             ))}
           </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRemoteImages } from "./images.jsx";
 import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, RESUME_URL, slugOf } from "./data.js";
 import { useScrollProgress } from "./hooks.js";
-import { Sun, Moon, Menu, X, ArrowUp, Github, Linkedin, Mail, Download } from "./icons.jsx";
+import { Sun, Moon, Menu, X, ArrowUp } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel } from "./components/ui.jsx";
@@ -115,7 +115,9 @@ function App() {
   }, []);
   const navigateTo = useCallback(
     (id) => {
-      if (["activities", "affiliation", "certification", "aboutme", "experience"].includes(id)) {
+      // "experience" is intentionally NOT here: the sidebar scrolls to the Experience
+      // section on the page. The panel only opens via the section's "Full history" link (#experience).
+      if (["activities", "affiliation", "certification", "aboutme"].includes(id)) {
         openPanel(id);
       } else {
         scrollToId(id);
@@ -241,18 +243,10 @@ function App() {
       <GithubActivity t={t} isDark={isDark} />
 
       <footer className={`border-t ${t.border}`}>
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex items-center justify-center">
           <p className={`font-mono text-xs ${t.textFaint}`}>
-            © {new Date().getFullYear()} {PROFILE.fullName}. Built with React + Tailwind CSS.
+            © {new Date().getFullYear()} {PROFILE.fullName}.
           </p>
-          <div className="flex items-center gap-4">
-            <a href={PROFILE.github} className={`${t.textFaint} hover:text-accent-400`} aria-label="GitHub"><Github size={16} /></a>
-            <a href={PROFILE.linkedin} className={`${t.textFaint} hover:text-accent-400`} aria-label="LinkedIn"><Linkedin size={16} /></a>
-            <a href={mailtoUrl} className={`${t.textFaint} hover:text-accent-400`} aria-label="Email"><Mail size={16} /></a>
-            <button onClick={openResumes} className={`font-mono text-xs ${t.textMuted} hover:text-accent-400 flex items-center gap-1.5`}>
-              <Download size={13} /> Resume
-            </button>
-          </div>
         </div>
       </footer>
 

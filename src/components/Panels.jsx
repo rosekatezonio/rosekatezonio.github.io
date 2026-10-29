@@ -4,7 +4,7 @@ import { Reveal } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
 import { ExperienceTimeline } from "./Home.jsx";
 import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, hasLink, eduProgress, initialsOf } from "../data.js";
-import { CheckCircle2, Clock, ExternalLink, ArrowUpRight } from "../icons.jsx";
+import { CheckCircle2, Clock, ExternalLink, ArrowUpRight, User } from "../icons.jsx";
 
 export const PENDING_STATUSES = ["In Progress", "Planned", "Upcoming"];
 export const isEarnedCert = (cert) => !PENDING_STATUSES.includes(cert.status);

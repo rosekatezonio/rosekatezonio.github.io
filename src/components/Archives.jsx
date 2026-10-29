@@ -35,7 +35,7 @@ export function SkillsArchive({ t, onClose, isDark }) {
   }, [requestClose]);
 
   return (
-    <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
@@ -132,7 +132,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
   });
 
   return (
-    <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="max-w-4xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
@@ -215,7 +215,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
   const navBtn = `h-10 w-10 rounded-full border ${t.border} flex items-center justify-center transition-colors hover:border-accent-400 hover:text-accent-400 disabled:opacity-30 disabled:pointer-events-none`;
 
   return (
-    <div className={`fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
+    <div className={`fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
         <a href="#archive" className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> All projects
