@@ -474,34 +474,6 @@ export const AFFILIATIONS = [
   },
 ];
 
-export const BLOG_PAGE_SIZE = 6;
-
-export const BLOGS = [
-  {
-    title: "What I Learned at the AppBuilders PH Hackathon",
-    date: "Oct 9 - 10, 2026",
-    category: "Hackathon",
-    image: "appbuilders-hackathon-group",
-    position: "object-[center_75%]",
-    hero: true,
-    excerpt: "500+ builders, a live top-12 showcase, and why losing taught me more than winning.",
-    body: [
-      "Participating in hackathons is always an intense experience, but AppBuilders PH was something different for me.",
-      "During my first hackathon, we built our project, recorded a pitch video at home, and submitted everything online. A few days later, we received an email saying we didn't make the top 10. And that was pretty much it. No feedback, no chance to see how the other teams presented, just an email and the end of the experience.",
-      "But this time, things felt different.",
-      "Walking into the venue and seeing 500+ builders, from college students to professionals with years of experience, was an experience on its own. The energy was different, and being surrounded by people who were also building things made me realize how much there is to learn outside the classroom.",
-      "Our team didn't win, but I stayed to watch the top 12 teams present their projects live. Seeing how they explained their ideas, approached problems, and presented their solutions taught me things I probably wouldn't have learned from watching tutorials alone.",
-      "And honestly, I think that's what made this experience worth it.",
-      "Maybe stepping outside my comfort zone and saying yes to random side quests isn't such a bad idea after all HAHAHAHAHA",
-    ],
-    links: FEATURED_ACTIVITY.links,
-  },
-];
-
-export const blogSlug = (post) => slugOf(post.title);
-export const BLOG_BY_SLUG = Object.fromEntries(BLOGS.map((b) => [blogSlug(b), b]));
-export const readMinutes = (post) => Math.max(1, Math.ceil(post.body.join(" ").split(/\s+/).filter(Boolean).length / 200));
-
 export const ABOUT_PHOTOS = [
   { name: "About me · Photo", caption: "Me", image: "aboutme-photo-main" },
 ];
@@ -608,7 +580,7 @@ export const SKILL_TOTAL = SKILL_GROUPS.reduce((n, g) => n + g.items.length, 0);
 export const IMAGE_FIELDS = ["icon", "thumbnail", "thumbnailDark", "gallery", "galleryDark", "image", "inset", "logo"];
 export const IMAGE_SLOTS = (() => {
   const slots = { [PROFILE.photo]: ["Profile photo"] };
-  const sources = [...ALL_SKILL_ITEMS, ...AI_TOOLING, ...ALL_PROJECTS, ...CERTIFICATIONS, ...ACTIVITIES, ...EXPERIENCE, ...AFFILIATIONS, ...BLOGS, ...ABOUT_PHOTOS, ...EDUCATION];
+  const sources = [...ALL_SKILL_ITEMS, ...AI_TOOLING, ...ALL_PROJECTS, ...CERTIFICATIONS, ...ACTIVITIES, ...EXPERIENCE, ...AFFILIATIONS, ...ABOUT_PHOTOS, ...EDUCATION];
   for (const item of sources) {
     const name = item.name || item.title || item.company || item.institution || "Item";
     for (const field of IMAGE_FIELDS) {

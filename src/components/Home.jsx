@@ -55,7 +55,7 @@ export function ExperienceTimeline({ t, isDark }) {
 }
 
 
-export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
+export function HeroSection({ t, isDark, mailtoUrl, openResumes, onOpenAbout }) {
   // Hover previews color (mouse only). Click flips whatever is currently shown.
   const [photoHover, setPhotoHover] = useState(false);
   const [photoOverride, setPhotoOverride] = useState(null); // null | "color" | "gray"
@@ -137,6 +137,10 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
               <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
                 <a
                   href="#aboutme"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    onOpenAbout();
+                  }}
                   className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-xl font-medium uppercase leading-tight sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   More about me
@@ -197,6 +201,20 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes }) {
           </div>
         </Reveal>
 
+        <section aria-label="Activities, affiliation, and certification links" className="mt-8">
+          <div className={`grid grid-cols-3 border-y ${t.border}`}>
+            {[{ id: "activities", label: "Activities" }, { id: "affiliation", label: "Affiliation" }, { id: "certification", label: "Cert" }].map((item, index) => (
+              <a
+                key={item.id}
+                href={`#${item.id}`}
+                className={`group flex min-h-16 items-center justify-between gap-2 px-3 py-4 sm:px-6 ${index > 0 ? `border-l ${t.border}` : ""} ${t.textMuted} transition-colors hover:text-accent-400`}
+              >
+                <span className="whitespace-nowrap font-mono text-[9px] uppercase tracking-normal sm:text-xs sm:tracking-[0.18em]">{item.label}</span>
+                <span aria-hidden="true" className="hidden shrink-0 text-accent-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:inline">↗</span>
+              </a>
+            ))}
+          </div>
+        </section>
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 import React from "react";
-import { PROFILE, RESUME_URL, SKILL_TOTAL, BLOGS, ALL_PROJECTS, EXPERIENCE, AFFILIATIONS, CERTIFICATIONS } from "../data.js";
-import { House, User, Layers, Trophy, BookOpen, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight, Eye } from "../icons.jsx";
+import { PROFILE, RESUME_URL, SKILL_TOTAL, ALL_PROJECTS, EXPERIENCE, AFFILIATIONS, CERTIFICATIONS } from "../data.js";
+import { House, User, Layers, Trophy, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight, Eye } from "../icons.jsx";
 import { useMonthlyVisits, monthLabel } from "../visits.js";
 
 export const SIDEBAR_GROUPS = [
@@ -14,7 +14,6 @@ export const SIDEBAR_GROUPS = [
       { id: "aboutme", label: "About", Icon: User },
       { id: "skills", label: "Skills", Icon: Layers, count: SKILL_TOTAL },
       { id: "activities", label: "Activities", Icon: Trophy },
-      { id: "blogs", label: "Blogs", Icon: BookOpen, count: BLOGS.length },
     ],
   },
   {
@@ -23,7 +22,7 @@ export const SIDEBAR_GROUPS = [
       { id: "labs", label: "Projects", Icon: LayoutGrid, count: ALL_PROJECTS.length },
       { id: "experience", label: "Experience", Icon: Briefcase, count: EXPERIENCE.length },
       { id: "affiliation", label: "Affiliation", Icon: Users, count: AFFILIATIONS.length },
-      { id: "certification", label: "Certs", Icon: Award, count: CERTIFICATIONS.length },
+      { id: "certification", label: "Cert", Icon: Award, count: CERTIFICATIONS.length },
     ],
   },
   {

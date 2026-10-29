@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PortfolioImage } from "../images.jsx";
-import { useOverlayClose } from "../hooks.js";
-import { ActivityLink, Reveal } from "./ui.jsx";
+import { Reveal } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
 import { ExperienceTimeline } from "./Home.jsx";
-import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, BLOGS, BLOG_PAGE_SIZE, blogSlug, readMinutes, PROFILE, hasLink, eduProgress, initialsOf } from "../data.js";
-import { CheckCircle2, Clock, ExternalLink, ArrowUpRight, ArrowLeftIcon, ArrowRight, User } from "../icons.jsx";
+import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, hasLink, eduProgress, initialsOf } from "../data.js";
+import { CheckCircle2, Clock, ExternalLink, ArrowUpRight } from "../icons.jsx";
 
 export const PENDING_STATUSES = ["In Progress", "Planned", "Upcoming"];
 export const isEarnedCert = (cert) => !PENDING_STATUSES.includes(cert.status);
@@ -94,11 +93,10 @@ export function ExperienceHistory({ t, isDark }) {
 
 export function ActivitiesJourney({ t, isDark }) {
   return (
-    <section id="activities-journey">
+    <section>
       <h1 className="font-display font-bold text-3xl sm:text-5xl">Activities</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>The journey so far: where I've been and what I've been building, newest first.</p>
-
-      <div className="mt-14 space-y-14 lg:space-y-28">
+      <div className="mt-10 sm:mt-14 space-y-14 lg:space-y-28">
         {ACTIVITIES.map((f, i) => (
           <Reveal key={f.title}>
             <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
@@ -232,181 +230,6 @@ export function AffiliationSection({ t, isDark }) {
         ))}
       </ul>
     </section>
-  );
-}
-
-export function BlogAuthor({ t, size = 24 }) {
-  return (
-    <span className="inline-flex items-center gap-2">
-      <PortfolioImage imageKey={PROFILE.photo} alt="" fallbackLabel="RK" style={{ width: size, height: size }} className="rounded-full object-cover" />
-      <span className={`font-body text-[13px] ${t.text}`}>{PROFILE.name}</span>
-    </span>
-  );
-}
-
-export function BlogSection({ t, isDark }) {
-  const categories = ["All", ...Array.from(new Set(BLOGS.map((b) => b.category)))];
-  const [category, setCategory] = useState("All");
-  const [page, setPage] = useState(1);
-
-  const filtered = category === "All" ? BLOGS : BLOGS.filter((b) => b.category === category);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / BLOG_PAGE_SIZE));
-  const current = Math.min(page, totalPages);
-  const visible = filtered.slice((current - 1) * BLOG_PAGE_SIZE, current * BLOG_PAGE_SIZE);
-
-  const pickCategory = (c) => {
-    setCategory(c);
-    setPage(1);
-  };
-  const goPage = (n) => {
-    setPage(n);
-    const el = document.getElementById("panel-scroll");
-    if (el) el.scrollTo({ top: 0, behavior: "smooth" });
-  };
-  const navBtn = (disabled) =>
-    `font-mono text-xs ${disabled ? `${t.textFaint} opacity-40 cursor-not-allowed` : `${t.textMuted} hover:text-accent-400`} transition-colors`;
-
-  return (
-    <section id="blogs" className="max-w-3xl mx-auto">
-      <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">Blogs</h2>
-      <p className={`font-body text-base ${t.textMuted} mt-3`}>Stories and notes from the things I build and join.</p>
-
-      <div className={`mt-8 flex flex-wrap items-center gap-6 border-b ${t.border}`}>
-        {categories.map((c) => {
-          const on = category === c;
-          return (
-            <button
-              key={c}
-              type="button"
-              onClick={() => pickCategory(c)}
-              aria-pressed={on}
-              className={`-mb-px border-b pb-3 font-body text-sm transition-colors ${
-                on ? `${isDark ? "border-white text-white" : "border-slate-900 text-slate-900"}` : `border-transparent ${t.textMuted} hover:text-accent-400`
-              }`}
-            >
-              {c}
-            </button>
-          );
-        })}
-      </div>
-
-      <div>
-        {visible.map((post) => (
-          <a
-            key={post.title}
-            href={`#blogs/${blogSlug(post)}`}
-            className={`group flex items-start justify-between gap-5 sm:gap-8 border-b ${t.border} py-8`}
-          >
-            <div className="min-w-0 flex-1">
-              <BlogAuthor t={t} size={22} />
-              <h3 className="font-display font-bold text-xl sm:text-[22px] leading-snug mt-3 group-hover:underline decoration-1 underline-offset-4">{post.title}</h3>
-              <p className={`font-body text-[15px] leading-relaxed ${t.textMuted} mt-2`}>{post.excerpt}</p>
-              <p className={`font-body text-[13px] ${t.textFaint} mt-4 flex flex-wrap items-center gap-x-3 gap-y-2`}>
-                <span>{post.date}</span>
-                <span className={`rounded-full ${isDark ? "bg-white/10" : "bg-slate-100"} px-2.5 py-0.5 ${t.textMuted}`}>{post.category}</span>
-                <span>{readMinutes(post)} min read</span>
-              </p>
-            </div>
-            <PortfolioImage
-              imageKey={post.image}
-              alt=""
-              fallbackLabel={post.title}
-              loading="lazy"
-              className={`h-20 w-20 sm:h-28 sm:w-40 shrink-0 rounded-md object-cover ${post.position}`}
-            />
-          </a>
-        ))}
-        {visible.length === 0 && <p className={`py-10 text-center font-mono text-xs ${t.textFaint}`}>No posts yet.</p>}
-      </div>
-
-      {totalPages > 1 && (
-        <div className="mt-8 flex items-center justify-between">
-          <button type="button" disabled={current === 1} onClick={() => goPage(current - 1)} className={`inline-flex items-center gap-1.5 ${navBtn(current === 1)}`}>
-            <ArrowLeftIcon size={13} /> prev
-          </button>
-          <span className={`font-mono text-xs ${t.textMuted}`}>{current} / {totalPages}</span>
-          <button type="button" disabled={current === totalPages} onClick={() => goPage(current + 1)} className={`inline-flex items-center gap-1.5 ${navBtn(current === totalPages)}`}>
-            next <ArrowRight size={13} />
-          </button>
-        </div>
-      )}
-    </section>
-  );
-}
-
-export function BlogArticle({ t, isDark, post, onBack }) {
-  const [closing, requestClose] = useOverlayClose(onBack);
-  const [copied, setCopied] = useState(false);
-  useEffect(() => {
-    const onKey = (e) => e.key === "Escape" && requestClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [requestClose]);
-
-  const copyLink = () => {
-    try {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1800);
-    } catch {}
-  };
-
-  return (
-    <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[70] overflow-y-auto ${t.bg} ${t.text}`}>
-      <article className="mx-auto w-full max-w-[680px] px-5 pt-10 sm:pt-14 pb-24">
-        <button onClick={requestClose} className={`inline-flex items-center gap-1.5 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
-          <ArrowLeftIcon size={13} /> all posts
-        </button>
-
-        <h1 className="font-display font-bold text-[32px] sm:text-[42px] leading-[1.15] tracking-tight mt-10">{post.title}</h1>
-        <p className={`font-body text-lg sm:text-xl leading-relaxed ${t.textMuted} mt-4`}>{post.excerpt}</p>
-
-        <div className={`mt-8 flex items-center justify-between gap-4 border-y ${t.border} py-4`}>
-          <div className="flex items-center gap-3 min-w-0">
-            <PortfolioImage imageKey={PROFILE.photo} alt="" fallbackLabel="RK" className="h-11 w-11 rounded-full object-cover" />
-            <div className="min-w-0">
-              <p className="font-body text-sm font-medium leading-tight">{PROFILE.name}</p>
-              <p className={`font-body text-[13px] ${t.textMuted} mt-0.5`}>
-                {readMinutes(post)} min read · {post.date}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={copyLink}
-            className={`shrink-0 inline-flex items-center gap-1.5 font-body text-[13px] ${t.textMuted} hover:text-accent-400 transition-colors`}
-          >
-            <ExternalLink size={14} /> {copied ? "Link copied" : "Share"}
-          </button>
-        </div>
-
-        {post.hero && (
-          <PortfolioImage imageKey={post.image} alt={post.title} fallbackLabel={post.title} className={`mt-8 aspect-[16/10] w-full rounded-lg object-cover ${post.position}`} />
-        )}
-
-        <div className="font-serif-read mt-10 text-[19px] sm:text-[21px] leading-[1.75] text-justify">
-          {post.body.map((block, i) =>
-            block.startsWith("## ") ? (
-              <h2 key={i} className="font-display font-bold text-2xl sm:text-[28px] leading-snug tracking-tight mt-12 mb-1">{block.slice(3)}</h2>
-            ) : (
-              <p key={i} className="mt-7 first:mt-0">{block}</p>
-            )
-          )}
-        </div>
-
-        {post.links.length > 0 && (
-          <div className="mt-12 flex flex-wrap items-center gap-x-6 gap-y-3">
-            {post.links.map((link) => (
-              <ActivityLink key={link.label} link={link} t={t} isDark={isDark} />
-            ))}
-          </div>
-        )}
-
-        <div className={`mt-12 pt-8 border-t ${t.border} flex flex-wrap items-center gap-3`}>
-          <span className={`rounded-full ${isDark ? "bg-white/10" : "bg-slate-100"} px-3.5 py-1.5 font-body text-[13px] ${t.textMuted}`}>{post.category}</span>
-        </div>
-      </article>
-    </div>
   );
 }
 

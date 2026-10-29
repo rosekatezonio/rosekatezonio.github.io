@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRemoteImages } from "./images.jsx";
-import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, BLOG_BY_SLUG, RESUME_URL, slugOf } from "./data.js";
+import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, RESUME_URL, slugOf } from "./data.js";
 import { useScrollProgress } from "./hooks.js";
 import { Sun, Moon, Menu, X, ArrowUp, Github, Linkedin, Mail, Download } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel } from "./components/ui.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
-import { LatestActivities, GithubActivity } from "./components/Sections.jsx";
-import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, BlogSection, BlogArticle, ExperienceHistory } from "./components/Panels.jsx";
+import { GithubActivity } from "./components/Sections.jsx";
+import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, ExperienceHistory } from "./components/Panels.jsx";
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
 function App() {
@@ -91,19 +91,13 @@ function App() {
   }, []);
 
   const [panel, setPanel] = useState(null);
-  const [postSlug, setPostSlug] = useState(null);
   useEffect(() => {
     const sync = () => {
       const h = window.location.hash.slice(1);
-      if (h === "affiliation" || h === "blogs" || h === "certification" || h === "aboutme" || h === "activities" || h === "experience") {
+      if (["activities", "affiliation", "certification", "aboutme", "experience"].includes(h)) {
         setPanel(h);
-        setPostSlug(null);
-      } else if (h.startsWith("blogs/") && BLOG_BY_SLUG[h.slice(6)]) {
-        setPanel("blogs");
-        setPostSlug(h.slice(6));
       } else {
         setPanel(null);
-        setPostSlug(null);
       }
     };
     sync();
@@ -113,19 +107,21 @@ function App() {
   const closePanel = useCallback(() => {
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
     setPanel(null);
-    setPostSlug(null);
   }, []);
-  const backToPosts = useCallback(() => { window.location.hash = "blogs"; }, []);
+  const openPanel = useCallback((id) => {
+    if (window.location.hash !== `#${id}`) window.location.hash = id;
+    setPanel(id);
+    setMenuOpen(false);
+  }, []);
   const navigateTo = useCallback(
     (id) => {
-      if (id === "affiliation" || id === "blogs" || id === "certification" || id === "aboutme") {
-        window.location.hash = id;
-        setMenuOpen(false);
+      if (["activities", "affiliation", "certification", "aboutme", "experience"].includes(id)) {
+        openPanel(id);
       } else {
         scrollToId(id);
       }
     },
-    [scrollToId]
+    [openPanel, scrollToId]
   );
 
   const [skillsOpen, setSkillsOpen] = useState(false);
@@ -229,9 +225,8 @@ function App() {
         </nav>
       </header>
 
-      <HeroSection t={t} isDark={isDark} mailtoUrl={mailtoUrl} openResumes={openResumes} />
+      <HeroSection t={t} isDark={isDark} mailtoUrl={mailtoUrl} openResumes={openResumes} onOpenAbout={() => openPanel("aboutme")} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
-      <LatestActivities t={t} isDark={isDark} />
       <ProjectsSection
         t={t}
         isDark={isDark}
@@ -263,13 +258,11 @@ function App() {
 
       {archiveOpen && <ProjectArchive t={t} isDark={isDark} onClose={closeArchive} instant={archiveInstant} />}
       {projectSlug && <ProjectDetail key={projectSlug} t={t} isDark={isDark} project={PROJECT_BY_SLUG[projectSlug]} onBack={closeProject} />}
+      {panel === "activities" && <SectionPanel t={t} onClose={closePanel}><ActivitiesJourney t={t} isDark={isDark} /></SectionPanel>}
       {panel === "affiliation" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><AffiliationSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "aboutme" && <SectionPanel t={t} onClose={closePanel}><AboutMeSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "certification" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><CertificationSection t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "activities" && <SectionPanel t={t} onClose={closePanel}><ActivitiesJourney t={t} isDark={isDark} /></SectionPanel>}
       {panel === "experience" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "blogs" && <SectionPanel t={t} onClose={closePanel} listenEsc={!postSlug}><BlogSection t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "blogs" && postSlug && <BlogArticle key={postSlug} t={t} isDark={isDark} post={BLOG_BY_SLUG[postSlug]} onBack={backToPosts} />}
       {skillsOpen && <SkillsArchive t={t} onClose={closeSkills} isDark={isDark} />}
 
       {showTop && !menuOpen && (
