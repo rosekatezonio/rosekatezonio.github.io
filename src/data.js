@@ -597,4 +597,4 @@ export const IMAGE_SLOTS = (() => {
 
 export const HOME_PROJECT_BY_TAB = { webapps: "Salo Sa Antipolo", labs: "Home Network Device Monitor" };
 export const FEATURED_TITLES = ["Home Network Device Monitor", "Salo Sa Antipolo"];
-export const TRACK_FILTERS = ["All", "Software", "Hardware", "Hackathon"];
+export const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hardware", "Hackathon"];

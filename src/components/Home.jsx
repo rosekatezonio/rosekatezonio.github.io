@@ -6,46 +6,45 @@ import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Github, ExternalLink,
 
 
 export function ExperienceTimeline({ t, isDark }) {
-  const lineColor = isDark ? "bg-neutral-800" : "bg-slate-200";
   return (
     <ol className="max-w-3xl mx-auto">
       {EXPERIENCE.map((exp, i) => {
-        const last = i === EXPERIENCE.length - 1;
-        const RoleIcon = PATHWAY_ICONS[exp.pathway] || Briefcase;
+        const date = exp.period || exp.duration || "";
+        const meta = [exp.location, exp.employment].filter((v) => v && v !== date);
         return (
           <Reveal key={`${exp.company}-${i}`} delay={i * 80}>
-            <li className={`relative pl-16 sm:pl-[4.5rem] ${last ? "" : "pb-14"}`}>
-              {!last && <span aria-hidden="true" className={`absolute left-5 top-12 -bottom-0 w-px ${lineColor}`} />}
+            <li className={`py-7 sm:py-8 border-t first:border-t-0 first:pt-0 ${t.border}`}>
+              <div className="sm:grid sm:grid-cols-[9.5rem_1fr] sm:gap-8">
+                <p className={`font-mono text-xs ${t.textFaint} sm:pt-1.5`}>{date}</p>
+                <div className="mt-1.5 sm:mt-0 min-w-0">
+                  <h3 className="font-display font-semibold text-lg sm:text-xl leading-snug">{exp.position}</h3>
+                  <p className={`mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm ${t.textMuted}`}>
+                    {exp.logo && (
+                      <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-4 w-4 rounded-sm object-cover" />
+                    )}
+                    <span className={`font-medium ${t.text}`}>{exp.company}</span>
+                    {meta.map((m) => (
+                      <React.Fragment key={m}>
+                        <span aria-hidden="true">·</span>
+                        <span>{m}</span>
+                      </React.Fragment>
+                    ))}
+                  </p>
 
-              <div className={`absolute left-0 top-0 h-10 w-10 sm:h-11 sm:w-11 overflow-hidden rounded-lg border ${t.border} ${isDark ? "bg-neutral-950" : "bg-white"} flex items-center justify-center ${t.textMuted}`}>
-                {exp.logo ? (
-                  <PortfolioImage imageKey={exp.logo} alt={`${exp.company} logo`} fallbackLabel={exp.company} className="h-full w-full object-cover" />
-                ) : (
-                  <RoleIcon size={18} />
-                )}
+                  {Array.isArray(exp.description) ? (
+                    <ul className={`mt-4 space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
+                      {exp.description.map((line) => (
+                        <li key={line} className="relative pl-4">
+                          <span aria-hidden="true" className="absolute left-0">–</span>
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    exp.description && <p className={`mt-4 text-sm leading-relaxed ${t.textMuted}`}>{exp.description}</p>
+                  )}
+                </div>
               </div>
-
-              <h3 className="font-display font-semibold text-lg leading-snug">{exp.company}</h3>
-              {(exp.location || exp.employment) && (
-                <p className={`font-mono text-xs ${t.textMuted} mt-1`}>
-                  {[exp.location, exp.employment].filter(Boolean).join(" · ")}
-                </p>
-              )}
-
-              <h4 className="font-display font-medium text-base mt-6">{exp.position}</h4>
-              {exp.period && <p className={`font-mono text-[11px] uppercase tracking-wider ${t.textFaint} mt-1.5`}>{exp.period}</p>}
-              {Array.isArray(exp.description) ? (
-                <ul className={`mt-4 max-w-xl space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
-                  {exp.description.map((line) => (
-                    <li key={line} className="relative pl-4">
-                      <span aria-hidden="true" className="absolute left-0 top-[0.55em] h-1 w-1 rounded-full bg-current opacity-60" />
-                      {line}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                exp.description && <p className={`text-sm leading-relaxed ${t.textMuted} mt-4 max-w-xl`}>{exp.description}</p>
-              )}
             </li>
           </Reveal>
         );

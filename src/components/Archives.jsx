@@ -63,16 +63,24 @@ export function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
+// Gallery screenshots only need to fill a ~768px column (up to ~2x for sharp screens),
+// so ask Cloudinary for a capped width instead of the full-size original.
+const galleryUrl = (key) => {
+  const u = img(key);
+  if (!u || !/res\.cloudinary\.com/.test(u) || /\/upload\/[^/]*w_\d/.test(u)) return u;
+  return u.replace("/upload/", "/upload/w_1400,c_limit/");
+};
+
 function ProjectCard({ p, t, isDark }) {
   const featured = FEATURED_TITLES.includes(p.title);
   const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
   return (
-    <li className="min-w-0">
+    <li className={`min-w-0 border-t first:border-t-0 ${t.border}`}>
       <a
         href={`#${slugOf(p.title)}`}
-        className={`group flex h-full items-center gap-3.5 rounded-xl border ${t.border} ${t.surfaceSolid} p-2.5 card-glow`}
+        className="group flex items-center gap-3.5 px-3.5 py-3 transition-colors hover:bg-accent-400/5"
       >
-        <div className={`h-12 w-14 shrink-0 overflow-hidden rounded-lg border ${t.border} min-[380px]:h-14 min-[380px]:w-20 sm:h-16 sm:w-24 ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
+        <div className={`h-12 w-[4.25rem] shrink-0 overflow-hidden rounded-md border ${t.border} sm:h-14 sm:w-24 ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
           <PortfolioImage
             src={thumb}
             alt={`${p.title} preview`}
@@ -83,14 +91,23 @@ function ProjectCard({ p, t, isDark }) {
           />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="line-clamp-2 font-display text-[15px] font-bold leading-snug transition-colors group-hover:text-accent-400">{p.title}</h2>
-          <p className={`mt-0.5 font-mono text-[11px] ${t.textMuted}`}>
-            {monthYearOf(p)}
-            {featured && <span className="text-accent-400"> · Featured</span>}
+          <div className="flex items-center gap-2">
+            <h2 className="truncate font-display text-[15px] font-bold leading-tight transition-colors group-hover:text-accent-400 sm:text-base">{p.title}</h2>
+            {featured && (
+              <span className="shrink-0 font-mono text-[11px] uppercase tracking-wide text-accent-400">
+                <span aria-hidden="true" className="sm:hidden">●</span>
+                <span className="hidden sm:inline">Featured</span>
+                <span className="sr-only sm:hidden">Featured</span>
+              </span>
+            )}
+          </div>
+          <p className={`mt-1 truncate text-[13px] ${t.textMuted}`}>
+            <span className={`font-mono text-xs ${t.textFaint}`}>{monthYearOf(p)}</span>
+            <span className={t.textFaint}> · </span>
+            {renderDescription(p.description, t)}
           </p>
-          <p className={`mt-1 line-clamp-1 text-[12px] ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
         </div>
-        <ArrowRight size={14} className={`shrink-0 ${t.textFaint} transition-all group-hover:translate-x-0.5 group-hover:text-accent-400`} />
+        <ArrowRight size={16} className={`shrink-0 ${t.textFaint} transition-all group-hover:translate-x-0.5 group-hover:text-accent-400`} />
       </a>
     </li>
   );
@@ -118,7 +135,12 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
   const q = query.trim().toLowerCase();
   const matches = (p) => {
-    if (track !== "All" && trackOf(p.title) !== track && p.category !== track) return false;
+    if (track !== "All") {
+      const tr = trackOf(p.title);
+      // A project that sits in both lists ("Both") belongs under Software and Networking & IT.
+      const inTrack = tr === track || (tr === "Both" && (track === "Software" || track === "Networking & IT"));
+      if (!inTrack && p.category !== track) return false;
+    }
     if (!q) return true;
     const hay = [p.title, p.eyebrow, p.meta, p.category, ...(p.tags || [])].filter(Boolean).join(" ").toLowerCase();
     return hay.includes(q);
@@ -133,63 +155,61 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
-      <div className="max-w-4xl mx-auto px-5 sm:px-8 py-8 sm:py-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
 
-        <div className="mt-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
-          <div>
-            <h1 className="font-display font-bold text-2xl sm:text-4xl">Project Log</h1>
-            <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Everything I've built, wired up, and shipped.</p>
-          </div>
-          <p className={`font-mono text-xs ${t.textFaint}`}>
-            {filtered.length} of {ALL_PROJECTS.length} projects
+        <div className="mt-4 flex items-baseline justify-between gap-3">
+          <h1 className="font-display font-bold text-2xl sm:text-3xl">Project Log</h1>
+          <p className={`shrink-0 font-mono text-xs ${t.textFaint}`}>
+            {filtered.length} of {ALL_PROJECTS.length}
+            <span className="hidden sm:inline"> projects</span>
           </p>
         </div>
+        <p className={`text-sm ${t.textMuted} mt-1`}>Everything I've built, wired up, and shipped.</p>
 
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-          <div className={`flex items-center gap-3 rounded-xl border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5 sm:max-w-xs sm:flex-1`}>
-            <Search size={16} className={`shrink-0 ${t.textFaint}`} />
+        <div className="mt-4 flex items-center gap-2">
+          <div className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-lg border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5`}>
+            <Search size={15} className={`shrink-0 ${t.textFaint}`} />
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search projects..."
               aria-label="Search projects"
-              className="w-full bg-transparent font-body text-sm outline-none placeholder:text-slate-400"
+              className="w-full min-w-0 bg-transparent font-body text-[15px] outline-none placeholder:text-slate-400"
             />
             {query && (
               <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
-                <X size={15} />
+                <X size={14} />
               </button>
             )}
           </div>
-          <div className="flex items-center gap-4 sm:ml-auto">
-            <div className="relative">
-              <select
-                value={track}
-                onChange={(e) => setTrack(e.target.value)}
-                aria-label="Filter projects"
-                className={`h-11 appearance-none rounded-2xl border ${t.border} bg-transparent pl-4 pr-10 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
-              >
-                {TRACK_FILTERS.map((name) => (
-                  <option key={name} value={name} className={`${t.surfaceSolid} ${t.text}`}>{name}</option>
-                ))}
-              </select>
-              <ArrowDown size={14} className={`pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
-            </div>
-            <span className={`font-mono text-[11px] whitespace-nowrap ${t.textFaint}`}>{sorted.length} ITEMS</span>
+          <div className="relative shrink-0">
+            <select
+              value={track}
+              onChange={(e) => setTrack(e.target.value)}
+              aria-label="Filter projects"
+              className={`h-11 appearance-none rounded-lg border ${t.border} bg-transparent pl-3 pr-8 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
+            >
+              {TRACK_FILTERS.map((name) => (
+                <option key={name} value={name} className={`${t.surfaceSolid} ${t.text}`}>{name}</option>
+              ))}
+            </select>
+            <ArrowDown size={13} className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
           </div>
         </div>
 
-        <ul className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3">
-          {sorted.map((p) => (
-            <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
-          ))}
-        </ul>
+        {sorted.length > 0 && (
+          <ul className={`mt-4 overflow-hidden rounded-xl border ${t.border} ${t.surfaceSolid}`}>
+            {sorted.map((p) => (
+              <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
+            ))}
+          </ul>
+        )}
         {sorted.length === 0 && (
-          <p className={`mt-6 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
+          <p className={`mt-4 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
         )}
       </div>
     </div>
@@ -206,6 +226,17 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
   const gallery = galleryFor(p, isDark);
   const images = (gallery && gallery.length ? gallery : [thumbFor(p, isDark)]).filter(Boolean);
   const [slide, setSlide] = useState(0);
+  const slideUrls = images.map(galleryUrl);
+  const slideUrlKey = slideUrls.join("|");
+  useEffect(() => {
+    // Warm the browser cache for every screenshot so switching slides is instant.
+    slideUrls.forEach((u) => {
+      if (!u) return;
+      const im = new Image();
+      im.decoding = "async";
+      im.src = u;
+    });
+  }, [slideUrlKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const idx = ALL_PROJECTS.indexOf(p);
   const next = ALL_PROJECTS[(idx + 1) % ALL_PROJECTS.length];
   const links = [
@@ -244,7 +275,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
         {images.length > 0 && (
           <>
             <div className={`mt-8 rounded-2xl border ${t.border} overflow-hidden ${t.surfaceSolid}`}>
-              <PortfolioImage imageKey={images[slide]} alt={`${p.title} screenshot ${slide + 1}`} fallbackLabel={p.title} className="w-full h-auto block" />
+              <PortfolioImage src={slideUrls[slide]} alt={`${p.title} screenshot ${slide + 1}`} fallbackLabel={p.title} decoding="async" className="w-full h-auto block" />
             </div>
             {images.length > 1 && (
               <div className="mt-4 flex items-center justify-between">

@@ -84,7 +84,7 @@ export function ExperienceHistory({ t, isDark }) {
     <section id="experience-history">
       <h1 className="font-display font-bold text-3xl sm:text-5xl">Experience</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Internships and work experience, newest first.</p>
-      <div className="mt-14">
+      <div className="mt-8 sm:mt-10">
         <ExperienceTimeline t={t} isDark={isDark} />
       </div>
     </section>
