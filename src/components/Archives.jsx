@@ -165,6 +165,142 @@ const monthYearOf = (p) => {
   return m ? m[0] : yearOf(p);
 };
 
+// Laptop-and-up layout (lg+): an index on the left, a sticky preview of the selected project on the right.
+// Clicking a row only selects it; "View project" is the one way into the full project.
+// Mobile and tablet keep the original single-column list rendered by ProjectArchive.
+function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, setTrack, onClose }) {
+  const [activeTitle, setActiveTitle] = useState(null);
+  const active = sorted.find((p) => p.title === activeTitle) || sorted[0];
+  const activeThumb = active && active.thumbnail ? img(thumbFor(active, isDark)) : undefined;
+
+  return (
+    <div className="hidden lg:block max-w-7xl mx-auto px-12 py-10">
+      <button onClick={onClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
+        <ArrowRight size={14} className="rotate-180" /> Back to portfolio
+      </button>
+
+      <div className="mt-8 grid grid-cols-12 gap-x-14 items-start">
+        {/* Left: heading, search, filters, index */}
+        <div className="col-span-5">
+          <div className="flex items-baseline justify-between gap-4">
+            <h1 className="font-display font-bold text-5xl leading-none">Project Log</h1>
+            <p className={`shrink-0 font-mono text-xs ${t.textFaint}`}>{sorted.length} of {total} projects</p>
+          </div>
+          <p className={`mt-3 text-[15px] ${t.textMuted}`}>Everything I've built, wired up, and shipped.</p>
+
+          <div className={`mt-7 flex items-center gap-2.5 rounded-lg border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5 focus-within:border-accent-400/60 transition-colors`}>
+            <Search size={15} className={`shrink-0 ${t.textFaint}`} />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search projects..."
+              aria-label="Search projects"
+              className="w-full min-w-0 bg-transparent font-body text-[15px] outline-none placeholder:text-slate-400"
+            />
+            {query && (
+              <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          <div className="mt-3 flex flex-wrap gap-1.5" role="tablist" aria-label="Filter projects">
+            {TRACK_FILTERS.map((name) => (
+              <button
+                key={name}
+                role="tab"
+                aria-selected={track === name}
+                onClick={() => setTrack(name)}
+                className={`font-mono text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
+                  track === name ? "border-accent-400 text-accent-400" : `${t.border} ${t.textMuted} hover:text-accent-400 hover:border-accent-400/50`
+                }`}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+
+          {sorted.length > 0 ? (
+            <ul className="mt-6">
+              {sorted.map((p) => {
+                const isActive = active && p.title === active.title;
+                return (
+                  <li key={p.title} className={`border-t ${t.border}`}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTitle(p.title)}
+                      aria-pressed={isActive}
+                      className="group grid w-full grid-cols-[3.25rem_1fr_auto] items-baseline gap-4 py-4 text-left"
+                    >
+                      <span className={`font-mono text-xs ${isActive ? "text-accent-400" : t.textFaint} transition-colors`}>{yearOf(p)}</span>
+                      <span className="block min-w-0">
+                        <span className={`block font-display text-xl font-bold leading-tight transition-colors ${isActive ? "text-accent-400" : ""}`}>
+                          {p.title}
+                        </span>
+                        <span className={`mt-1 block font-mono text-xs ${t.textFaint}`}>
+                          {taglineOf(p)}
+                          {FEATURED_TITLES.includes(p.title) && (
+                            <span className="ml-2 text-[10px] uppercase tracking-widest text-accent-400">· Featured</span>
+                          )}
+                        </span>
+                      </span>
+                      <ArrowRight size={16} className={`transition-all ${isActive ? "translate-x-0.5 text-accent-400" : t.textFaint}`} />
+                    </button>
+                  </li>
+                );
+              })}
+              <li className={`border-t ${t.border}`} aria-hidden="true" />
+            </ul>
+          ) : (
+            <p className={`mt-8 text-sm ${t.textMuted}`}>No projects match{query.trim() ? ` "${query.trim()}"` : ""}.</p>
+          )}
+        </div>
+
+        {/* Right: sticky preview */}
+        <div className="col-span-7 sticky top-10">
+          {active && (
+            <div className={`overflow-hidden rounded-2xl border ${t.border} ${t.surfaceSolid}`}>
+              <div className={`aspect-[16/9] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
+                <PortfolioImage
+                  key={active.title}
+                  src={activeThumb}
+                  alt={`${active.title} preview`}
+                  fallbackLabel={active.title}
+                  className="h-full w-full object-cover object-top"
+                />
+              </div>
+              <div className="p-7">
+                <p className={`font-mono text-xs ${t.textFaint}`}>
+                  {monthYearOf(active)}
+                  <span> · </span>
+                  {contextOf(active)}
+                  {active.status && (<><span> · </span><span className="text-accent-400">{active.status}</span></>)}
+                </p>
+                <h2 className="mt-2 font-display text-3xl font-bold leading-tight">{active.title}</h2>
+                <p className={`mt-3 text-[15px] leading-relaxed line-clamp-3 ${t.textMuted}`}>{renderDescription(active.description, t)}</p>
+                {active.tags && active.tags.length > 0 && (
+                  <ul className="mt-5 flex flex-wrap gap-2">
+                    {active.tags.slice(0, 6).map((tag) => (
+                      <li key={tag} className={`font-mono text-xs px-2.5 py-1 rounded-md border ${t.border} ${t.textMuted}`}>{tag}</li>
+                    ))}
+                  </ul>
+                )}
+                <a
+                  href={`#${slugOf(active.title)}`}
+                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent-400 px-5 py-2.5 text-sm font-semibold text-onaccent transition-opacity hover:opacity-90"
+                >
+                  View project <ArrowUpRight size={14} />
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   const [query, setQuery] = useState("");
@@ -197,7 +333,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
+      <div className="lg:hidden max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
@@ -254,6 +390,17 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
           <p className={`mt-4 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
         )}
       </div>
+      <ProjectLogDesktop
+        t={t}
+        isDark={isDark}
+        sorted={sorted}
+        total={ALL_PROJECTS.length}
+        query={query}
+        setQuery={setQuery}
+        track={track}
+        setTrack={setTrack}
+        onClose={requestClose}
+      />
     </div>
   );
 }
