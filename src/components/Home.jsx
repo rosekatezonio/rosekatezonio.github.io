@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PortfolioImage } from "../images.jsx";
 import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
-import { PROFILE, LOGO_SKILLS, SKILL_TOTAL, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
+import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
 
 
@@ -223,44 +223,60 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes, onOpenAbout }) 
 export function SkillsSection({ t, isDark, onOpenSkills }) {
   return (
     <section id="skills">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
-        <div className="text-center mb-10">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-24">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
           <Reveal>
             <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-              <Wrench size={13} /> 02 · TOOLKIT
+              <Wrench size={13} /> 02 / TECHNICAL TOOLKIT
             </p>
-            <h2 className={`font-display text-2xl sm:text-3xl font-bold ${t.text} mb-4`}>Technical Skills</h2>
-            <p className={`font-mono text-xs ${t.textFaint}`}>
-              What I use to build software and keep networks running.
+            <h2 className={`font-display text-2xl sm:text-3xl font-bold ${t.text} mb-4`}>What I work with.</h2>
+            <p className={`font-body text-sm sm:text-base ${t.textMuted}`}>
+              A practical toolkit for building software and understanding IT systems.
             </p>
           </Reveal>
         </div>
 
-        <Reveal delay={140}>
-          <div className="marquee-mask">
-            <div
-              className="marquee-track"
-              style={{ animationDuration: `${LOGO_SKILLS.length * 3}s` }}
-            >
-              {[...LOGO_SKILLS, ...LOGO_SKILLS].map((item, i) => (
-                <div
-                  key={item.name + i}
-                  title={item.name}
-                  className={`h-16 w-16 shrink-0 rounded-2xl border ${t.border} ${
-                    isDark ? "bg-black/40" : "bg-slate-50"
-                  } flex items-center justify-center p-2`}
-                >
-                  <div className="h-full w-full rounded-lg bg-white flex items-center justify-center p-1.5 shadow-sm">
-                    <PortfolioImage imageKey={item.icon} alt={item.name} fallbackLabel={item.name} className="h-full w-full object-contain" />
-                  </div>
+        <div className="grid gap-x-14 gap-y-12 sm:grid-cols-2">
+          {TOOLKIT_GROUPS.map((group, i) => (
+            <Reveal key={group.title} delay={i * 80}>
+              <div className={`border-t pt-6 ${t.border}`}>
+                <div className="flex items-baseline gap-3">
+                  <span className={`font-mono text-xs ${t.accent}`}>{group.num}</span>
+                  <h3 className="font-display font-semibold text-lg sm:text-xl">{group.title}</h3>
                 </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
+                <p className={`mt-1.5 font-body text-sm ${t.textMuted}`}>{group.blurb}</p>
 
-        <div className="mt-12 text-center">
-          <ViewMore t={t} onClick={onOpenSkills}>View more skills ({SKILL_TOTAL})</ViewMore>
+                <ul className="mt-5 flex flex-wrap gap-2">
+                  {group.items.map((item) => (
+                    <li
+                      key={item.name}
+                      className={`font-mono text-xs sm:text-[13px] px-2.5 py-1.5 rounded-md border ${t.border} ${t.text}`}
+                    >
+                      {item.name}
+                    </li>
+                  ))}
+                </ul>
+
+                {group.proof.length > 0 && (
+                  <p className={`mt-5 font-mono text-xs sm:text-[13px] ${t.textMuted}`}>
+                    {group.proofLabel || "Seen in"}:{" "}
+                    {group.proof.map((title, idx) => (
+                      <React.Fragment key={title}>
+                        {idx > 0 && ", "}
+                        <a href={`#${slugOf(title)}`} className={`${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}>
+                          {title}
+                        </a>
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )}
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <ViewMore t={t} onClick={onOpenSkills}>View full toolkit</ViewMore>
         </div>
       </div>
     </section>

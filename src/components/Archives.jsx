@@ -7,22 +7,55 @@ import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
 export function SkillTile({ item, t, isDark }) {
   const [broken, setBroken] = useState(false);
-  const showImg = item.icon && !broken;
+  const showImg = img(item.icon) && !broken;
   return (
     <div className="flex flex-col items-center text-center gap-2.5" title={item.name}>
-      <div className="relative">
-        <div className={`h-14 w-14 rounded-2xl border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center p-1.5 card-glow`}>
-          {showImg ? (
-            <div className="h-full w-full rounded-lg bg-white flex items-center justify-center p-1 shadow-sm">
-              <img src={img(item.icon)} alt={item.name} onError={() => setBroken(true)} className="h-full w-full object-contain" />
-            </div>
-          ) : (
-            <span className={`font-mono text-[11px] font-bold tracking-wider ${t.accent}`}>{item.abbr}</span>
-          )}
-        </div>
+      <div className={`h-16 w-16 rounded-2xl border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center p-1.5 card-glow`}>
+        {showImg ? (
+          <div className="h-full w-full rounded-lg bg-white flex items-center justify-center p-1.5 shadow-sm">
+            <img src={img(item.icon)} alt={item.name} onError={() => setBroken(true)} className="h-full w-full object-contain" />
+          </div>
+        ) : (
+          <span className={`font-mono text-xs font-bold tracking-wider ${t.accent}`}>{item.abbr}</span>
+        )}
       </div>
-      <span className={`font-body text-xs sm:text-[13px] leading-snug ${t.textMuted}`}>{item.name}</span>
+      <span className={`font-body text-sm leading-snug ${t.text}`}>{item.name}</span>
     </div>
+  );
+}
+
+// Small logo box that falls back to a text abbreviation if the image can't load.
+function CompactIcon({ src, abbr, t, isDark }) {
+  const [broken, setBroken] = useState(false);
+  const box = `h-7 min-w-7 rounded-md border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center`;
+  if (!img(src) || broken) {
+    return <span className={`${box} px-1 font-mono text-[9px] font-bold ${t.accent}`}>{abbr}</span>;
+  }
+  return (
+    <span className={`${box} w-7 p-1`}>
+      <span className="h-full w-full rounded bg-white flex items-center justify-center p-0.5">
+        <img src={img(src)} alt="" onError={() => setBroken(true)} className="h-full w-full object-contain" />
+      </span>
+    </span>
+  );
+}
+
+// Quieter row for secondary tools: small logo(s), name, and an optional note on what it was actually used for.
+function CompactSkill({ item, t, isDark }) {
+  const icons = item.icons || [item.icon];
+  const abbr = item.abbr || "AI";
+  return (
+    <li className="flex items-start gap-3 min-w-0">
+      <div className="flex shrink-0 -space-x-1.5 pt-0.5">
+        {icons.map((ic, i) => (
+          <CompactIcon key={i} src={ic} abbr={abbr} t={t} isDark={isDark} />
+        ))}
+      </div>
+      <div className="min-w-0">
+        <p className={`font-body text-sm leading-snug ${t.text}`}>{item.name}</p>
+        {item.note && <p className={`font-body text-xs leading-snug mt-0.5 ${t.textFaint}`}>{item.note}</p>}
+      </div>
+    </li>
   );
 }
 
@@ -36,25 +69,34 @@ export function SkillsArchive({ t, onClose, isDark }) {
 
   return (
     <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+      <div className="max-w-7xl mx-auto px-5 sm:px-10 py-10 sm:py-14">
         <button onClick={requestClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
           <ArrowRight size={14} className="rotate-180" /> Back to portfolio
         </button>
-        <h1 className="font-display font-bold text-4xl sm:text-6xl mt-12">Tech Stack</h1>
-        <p className={`font-mono text-sm ${t.accent} mt-3`}>Everything I build, configure, and debug with.</p>
+        <h1 className="font-display font-bold text-4xl sm:text-6xl mt-12">Full Toolkit</h1>
+        <p className={`font-mono text-sm ${t.accent} mt-3`}>Grouped by what each tool lets me do.</p>
 
-        <div className="mt-12 space-y-12">
+        <div className="mt-14 space-y-14">
           {SKILL_GROUPS.map((group) => (
             <section key={group.title}>
-              <div className="flex items-center gap-4 mb-7">
-                <h2 className={`font-mono text-xs tracking-[0.25em] uppercase ${t.textFaint}`}>{group.title}</h2>
+              <div className="flex items-center gap-4">
+                <h2 className={`font-mono text-xs tracking-[0.25em] uppercase ${t.textFaint}`}>{group.num} — {group.title}</h2>
                 <span className={`h-px flex-1 border-t ${t.border}`} />
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-4 gap-y-8">
-                {group.items.map((item) => (
-                  <SkillTile key={item.name} item={item} t={t} isDark={isDark} />
-                ))}
-              </div>
+              {group.blurb && <p className={`font-body text-sm ${t.textMuted} mt-2 mb-8`}>{group.blurb}</p>}
+              {group.compact ? (
+                <ul className="grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.items.map((item) => (
+                    <CompactSkill key={item.name} item={item} t={t} isDark={isDark} />
+                  ))}
+                </ul>
+              ) : (
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-4 gap-y-9">
+                  {group.items.map((item) => (
+                    <SkillTile key={item.name} item={item} t={t} isDark={isDark} />
+                  ))}
+                </div>
+              )}
             </section>
           ))}
         </div>

@@ -27,57 +27,49 @@ export const NAV_LINKS = [
   { id: "github-activity", label: "GitHub" },
 ];
 
-export const SKILL_LEVELS = {
-  core: { dot: "bg-accent-400", glow: "dot-glow-accent", text: "text-accent-400", label: "Core competency", code: "CORE", chipBg: "bg-accent-400", chipText: "text-onaccent", desc: "Comfortable using this independently in real projects and troubleshooting scenarios." },
-  working: { dot: "bg-neutral-300", glow: "dot-glow-mid", text: "text-neutral-300", label: "Guided practice", code: "GUIDED", chipBg: "bg-neutral-300", chipText: "text-slate-950", desc: "Can apply this with documentation, references, or guidance close at hand." },
-  basic: { dot: "bg-slate-400", glow: "dot-glow-soft", text: "text-slate-400", label: "Basic familiarity", code: "BASIC", chipBg: "bg-slate-400", chipText: "text-slate-950", desc: "Understands the fundamentals through hands-on labs and coursework." },
-  learning: { dot: "bg-slate-500", glow: "dot-glow-gray", text: "text-slate-400", label: "Currently learning", code: "NEW", chipBg: "bg-slate-500", chipText: "text-white", desc: "Just getting started, actively studying this right now." },
-};
-
 export const SKILLS = [
   {
     category: "Software",
     blurb: "Full-stack web, Python, Lua, databases",
     icon: Code2,
     items: [
-      { name: "JavaScript", level: "core", abbr: "JS" , icon: "asset-9fd9590f" },
-      { name: "HTML", level: "core", abbr: "HTML" , icon: "asset-84111716" },
-      { name: "CSS", level: "core", abbr: "CSS" , icon: "asset-96c75af1" },
-      { name: "React", level: "core", abbr: "JSX" , icon: "asset-b5acca38" },
-      { name: "Tailwind CSS", level: "core", abbr: "TW" , icon: "asset-12b1b727" },
-      { name: "Python", level: "core", abbr: "PY" , icon: "asset-2567e649" },
-      { name: "Lua (Roblox)", level: "working", abbr: "LUA" , icon: "asset-dc866c64" },
-      { name: "Git", level: "working", abbr: "GIT", icon: "asset-e9ee8d5e" },
-      { name: "GitHub", level: "working", abbr: "GH", icon: "asset-44876619" },
-      { name: "VS Code", level: "working", abbr: "VS", icon: "asset-3c66e1fc" },
-      { name: "Microsoft SQL Server", level: "basic", abbr: "MS", icon: "asset-247d2abe" },
-      { name: "Firebase / Firestore", level: "working", abbr: "FB" , icon: "asset-83b2b79f" },
-      { name: "SQL", level: "basic", abbr: "SQL" , icon: "asset-b5f6c886" },
-      { name: "PostgreSQL", level: "basic", abbr: "PG" , icon: "asset-c5fca167" },
-      { name: "Vite", level: "working", abbr: "VITE", icon: "https://cdn.simpleicons.org/vite" },
-      { name: "Node.js", level: "basic", abbr: "NODE", icon: "https://cdn.simpleicons.org/nodedotjs" },
-      { name: "Express", level: "basic", abbr: "EXP", icon: "https://cdn.simpleicons.org/express" },
-      { name: "SQLite", level: "working", abbr: "SQLT", icon: "https://cdn.simpleicons.org/sqlite" },
-      { name: "Progressive Web Apps (PWA)", level: "basic", abbr: "PWA", icon: "https://cdn.simpleicons.org/pwa" },
-      { name: "Local AI with Ollama", level: "basic", abbr: "AI", icon: "https://cdn.simpleicons.org/ollama" },
-      { name: "REST API Integration", level: "basic", abbr: "API" },
+      { name: "JavaScript", abbr: "JS" , icon: "asset-9fd9590f" },
+      { name: "HTML", abbr: "HTML" , icon: "asset-84111716" },
+      { name: "CSS", abbr: "CSS" , icon: "asset-96c75af1" },
+      { name: "React", abbr: "JSX" , icon: "asset-b5acca38" },
+      { name: "Tailwind CSS", abbr: "TW" , icon: "asset-12b1b727" },
+      { name: "Python", abbr: "PY" , icon: "asset-2567e649" },
+      { name: "Lua (Roblox)", abbr: "LUA" , icon: "asset-dc866c64" },
+      { name: "Git", abbr: "GIT", icon: "asset-e9ee8d5e" },
+      { name: "GitHub", abbr: "GH", icon: "asset-44876619" },
+      { name: "VS Code", abbr: "VS", icon: "asset-3c66e1fc" },
+      { name: "Microsoft SQL Server", abbr: "MS", icon: "asset-247d2abe" },
+      { name: "Firebase / Firestore", abbr: "FB" , icon: "asset-83b2b79f" },
+      { name: "SQL", abbr: "SQL" , icon: "asset-b5f6c886" },
+      { name: "PostgreSQL", abbr: "PG" , icon: "asset-c5fca167" },
+      { name: "Vite", abbr: "VITE", icon: "https://cdn.simpleicons.org/vite" },
+      { name: "Node.js", abbr: "NODE", icon: "https://cdn.simpleicons.org/nodedotjs" },
+      { name: "Express", abbr: "EXP", icon: "https://cdn.simpleicons.org/express" },
+      { name: "SQLite", abbr: "SQLT", icon: "https://cdn.simpleicons.org/sqlite" },
+      { name: "Progressive Web Apps (PWA)", abbr: "PWA", icon: "https://cdn.simpleicons.org/pwa" },
+      { name: "Local AI with Ollama", abbr: "AI", icon: "https://cdn.simpleicons.org/ollama" },
+      { name: "REST API Integration", abbr: "API", icon: "rest-api" },
     ],
   },
   {
     category: "Networking & IT",
-    blurb: "Subnetting, VLANs, monitoring, IT support",
+    blurb: "VLANs, routing, virtual labs, IT support",
     icon: Network,
     items: [
-      { name: "Cisco Packet Tracer", level: "working", abbr: "CPT", icon: "asset-a8e20bfa" },
-      { name: "Subnetting / VLSM", level: "working", abbr: "VLSM" },
-      { name: "Python Network Scripting", level: "working", abbr: "PY" },
-      { name: "Hardware & Software Troubleshooting", level: "working", abbr: "H/S" },
-      { name: "Command-Line Administration", level: "working", abbr: "CLI" },
-      { name: "VLANs & Inter-VLAN Routing", level: "basic", abbr: "VLAN" },
-      { name: "Cisco IOS CLI", level: "basic", abbr: "IOS" },
-      { name: "TCP/IP, DNS & DHCP", level: "basic", abbr: "TCP" },
-      { name: "Network Security Fundamentals", level: "basic", abbr: "SEC" },
-      { name: "Linux (WSL)", level: "learning", abbr: "WSL" },
+      { name: "Cisco Packet Tracer", abbr: "CPT", icon: "asset-a8e20bfa" },
+      { name: "Python Network Scripting", abbr: "PY" },
+      { name: "Command-Line Administration", abbr: "CLI" },
+      { name: "VLANs & Inter-VLAN Routing", abbr: "VLAN" },
+      { name: "Cisco IOS CLI", abbr: "IOS" },
+      { name: "TCP/IP, DNS & DHCP", abbr: "TCP", icon: "tcp-ip" },
+      { name: "Network Security Fundamentals", abbr: "SEC" },
+      { name: "VirtualBox", abbr: "VBOX", icon: "virtualbox" },
+      { name: "Kali Linux", abbr: "KALI", icon: "kali-linux" },
     ],
   },
 ];
@@ -309,7 +301,6 @@ export const WEB_APPS = [...WEB_APPS_LIST].sort((a, b) => SOFTWARE_ORDER.indexOf
 
 export const yearOf = (p) => (p.meta && (p.meta.match(/(\d{4})/) || [])[1]) || "-";
 export const contextOf = (p) => (p.meta ? p.meta.split(" · ")[0] : p.category || "Lab");
-export const LOGO_SKILLS = SKILLS.flatMap((g) => g.items).filter((item) => item.icon);
 export const ALL_PROJECTS = [...WEB_APPS, ...LABS]
   .filter((p, i, arr) => arr.findIndex((q) => q.title === p.title) === i)
   .sort((a, b) => (+yearOf(b) || 0) - (+yearOf(a) || 0));
@@ -568,12 +559,60 @@ export const AI_TOOLING = [
   { name: "Gemini", abbr: "GEM", icon: "https://cdn.simpleicons.org/googlegemini" },
 ];
 
+// Skills are grouped by what they let me do, not by technology type.
+// `proof` lists the projects that back each group up (linked from the Skills section).
+
+export const TOOLKIT_GROUPS = [
+  {
+    num: "01",
+    title: "Software Development",
+    blurb: "Languages, frontend and frameworks",
+    proof: ["Salo Sa Antipolo"],
+    items: pickSkills(["JavaScript", "Python", "React", "HTML", "CSS", "Tailwind CSS", "Vite"]),
+  },
+  {
+    num: "02",
+    title: "Networking & IT",
+    blurb: "Fundamentals, simulation and lab environments",
+    proof: ["Home Network Device Monitor"],
+    proofLabel: "Related project",
+    items: pickSkills(["TCP/IP, DNS & DHCP", "Cisco Packet Tracer", "VirtualBox", "Kali Linux"]),
+  },
+  {
+    num: "03",
+    title: "Backend, Databases & APIs",
+    blurb: "SQL, databases, persistence and integrations",
+    proof: ["CineLookUp"],
+    items: pickSkills(["SQL", "Firebase / Firestore", "SQLite", "PostgreSQL", "Microsoft SQL Server", "REST API Integration"]),
+  },
+  {
+    num: "04",
+    title: "Developer Tools",
+    blurb: "Git, GitHub, runtime and workflow",
+    proof: [],
+    items: pickSkills(["Git", "GitHub", "VS Code", "Node.js", "Express"]),
+  },
+];
+
+// Secondary tools: shown only on the Full Toolkit page, not as headline skills.
+export const ADDITIONAL_ITEMS = pickSkills(["Lua (Roblox)", "Progressive Web Apps (PWA)", "Local AI with Ollama"]);
+
+// The AI brands are grouped into one quiet row instead of three equal-weight skills.
+export const AI_ASSISTED_ITEM = {
+  name: "AI-assisted development tools",
+  icons: AI_TOOLING.map((a) => a.icon),
+};
+
+// Full reference page (opened from "View full toolkit"): the four groups plus the secondary tools.
 export const SKILL_GROUPS = [
-  { title: "Languages", items: pickSkills(["JavaScript", "HTML", "CSS", "Python", "Lua (Roblox)", "SQL"]) },
-  { title: "Frameworks & Libraries", items: pickSkills(["React", "Tailwind CSS", "Vite", "Node.js", "Express", "Progressive Web Apps (PWA)"]) },
-  { title: "Databases", items: pickSkills(["Firebase / Firestore", "PostgreSQL", "Microsoft SQL Server", "SQLite"]) },
-  { title: "Platforms & Tooling", items: pickSkills(["Git", "GitHub", "VS Code", "Cisco Packet Tracer"]) },
-  { title: "AI Tooling", items: [...AI_TOOLING, ...pickSkills(["Local AI with Ollama"])] },
+  ...TOOLKIT_GROUPS,
+  {
+    num: "05",
+    title: "Additional Tools & Technologies",
+    blurb: "AI tools, emerging technologies, learning",
+    compact: true,
+    items: [...ADDITIONAL_ITEMS, AI_ASSISTED_ITEM],
+  },
 ];
 export const SKILL_TOTAL = SKILL_GROUPS.reduce((n, g) => n + g.items.length, 0);
 
