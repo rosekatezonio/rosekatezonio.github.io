@@ -205,15 +205,17 @@ function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, s
             )}
           </div>
 
-          <div className="mt-3 flex flex-wrap gap-1.5" role="tablist" aria-label="Filter projects">
+          <div className="mt-5 flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Filter projects">
             {TRACK_FILTERS.map((name) => (
               <button
                 key={name}
                 role="tab"
                 aria-selected={track === name}
                 onClick={() => setTrack(name)}
-                className={`font-mono text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
-                  track === name ? "border-accent-400 text-accent-400" : `${t.border} ${t.textMuted} hover:text-accent-400 hover:border-accent-400/50`
+                className={`text-[15px] font-medium underline underline-offset-8 decoration-1 transition-colors ${
+                  track === name
+                    ? `${t.text} decoration-accent-400 decoration-2`
+                    : `${t.textMuted} decoration-transparent hover:text-accent-400 hover:decoration-accent-400/60`
                 }`}
               >
                 {name}

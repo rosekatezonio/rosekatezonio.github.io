@@ -141,7 +141,7 @@ export const LABS = [
       next: "Device fingerprinting so unknown devices get a name, not just a flag.",
     },
   },
-  { ...RFID_PROJECT, category: "Hardware" },
+  { ...RFID_PROJECT, category: "Networking & IT" },
 ];
 
 export const WEB_APPS_LIST = [
@@ -636,4 +636,4 @@ export const IMAGE_SLOTS = (() => {
 
 export const HOME_PROJECT_BY_TAB = { webapps: "Salo Sa Antipolo", labs: "Home Network Device Monitor" };
 export const FEATURED_TITLES = ["Home Network Device Monitor", "Salo Sa Antipolo"];
-export const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hardware", "Hackathon"];
+export const TRACK_FILTERS = ["All", "Software", "Networking & IT", "Hackathon"];
