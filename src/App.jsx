@@ -6,6 +6,7 @@ import { Sun, Moon, Menu, X, ArrowUp } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel } from "./components/ui.jsx";
+import { ContactChooser } from "./components/ContactChooser.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
 import { GithubActivity } from "./components/Sections.jsx";
 import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, ExperienceHistory } from "./components/Panels.jsx";
@@ -56,10 +57,6 @@ function App() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const mailtoUrl = `mailto:${PROFILE.email}?subject=${encodeURIComponent(
-    "Let's connect: Internship Opportunity"
-  )}`;
 
   const scrollToId = useCallback((id) => {
     const el = document.getElementById(id);
@@ -126,6 +123,13 @@ function App() {
     [openPanel, scrollToId]
   );
 
+  const [contactOpen, setContactOpen] = useState(false);
+  const openContact = useCallback(() => {
+    setMenuOpen(false);
+    setContactOpen(true);
+  }, []);
+  const closeContact = useCallback(() => setContactOpen(false), []);
+
   const [skillsOpen, setSkillsOpen] = useState(false);
   useEffect(() => {
     const sync = () => setSkillsOpen(window.location.hash === "#all-skills");
@@ -140,8 +144,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen || archiveOpen || skillsOpen || projectSlug || panel ? "hidden" : "";
-  }, [menuOpen, archiveOpen, skillsOpen, projectSlug, panel]);
+    document.body.style.overflow = menuOpen || archiveOpen || skillsOpen || projectSlug || panel || contactOpen ? "hidden" : "";
+  }, [menuOpen, archiveOpen, skillsOpen, projectSlug, panel, contactOpen]);
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
@@ -149,8 +153,6 @@ function App() {
     return () => window.removeEventListener("keydown", onKey);
   }, [menuOpen]);
   const openResumes = () => window.open(RESUME_URL, "_blank", "noopener");
-  const [revealed, setRevealed] = useState({});
-  const toggleReveal = (title) => setRevealed((r) => ({ ...r, [title]: !r[title] }));
 
   return (
     <div
@@ -175,7 +177,7 @@ function App() {
         activeId={activeId}
         onNavigate={navigateTo}
         onToggleTheme={() => setIsDark((d) => !d)}
-        mailtoUrl={mailtoUrl}
+        onContact={openContact}
       />
 
       <div
@@ -192,7 +194,7 @@ function App() {
         activeId={activeId}
         onNavigate={navigateTo}
         onToggleTheme={() => setIsDark((d) => !d)}
-        mailtoUrl={mailtoUrl}
+        onContact={openContact}
       />
 
       <header className={`lg:hidden fixed top-0 left-0 right-0 z-40 backdrop-blur-md ${t.navBg} border-b ${t.border}`}>
@@ -227,7 +229,7 @@ function App() {
         </nav>
       </header>
 
-      <HeroSection t={t} isDark={isDark} mailtoUrl={mailtoUrl} openResumes={openResumes} onOpenAbout={() => openPanel("aboutme")} />
+      <HeroSection t={t} isDark={isDark} onContact={openContact} openResumes={openResumes} onOpenAbout={() => openPanel("aboutme")} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
       <ProjectsSection
         t={t}
@@ -235,8 +237,6 @@ function App() {
         onOpenProject={(title) => { window.location.hash = slugOf(title); }}
         projectTab={projectTab}
         onSwitchTab={switchProjectTab}
-        revealed={revealed}
-        onToggleReveal={toggleReveal}
         onOpenArchive={openArchive}
       />
       <ExperienceSection t={t} isDark={isDark} />
@@ -258,6 +258,7 @@ function App() {
       {panel === "certification" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><CertificationSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "experience" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
       {skillsOpen && <SkillsArchive t={t} onClose={closeSkills} isDark={isDark} />}
+      {contactOpen && <ContactChooser t={t} isDark={isDark} onClose={closeContact} />}
 
       {showTop && !menuOpen && (
         <button

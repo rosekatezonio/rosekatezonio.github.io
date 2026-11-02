@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { PortfolioImage } from "../images.jsx";
-import { Reveal, renderDescription, SectionHeading, ViewMore } from "./ui.jsx";
-import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB, hasLink, thumbFor } from "../data.js";
-import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Github, ExternalLink, Briefcase } from "../icons.jsx";
+import { Reveal, SectionHeading, ViewMore } from "./ui.jsx";
+import { ProjectShowcase } from "./ProjectShowcase.jsx";
+import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
+import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
 
 
 export function ExperienceTimeline({ t, isDark }) {
@@ -54,7 +55,7 @@ export function ExperienceTimeline({ t, isDark }) {
 }
 
 
-export function HeroSection({ t, isDark, mailtoUrl, openResumes, onOpenAbout }) {
+export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) {
   // Hover previews color (mouse only). Click flips whatever is currently shown.
   const [photoHover, setPhotoHover] = useState(false);
   const [photoOverride, setPhotoOverride] = useState(null); // null | "color" | "gray"
@@ -63,7 +64,7 @@ export function HeroSection({ t, isDark, mailtoUrl, openResumes, onOpenAbout }) 
   const tiles = [
     { big: "Resume", label: "Download CV", onClick: openResumes },
     { big: "LinkedIn", label: "Let's connect", href: PROFILE.linkedin, external: true },
-    { big: "Email", label: PROFILE.email, href: mailtoUrl },
+    { big: "Email", label: PROFILE.email, onClick: onContact },
     { big: "GitHub", label: "See my code", href: PROFILE.github, external: true },
   ];
   return (
@@ -284,13 +285,14 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
 }
 
 
-export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, onToggleReveal, onOpenArchive, onOpenProject }) {
-  const featured = (projectTab === "labs" ? LABS : WEB_APPS).filter((p) => p.title === HOME_PROJECT_BY_TAB[projectTab]);
+export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArchive, onOpenProject }) {
+  const isLabs = projectTab === "labs";
+  const item = (isLabs ? LABS : WEB_APPS).find((p) => p.title === HOME_PROJECT_BY_TAB[projectTab]);
   return (
     <section id="labs" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <div className="text-center mb-10 sm:mb-14">
         <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-          <Code2 size={13} /> {projectTab === "labs" ? "04 · NETWORKING & IT LOG" : "04 · SOFTWARE LOG"}
+          <Code2 size={13} /> {isLabs ? "04 · NETWORKING & IT LOG" : "04 · SOFTWARE LOG"}
         </p>
         <div className="flex flex-wrap items-baseline justify-center gap-3">
           {[["webapps", "Software"], ["labs", "Networking & IT"]].map(([key, label], i) => (
@@ -313,87 +315,11 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, revealed, 
         </p>
       </div>
 
-      <div className="space-y-20 sm:space-y-28">
-        {featured.map((item, i) => {
-          const flip = i % 2 === 1;
-          const GroupIcon = projectTab === "labs" ? Network : Code2;
-          return (
-            <Reveal key={item.title}>
-              <div className="fade-bottom -mx-4 max-h-[30rem] overflow-hidden px-4 lg:max-h-[26rem]">
-                <div className="grid sm:grid-cols-12 items-center gap-y-6">
-                  <div className={`sm:row-start-1 ${flip ? "sm:col-start-6 sm:col-end-13" : "sm:col-start-1 sm:col-end-8"}`}>
-                    <div className={`group relative aspect-[16/10] rounded-lg overflow-hidden border ${t.border} ${t.surface}`}>
-                      {item.thumbnail ? (
-                        <>
-                          <PortfolioImage
-                            imageKey={thumbFor(item, isDark)}
-                            alt={`${item.title} preview`}
-                            fallbackLabel={item.title}
-                            loading="lazy"
-                            decoding="async"
-                            onClick={() => onToggleReveal(item.title)}
-                            className={`absolute left-2 top-2 sm:left-2.5 sm:top-2.5 h-[calc(100%-1rem)] w-[calc(100%-1rem)] sm:h-[calc(100%-1.25rem)] sm:w-[calc(100%-1.25rem)] rounded-md object-cover object-top cursor-pointer transition-[filter] duration-500 ease-out ${
-                              revealed[item.title] ? "grayscale-0 contrast-100" : "grayscale contrast-125"
-                            } group-hover:grayscale-0 group-hover:contrast-100`}
-                          />
-                          <span
-                            className={`absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 font-mono text-[10px] tracking-widest uppercase px-2 py-1 rounded bg-black/50 text-white/80 transition-opacity duration-300 pointer-events-none ${
-                              revealed[item.title] ? "opacity-0" : "opacity-100 sm:group-hover:opacity-0"
-                            }`}
-                          >
-                            {revealed[item.title] ? "" : "Tap or hover"}
-                          </span>
-                        </>
-                      ) : (
-                        <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 bg-accent-400/10 ${t.accent}`}>
-                          <GroupIcon size={40} />
-                          <span className="relative font-mono text-xs tracking-widest uppercase">{item.eyebrow}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+      <Reveal>
+        {item && <ProjectShowcase t={t} isDark={isDark} item={item} icon={isLabs ? Network : Code2} onOpenProject={onOpenProject} />}
+      </Reveal>
 
-                  <div className={`relative z-10 sm:row-start-1 ${flip ? "sm:col-start-1 sm:col-end-8" : "sm:col-start-6 sm:col-end-13 sm:text-right"}`}>
-                    <p className={`font-mono text-xs tracking-wide ${t.accent}`}>{item.eyebrow}</p>
-                    <h3 className={`font-display font-bold text-2xl sm:text-[28px] mt-1 ${t.text}`}>{item.title}</h3>
-                    <div className={`hidden lg:block mt-5 rounded-lg border ${t.border} p-5 shadow-xl font-body text-sm leading-relaxed ${t.textMuted} ${isDark ? "bg-neutral-800/95" : "bg-white"} text-left`}>
-                      {renderDescription(item.description, t)}
-                    </div>
-                    {item.detail?.role && (
-                      <p className={`mt-4 font-mono text-[11px] leading-relaxed ${t.textFaint}`}>
-                        <span className={t.accent}>ROLE</span> / {item.detail.role}
-                      </p>
-                    )}
-                    <ul className={`mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
-                      {item.tags.map((tag) => <li key={tag}>{tag}</li>)}
-                    </ul>
-                    <div className={`mt-4 flex flex-wrap items-center gap-x-5 gap-y-3 ${t.textMuted} ${flip ? "" : "sm:justify-end"}`}>
-                      <button
-                        type="button"
-                        onClick={() => onOpenProject(item.title)}
-                        className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider hover:text-accent-400 transition-colors"
-                      >
-                        Read case study <ArrowRight size={13} />
-                      </button>
-                      {hasLink(item.github) && (
-                        <a href={item.github} target="_blank" rel="noreferrer" aria-label={`${item.title} on GitHub`} className="hover:text-accent-400 transition-colors"><Github size={19} /></a>
-                      )}
-                      {hasLink(item.view) && (
-                        <a href={item.view} target="_blank" rel="noreferrer" aria-label={`${item.title} preview`} className="hover:text-accent-400 transition-colors"><ExternalLink size={19} /></a>
-                      )}
-                      {item.privateDemo && (
-                        <span role="img" aria-disabled="true" aria-label={`${item.title} live demo unavailable, private project`} title="Live demo unavailable: private project" className="opacity-30 cursor-not-allowed"><ExternalLink size={19} /></span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          );
-        })}
-      </div>
-
-      <div className="mt-8 text-center">
+      <div className="mt-14 text-center">
         <ViewMore t={t} onClick={onOpenArchive}>View all my projects ({ALL_PROJECTS.length})</ViewMore>
       </div>
     </section>

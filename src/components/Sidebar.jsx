@@ -35,7 +35,7 @@ export const SIDEBAR_GROUPS = [
   },
 ];
 
-export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse, activeId, onNavigate, onToggleTheme, mailtoUrl, mobile = false, open = false, onClose }) {
+export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse, activeId, onNavigate, onToggleTheme, onContact, mobile = false, open = false, onClose }) {
   const collapsed = !mobile && collapsedPref;
   const visits = useMonthlyVisits();
   const visitText = visits == null ? "—" : visits.toLocaleString("en-US");
@@ -90,17 +90,17 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
       </div>
 
       <div className={collapsed ? "px-3" : "px-4"}>
-        <a
-          href={mailtoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={onContact}
           title={collapsed ? "Contact" : undefined}
           aria-label="Contact"
-          className={`flex items-center rounded-2xl border ${t.border} ${collapsed ? "h-11 justify-center" : "h-11 gap-3 px-4"} ${t.text} text-sm font-medium hover:border-accent-400/60 hover:text-accent-400 transition-colors`}
+          aria-haspopup="dialog"
+          className={`flex w-full items-center rounded-2xl border ${t.border} ${collapsed ? "h-11 justify-center" : "h-11 gap-3 px-4"} ${t.text} text-sm font-medium hover:border-accent-400/60 hover:text-accent-400 transition-colors`}
         >
           <Mail size={16} className="shrink-0" />
           {!collapsed && <span>Contact</span>}
-        </a>
+        </button>
       </div>
 
       <nav className={`flex-1 min-h-0 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${collapsed ? "mt-4 pb-3 px-3" : "mt-4 pb-3 px-4"}`}>
