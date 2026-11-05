@@ -163,10 +163,52 @@ const monthYearOf = (p) => {
   return m ? m[0] : yearOf(p);
 };
 
+const SORT_OPTIONS = [
+  { value: "az", label: "A-Z" },
+  { value: "za", label: "Z-A" },
+  { value: "newest", label: "Newest" },
+  { value: "oldest", label: "Oldest" },
+];
+
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+// Year + month as one number. A project that only lists a year counts as late in that year.
+const dateKeyOf = (p) => {
+  const m = (p.meta || "").match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(20\d{2})/i);
+  if (m) return parseInt(m[2], 10) * 12 + MONTHS.indexOf(m[1].toLowerCase());
+  return (parseInt(yearOf(p), 10) || 0) * 12 + 11;
+};
+
+const sortProjects = (list, mode) =>
+  [...list].sort((a, b) => {
+    if (mode === "az") return a.title.localeCompare(b.title, undefined, { sensitivity: "base", numeric: true });
+    if (mode === "za") return b.title.localeCompare(a.title, undefined, { sensitivity: "base", numeric: true });
+    const diff = mode === "oldest" ? dateKeyOf(a) - dateKeyOf(b) : dateKeyOf(b) - dateKeyOf(a);
+    return diff || featuredRank(a) - featuredRank(b);
+  });
+
+function SortSelect({ value, onChange, t, isDark, className = "" }) {
+  return (
+    <div className={`relative shrink-0 ${className}`}>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label="Sort projects"
+        className={`h-10 appearance-none rounded-lg border ${t.border} bg-transparent pl-3 pr-8 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
+      >
+        {SORT_OPTIONS.map((o) => (
+          <option key={o.value} value={o.value} className={`${t.surfaceSolid} ${t.text}`}>{o.label}</option>
+        ))}
+      </select>
+      <ArrowDown size={13} className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
+    </div>
+  );
+}
+
 // Laptop-and-up layout (lg+): an index on the left, a sticky preview of the selected project on the right.
 // Clicking a row only selects it; "View project" is the one way into the full project.
 // Mobile and tablet keep the original single-column list rendered by ProjectArchive.
-function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, setTrack, onClose }) {
+function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, setTrack, sort, setSort, onClose }) {
   const [activeTitle, setActiveTitle] = useState(null);
   const active = sorted.find((p) => p.title === activeTitle) || sorted[0];
   const activeThumb = active && active.thumbnail ? img(thumbFor(active, isDark)) : undefined;
@@ -201,7 +243,8 @@ function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, s
             )}
           </div>
 
-          <div className="mt-5 flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Filter projects">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Filter projects">
             {TRACK_FILTERS.map((name) => (
               <button
                 key={name}
@@ -217,6 +260,8 @@ function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, s
                 {name}
               </button>
             ))}
+          </div>
+          <SortSelect value={sort} onChange={setSort} t={t} isDark={isDark} />
           </div>
 
           {sorted.length > 0 ? (
@@ -303,6 +348,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   const [query, setQuery] = useState("");
   const [track, setTrack] = useState("All");
+  const [sort, setSort] = useState("newest");
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
@@ -322,12 +368,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
     return hay.includes(q);
   };
   const filtered = ALL_PROJECTS.filter(matches);
-  const sorted = [...filtered].sort((a, b) => {
-    const ya = parseInt(yearOf(a), 10) || 0;
-    const yb = parseInt(yearOf(b), 10) || 0;
-    if (ya !== yb) return yb - ya;
-    return featuredRank(a) - featuredRank(b);
-  });
+  const sorted = sortProjects(filtered, sort);
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
@@ -375,8 +416,13 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
           </div>
         </div>
 
+        <div className="mt-3 flex items-center justify-end gap-2.5">
+          <span className={`text-sm ${t.textMuted}`}>Sort by</span>
+          <SortSelect value={sort} onChange={setSort} t={t} isDark={isDark} />
+        </div>
+
         {sorted.length > 0 && (
-          <ul className={`mt-4 overflow-hidden rounded-xl border ${t.border} ${t.surfaceSolid}`}>
+          <ul className={`mt-3 overflow-hidden rounded-xl border ${t.border} ${t.surfaceSolid}`}>
             {sorted.map((p) => (
               <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
             ))}
@@ -395,6 +441,8 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
         setQuery={setQuery}
         track={track}
         setTrack={setTrack}
+        sort={sort}
+        setSort={setSort}
         onClose={requestClose}
       />
     </div>
@@ -454,6 +502,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
               </a>
             ))}
             {p.privateDemo && <span className={t.textFaint}>Live demo is private</span>}
+            {p.demoUnavailable && <span className={t.textFaint}>Live demo unavailable</span>}
           </div>
         </div>
 

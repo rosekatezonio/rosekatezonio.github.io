@@ -12,8 +12,7 @@ export const PROFILE = {
   githubUsername: "arkyxo",
   linkedin: "https://www.linkedin.com/in/rkzonio/",
   location: "Rizal, Philippines",
-  city: "Manila",
-  status: "building",
+  city: "Rizal",
 };
 
 export const hasLink = (u) => !!u && u !== "#";
@@ -76,39 +75,6 @@ export const SKILLS = [
   },
 ];
 
-export const RFID_PROJECT = {
-  title: "RFID-Based Automatic Parking Slot System",
-  eyebrow: "Hardware + Software",
-  meta: "Group Project · Academic · March 2024",
-  status: "Completed",
-  description: [
-    "A team-built parking system that reads ",
-    { hl: "RFID" },
-    " cards to show real-time slot availability, alert attendants when a slot is chosen, and handle ",
-    { hl: "automated billing" },
-    ": hardware, a VB.NET app, and a SQL database working as one flow.",
-  ],
-  highlights: [
-    "RFID reader integrated with a custom VB.NET application",
-    "SQL database tracking slot occupancy in real time",
-    "Complete flow demonstrated: ID scan, slot selection, payment",
-  ],
-  tags: ["VB.NET", "SQL", "RFID", "Hardware Integration"],
-  github: "https://github.com/EngrPrenz/Robinson-s-Mall-RFID-Parking-System",
-  thumbnail: "asset-06a80c2f",
-  detail: {
-    role: "Group project · hardware + software",
-    problem: "Tracking parking slots and billing by hand is slow and easy to get wrong. Attendants guess, drivers wait, and nothing is recorded.",
-    approach: "Close the loop with RFID: scan a card, see live slot availability, and let the system track occupancy and compute the bill automatically. Hardware, application, and database working as one flow.",
-    challenges: [
-      { title: "Hardware talking to software", fix: "Wired the RFID reader into a custom VB.NET app so every scan lands as a real event instead of a manual input." },
-      { title: "Keeping occupancy truthful", fix: "A SQL database tracks slot state in real time so the availability display and the billing can never disagree." },
-    ],
-    learned: "The full shape of a hardware-integrated project: physical input, application logic, and a database all moving together.",
-    next: "A cleaner interface and support for more than one entrance and exit.",
-  },
-};
-
 export const LABS = [
   {
     title: "Home Network Device Monitor",
@@ -143,46 +109,44 @@ export const LABS = [
       next: "Device fingerprinting so unknown devices get a name, not just a flag.",
     },
   },
-  { ...RFID_PROJECT, category: "Networking & IT" },
 ];
 
 export const WEB_APPS_LIST = [
   {
-    title: "CineLookUp",
-    eyebrow: "Movie Browsing App",
-    meta: "Independent Project · Apr 2024",
-    category: "Academic",
+    title: "UGAT",
+    eyebrow: "Persistent-Problem Intelligence · Hackathon",
+    meta: "Hackathon · PLDT AI in 30 Hours · Nov 2026",
+    category: "Hackathon",
     status: "Completed",
     description: [
-      "A ",
-      { hl: "solo project" },
-      " centered on ",
-      { hl: "API integration" },
-      ": pulling live movie listings, details, and search results from an external data source instead of a static database.",
+      "An AI layer for local government reporting systems. It reads citizen reports and flags problems that ",
+      { hl: "keep coming back after being marked resolved" },
+      ", matching English, Filipino and Taglish reports to the same problem and place, and showing the ",
+      { hl: "evidence timeline" },
+      " behind every flag. Top 10 finalist out of 440 participants.",
     ],
     highlights: [
-      "Live movie data pulled from a third-party API",
-      "Search and browse interface for exploring titles",
-      "Watchlists, ratings and private lists synced to each user's account",
-      "Designed and built solo, end to end",
+      "Flags a problem only when a new report arrives after an earlier one was resolved",
+      "Matches Filipino, English and Taglish reports to one problem and one place",
+      "Evidence timelines, plus a \"why not flagged\" view so it is not just a counter",
+      "Ask UGAT: questions answered only from the report data, with sources cited",
+      "Telegram intake with priority tagging, camera-only photo evidence and an emergency desk",
     ],
-    tags: ["React", "Vite", "JavaScript", "HTML", "Firebase", "TMDb API"],
-    github: "https://github.com/arkyxo/CineLookUp",
-    privateDemo: true,
-    thumbnail: "cinelookup-light-1",
-    thumbnailDark: "cinelookup-dark-1",
-    gallery: ["cinelookup-light-1", "cinelookup-light-2", "cinelookup-light-3", "cinelookup-light-4"],
-    galleryDark: ["cinelookup-dark-1", "cinelookup-dark-2", "cinelookup-dark-3", "cinelookup-dark-4"],
+    tags: ["React", "Vite", "Node.js", "Express", "Leaflet", "Telegram Bot API", "OpenRouter"],
+    github: "https://github.com/arkyxo/UGAT",
+    demoUnavailable: true,
+    thumbnail: "ugat",
     detail: {
-      role: "Solo project · design to deploy",
-      problem: "Movie lists that never change are boring. I wanted a real browsing app with live listings, search, and watchlists that follow the user, not a static page.",
-      approach: "Pull everything from TMDb's API and let Firebase handle identity, so watchlists, ratings, and private lists sync to each account instead of living in one browser.",
+      role: "Team build · 30-hour hackathon · Top 10 finalist",
+      problem: "Government systems measure whether each ticket is closed, but almost nothing measures whether the problem stayed closed. A street can flood four times a year with every ticket marked resolved and every metric green.",
+      approach: "Use AI only to read messy resident text, and keep the decision in plain, testable code: a problem is flagged only when enough reports exist and one arrived after a resolution. Every flag links back to the original reports so staff can judge it.",
       challenges: [
-        { title: "Wrangling an external API", fix: "Kept API calls behind a thin layer so the listing, detail, and search views all share the same data path." },
-        { title: "Per-user data without a backend", fix: "Firebase auth plus Firestore gives every user their own synced watchlist." },
+        { title: "Residents write in three languages", fix: "A language model labels each report with a problem type and a canonical place, so \"Baha na naman harap ng palengke\" and \"flooding near the market\" land in the same group." },
+        { title: "AI should not make government decisions", fix: "The flag rule lives in testable code in the engine, and the assistant only answers from the dataset with report IDs cited. Next steps are suggestions for staff to review." },
+        { title: "Proving it is not just a report counter", fix: "A \"why not flagged\" view shows busy areas and fixed problems that UGAT deliberately leaves alone, and an accuracy panel scores it against known ground truth." },
       ],
-      learned: "API integration end to end: auth, request flow, and keeping the UI honest about loading and error states.",
-      next: "Polish the discovery side: better recommendations and a tighter watch experience.",
+      learned: "Where AI belongs in a public-service tool: reading language, not deciding outcomes. Keeping the rules testable made the whole system easier to trust and to demo.",
+      next: "Finish polishing the system and release a stable live demo.",
     },
   },
   {
@@ -298,7 +262,7 @@ export const WEB_APPS_LIST = [
   },
 ];
 
-export const SOFTWARE_ORDER = ["Salo Sa Antipolo", "URSAC Simulation Academy", "KuryenteWatch", "CineLookUp"];
+export const SOFTWARE_ORDER = ["UGAT", "Salo Sa Antipolo", "URSAC Simulation Academy", "KuryenteWatch"];
 export const WEB_APPS = [...WEB_APPS_LIST].sort((a, b) => SOFTWARE_ORDER.indexOf(a.title) - SOFTWARE_ORDER.indexOf(b.title));
 
 export const yearOf = (p) => (p.meta && (p.meta.match(/(\d{4})/) || [])[1]) || "-";
@@ -382,6 +346,7 @@ export const AI30_ACTIVITY = {
   links: [
     { label: "See the post on LinkedIn", short: "LinkedIn post", url: AI30_LINKEDIN },
     { label: "See the post on Facebook", short: "Facebook post", url: AI30_FACEBOOK },
+    { label: "See the project page", short: "Project page", page: "#ugat" },
   ],
 };
 
@@ -550,7 +515,7 @@ export const initialsOf = (name) =>
   name.replace(/[—–-].*$/, "").split(" ").filter((w) => /^[A-Z]/.test(w)).slice(0, 3).map((w) => w[0]).join("");
 
 export const ABOUT_ME = [
-  "I'm a fourth-year Computer Engineering student at the University of Rizal System, Antipolo. I build web apps end to end: a restaurant POS delivered to a real client, a 24-hour hackathon energy app, an RFID parking system, and a published Roblox game. I also keep the network side sharp through a SOC analyst internship and certifications in network security.",
+  "I'm a fourth-year Computer Engineering student at the University of Rizal System, Antipolo. I build web apps end to end: a restaurant POS delivered to a real client, a 24-hour hackathon energy app, an AI tool for local government that made the Top 10 at a national hackathon, and a published Roblox game. I also keep the network side sharp through certifications in network security.",
   "I like work where software meets infrastructure: interfaces people enjoy using, and a clear picture of everything carrying them underneath.",
 ];
 
@@ -586,7 +551,7 @@ export const TOOLKIT_GROUPS = [
     num: "03",
     title: "Backend, Databases & APIs",
     blurb: "SQL, databases, persistence and integrations",
-    proof: ["CineLookUp"],
+    proof: ["KuryenteWatch"],
     items: pickSkills(["SQL", "Firebase / Firestore", "SQLite", "PostgreSQL", "Microsoft SQL Server", "REST API Integration"]),
   },
   {

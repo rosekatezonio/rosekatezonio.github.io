@@ -164,8 +164,8 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
       <div className={`shrink-0 border-t ${t.border} ${collapsed ? "py-3 flex flex-col items-center gap-2" : "px-5 py-3 flex items-center justify-between"}`}>
         <div
           className={`min-w-0 ${collapsed ? "flex flex-col items-center gap-1" : "pr-3"}`}
-          title={`${manilaTime} in ${PROFILE.city} · ${PROFILE.status}`}
-          aria-label={`${PROFILE.fullName}, ${manilaTime} in ${PROFILE.city}, ${PROFILE.status}`}
+          title={`${manilaTime} in ${PROFILE.city}`}
+          aria-label={`${PROFILE.fullName}, ${manilaTime} in ${PROFILE.city}`}
         >
           {collapsed ? (
             <>
@@ -177,7 +177,7 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
               <p className={`truncate text-sm font-bold ${t.text}`}>{PROFILE.fullName}</p>
               <p className={`mt-0.5 flex items-center gap-1.5 text-[11px] ${t.textMuted}`}>
                 <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-green-500" />
-                <span className="truncate tabular-nums">{manilaTime} in {PROFILE.city} · {PROFILE.status}</span>
+                <span className="truncate tabular-nums">{manilaTime} in {PROFILE.city}</span>
               </p>
             </>
           )}
