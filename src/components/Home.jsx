@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { PortfolioImage, img } from "../images.jsx";
 import { Reveal, SectionHeading, ViewMore } from "./ui.jsx";
 import { ProjectShowcase } from "./ProjectShowcase.jsx";
-import { PROFILE, ACTIVITIES, AFFILIATIONS, CERTIFICATIONS, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
+import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
 
 
@@ -204,16 +204,15 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
         <section aria-label="Activities, affiliation, and certification links" className={`mt-8 border-t ${t.border} pt-7`}>
           <div className="grid grid-cols-3 gap-x-4 sm:gap-8">
             {[
-              { id: "activities", label: "Activities", sub: `${ACTIVITIES.length} highlights` },
-              { id: "affiliation", label: "Affiliation", sub: `${AFFILIATIONS.length} organizations` },
-              { id: "certification", label: "Cert", sub: `${CERTIFICATIONS.length} certifications` },
+              { id: "activities", label: "Activities" },
+              { id: "affiliation", label: "Affiliation" },
+              { id: "certification", label: "Cert" },
             ].map((item) => (
               <a key={item.id} href={`#${item.id}`} className="group relative block pr-5">
                 <ArrowUpRight size={14} className={`absolute right-0 top-1 ${t.textFaint} transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-400`} />
                 <p className={`font-display text-base sm:text-[28px] font-medium leading-tight tracking-tight ${t.text} transition-colors group-hover:text-accent-400`}>
                   {item.label}
                 </p>
-                <p className={`font-body text-[12px] sm:text-sm ${t.textMuted} mt-1.5`}>{item.sub}</p>
               </a>
             ))}
           </div>

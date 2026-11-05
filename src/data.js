@@ -420,19 +420,6 @@ export const EXPERIENCE = [
     ],
   },
   {
-    company: "TechBizAcademy",
-    pathway: "internship",
-    position: "SOC Analyst Intern",
-    logo: "techbizacademy-logo",
-    employment: "Internship · 240 hours",
-    location: "Remote",
-    period: "Oct 2026 - Present",
-    duration: "Oct 2026 - Present · 240 hours",
-    type: "Networking & IT · Internship",
-    description:
-      "Just started a 240-hour OJT as a SOC analyst intern: triaging alerts, monitoring for suspicious activity, and learning how a real security operations team works day to day.",
-  },
-  {
     company: "DOLE",
     pathway: "work",
     position: "Special Program for Employment of Students",
