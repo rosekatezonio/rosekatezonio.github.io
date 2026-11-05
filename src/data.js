@@ -12,6 +12,8 @@ export const PROFILE = {
   githubUsername: "arkyxo",
   linkedin: "https://www.linkedin.com/in/rkzonio/",
   location: "Rizal, Philippines",
+  city: "Manila",
+  status: "building",
 };
 
 export const hasLink = (u) => !!u && u !== "#";
@@ -365,10 +367,28 @@ export const FEATURED_ACTIVITY = {
   ],
 };
 
+export const AI30_LINKEDIN = "https://www.linkedin.com/posts/pldtenterprise_aiin30hours-pldtenterprise-epldt-activity-7520409177354309632-h8-B";
+export const AI30_FACEBOOK = "https://www.facebook.com/share/p/1FQeKnihxv/";
+
+export const AI30_ACTIVITY = {
+  label: "Latest",
+  date: "November 3 - 4, 2026",
+  title: "PLDT AI in 30 Hours Hackathon",
+  location: "De La Salle University, Manila",
+  description:
+    "A nationwide student challenge by PLDT Enterprise, PLDT Innolab, and ePLDT, with DLSU Animo Labs and Rokid Philippines. Teams had 30 hours to turn ideas into working AI prototypes for real problems in government, public services, and safety. My team made it into the Top 10 finalists out of 440 participants!",
+  image: "ai-in-30-hours-group",
+  aspect: "aspect-[16/9]",
+  links: [
+    { label: "See the post on LinkedIn", short: "LinkedIn post", url: AI30_LINKEDIN },
+    { label: "See the post on Facebook", short: "Facebook post", url: AI30_FACEBOOK },
+  ],
+};
+
 export const AMA_FACEBOOK = "https://www.facebook.com/amaeducsystem";
 
 export const CTIA_ACTIVITY = {
-  label: "Latest",
+  label: "Training",
   date: "Day 1",
   title: "Cyber Threat Intelligence Analysis (CTIA) Level III",
   location: "AMA University, Quezon City",
@@ -378,7 +398,7 @@ export const CTIA_ACTIVITY = {
   links: [{ label: "See AMA on Facebook", short: "AMA on Facebook", url: AMA_FACEBOOK }],
 };
 
-export const ACTIVITIES = [CTIA_ACTIVITY, FEATURED_ACTIVITY];
+export const ACTIVITIES = [AI30_ACTIVITY, CTIA_ACTIVITY, FEATURED_ACTIVITY];
 
 export const PATHWAY_ICONS = { internship: GraduationCap, work: Briefcase };
 
@@ -545,9 +565,6 @@ export const initialsOf = (name) =>
 export const ABOUT_ME = [
   "I'm a fourth-year Computer Engineering student at the University of Rizal System, Antipolo. I build web apps end to end: a restaurant POS delivered to a real client, a 24-hour hackathon energy app, an RFID parking system, and a published Roblox game. I also keep the network side sharp through a SOC analyst internship and certifications in network security.",
   "I like work where software meets infrastructure: interfaces people enjoy using, and a clear picture of everything carrying them underneath.",
-  "## Outside of work",
-  "There's a part of me that has always belonged to stories. I used to write novels on Wattpad and still daydream about films; becoming a filmmaker is one of those dreams I never quite let go of. Away from the keyboard, you'll find me solving a Rubik's Cube, listening to jazz, or admiring the little garden I'd love to grow someday.",
-  "Still learning, still exploring, still discovering what I could become, and honestly, that's one of the most exciting parts of being me.",
 ];
 
 export const ALL_SKILL_ITEMS = SKILLS.flatMap((g) => g.items);

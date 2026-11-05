@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { PROFILE, RESUME_URL, SKILL_TOTAL, ALL_PROJECTS, EXPERIENCE, AFFILIATIONS, CERTIFICATIONS } from "../data.js";
-import { House, User, Layers, Trophy, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight, Eye } from "../icons.jsx";
-import { useMonthlyVisits, monthLabel } from "../visits.js";
+import { House, User, Layers, Trophy, LayoutGrid, Briefcase, Users, Award, Download, Github, Linkedin, Mail, X, PanelLeft, Contrast, ArrowUpRight } from "../icons.jsx";
+import { useMonthlyVisits } from "../visits.js";
 
 export const SIDEBAR_GROUPS = [
   {
@@ -35,10 +35,20 @@ export const SIDEBAR_GROUPS = [
   },
 ];
 
+function useManilaTime() {
+  const format = () => new Date().toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "Asia/Manila" });
+  const [time, setTime] = useState(format);
+  useEffect(() => {
+    const id = setInterval(() => setTime(format()), 15000);
+    return () => clearInterval(id);
+  }, []);
+  return time;
+}
+
 export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse, activeId, onNavigate, onToggleTheme, onContact, mobile = false, open = false, onClose }) {
   const collapsed = !mobile && collapsedPref;
-  const visits = useMonthlyVisits();
-  const visitText = visits == null ? "—" : visits.toLocaleString("en-US");
+  useMonthlyVisits();
+  const manilaTime = useManilaTime();
   const hoverText = isDark ? "hover:text-neutral-100" : "hover:text-slate-900";
   const hoverBg = isDark ? "hover:bg-white/5" : "hover:bg-slate-900/[0.04]";
   const activeBg = isDark ? "bg-white/[0.06]" : "bg-slate-900/[0.05]";
@@ -153,12 +163,24 @@ export function Sidebar({ t, isDark, collapsed: collapsedPref, onToggleCollapse,
 
       <div className={`shrink-0 border-t ${t.border} ${collapsed ? "py-3 flex flex-col items-center gap-2" : "px-5 py-3 flex items-center justify-between"}`}>
         <div
-          className={`flex items-center ${collapsed ? "flex-col gap-1" : "gap-2 min-w-0 pr-3"} ${t.textMuted}`}
-          title={`Visits in ${monthLabel()}`}
-          aria-label={`${visitText} visits in ${monthLabel()}`}
+          className={`min-w-0 ${collapsed ? "flex flex-col items-center gap-1" : "pr-3"}`}
+          title={`${manilaTime} in ${PROFILE.city} · ${PROFILE.status}`}
+          aria-label={`${PROFILE.fullName}, ${manilaTime} in ${PROFILE.city}, ${PROFILE.status}`}
         >
-          <Eye size={collapsed ? 15 : 16} className="shrink-0 text-accent-400" />
-          <span className={`font-mono tabular-nums ${collapsed ? "text-[10px]" : "text-xs"}`}>{visitText}</span>
+          {collapsed ? (
+            <>
+              <span className="h-2 w-2 rounded-full bg-green-500" />
+              <span className={`font-mono tabular-nums text-[10px] ${t.textMuted}`}>{manilaTime.replace(/ [AP]M$/, "")}</span>
+            </>
+          ) : (
+            <>
+              <p className={`truncate text-sm font-bold ${t.text}`}>{PROFILE.fullName}</p>
+              <p className={`mt-0.5 flex items-center gap-1.5 text-[11px] ${t.textMuted}`}>
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-green-500" />
+                <span className="truncate tabular-nums">{manilaTime} in {PROFILE.city} · {PROFILE.status}</span>
+              </p>
+            </>
+          )}
         </div>
         <div className={collapsed ? "flex flex-col gap-2" : "flex items-center gap-2"}>
           <button aria-label="Toggle theme" title="Toggle theme" onClick={onToggleTheme} className={iconBtn}>

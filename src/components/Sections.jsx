@@ -14,7 +14,7 @@ export function ActivityRow({ f, reverse, t, isDark }) {
   return (
     <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
       <div className={`relative w-full max-w-md mx-auto lg:max-w-none ${f.inset ? "pb-10 pr-8 sm:pb-14 sm:pr-14" : ""} ${reverse ? "lg:order-2" : ""}`}>
-        <PortfolioImage imageKey={main.src} alt={main.alt} fallbackLabel={main.alt} className={`aspect-[16/9] sm:aspect-[4/3] w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
+        <PortfolioImage imageKey={main.src} alt={main.alt} fallbackLabel={main.alt} className={`${f.aspect || "aspect-[16/9] sm:aspect-[4/3]"} w-full rounded-3xl object-cover ${main.position} border ${t.border}`} />
         {f.inset && small && (
           <button
             type="button"

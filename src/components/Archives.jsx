@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
-import { renderDescription } from "./ui.jsx";
+import { renderDescription, BackButton } from "./ui.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
 import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
@@ -70,9 +70,7 @@ export function SkillsArchive({ t, onClose, isDark }) {
   return (
     <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="max-w-7xl mx-auto px-5 sm:px-10 py-10 sm:py-14">
-        <button onClick={requestClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
-          <ArrowRight size={14} className="rotate-180" /> Back to portfolio
-        </button>
+        <BackButton t={t} onClick={requestClose} />
         <h1 className="font-display font-bold text-4xl sm:text-6xl mt-12">Full Toolkit</h1>
         <p className={`font-mono text-sm ${t.accent} mt-3`}>Grouped by what each tool lets me do.</p>
 
@@ -175,9 +173,7 @@ function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, s
 
   return (
     <div className="hidden lg:block max-w-7xl mx-auto px-12 py-10">
-      <button onClick={onClose} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
-        <ArrowRight size={14} className="rotate-180" /> Back to portfolio
-      </button>
+      <BackButton t={t} onClick={onClose} />
 
       <div className="mt-8 grid grid-cols-12 gap-x-14 items-start">
         {/* Left: heading, search, filters, index */}
@@ -336,9 +332,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="lg:hidden max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-        <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
-          <ArrowRight size={14} className="rotate-180" /> Back to portfolio
-        </button>
+        <BackButton t={t} onClick={requestClose} />
 
         <div className="mt-4 flex items-baseline justify-between gap-3">
           <h1 className="font-display font-bold text-2xl sm:text-3xl">Project Log</h1>

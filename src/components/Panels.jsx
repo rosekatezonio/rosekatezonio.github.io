@@ -124,10 +124,7 @@ export function AboutPhoto({ photo, isDark }) {
 }
 
 export function AboutMeSection({ t, isDark }) {
-  const outsideIdx = ABOUT_ME.findIndex((b) => b.startsWith("## "));
-  const mainBlocks = outsideIdx === -1 ? ABOUT_ME : ABOUT_ME.slice(0, outsideIdx);
-  const outsideTitle = outsideIdx === -1 ? "" : ABOUT_ME[outsideIdx].slice(3);
-  const outsideBlocks = outsideIdx === -1 ? [] : ABOUT_ME.slice(outsideIdx + 1);
+  const mainBlocks = ABOUT_ME;
   return (
     <section id="aboutme" className="max-w-2xl mx-auto">
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
@@ -155,25 +152,6 @@ export function AboutMeSection({ t, isDark }) {
           </p>
         ))}
       </div>
-
-      {outsideBlocks.length > 0 && (
-        <div className={`mt-14 max-w-2xl mx-auto rounded-xl border ${t.border} px-6 py-7 sm:px-8 sm:py-8`}>
-          <p className={`font-mono text-[11px] tracking-[0.25em] uppercase ${t.accent}`}>{outsideTitle}</p>
-          <div className="mt-6 space-y-6">
-            {outsideBlocks.map((block, i) => (
-              <p
-                key={i}
-                style={{ hyphens: "auto", WebkitHyphens: "auto" }}
-                className={`font-body text-base sm:text-[17px] leading-[1.8] text-justify ${
-                  i === outsideBlocks.length - 1 ? `font-medium ${t.text}` : t.textMuted
-                }`}
-              >
-                {block}
-              </p>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="mt-14 max-w-2xl mx-auto">
         <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Foundation</p>

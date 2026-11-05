@@ -65,6 +65,14 @@ export function ActivityLink({ link, t, isDark }) {
   );
 }
 
+export function BackButton({ t, onClick }) {
+  return (
+    <button onClick={onClick} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
+      <ArrowRight size={14} className="rotate-180" /> Back to portfolio
+    </button>
+  );
+}
+
 export function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl", children }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   useEffect(() => {
@@ -77,9 +85,7 @@ export function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl"
   return (
     <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
       <div className={`${width} mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20`}>
-        <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} hover:text-accent-400 transition-colors`}>
-          <ArrowRight size={14} className="rotate-180" /> Back to portfolio
-        </button>
+        <BackButton t={t} onClick={requestClose} />
         <div className="mt-10">{children}</div>
       </div>
     </div>

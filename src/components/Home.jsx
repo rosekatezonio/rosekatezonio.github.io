@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PortfolioImage } from "../images.jsx";
+import { PortfolioImage, img } from "../images.jsx";
 import { Reveal, SectionHeading, ViewMore } from "./ui.jsx";
 import { ProjectShowcase } from "./ProjectShowcase.jsx";
 import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
@@ -202,15 +202,15 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
         </Reveal>
 
         <section aria-label="Activities, affiliation, and certification links" className="mt-8">
-          <div className={`grid grid-cols-3 border-y ${t.border}`}>
-            {[{ id: "activities", label: "Activities" }, { id: "affiliation", label: "Affiliation" }, { id: "certification", label: "Cert" }].map((item, index) => (
+          <div className="grid grid-cols-3 gap-3 sm:gap-5">
+            {[{ id: "activities", label: "Activities" }, { id: "affiliation", label: "Affiliation" }, { id: "certification", label: "Cert" }].map((item) => (
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`group flex min-h-16 items-center justify-between gap-2 px-3 py-4 sm:px-6 ${index > 0 ? `border-l ${t.border}` : ""} ${t.textMuted} transition-colors hover:text-accent-400`}
+                className="group flex min-h-28 flex-col justify-between rounded-2xl bg-accent-400 p-4 text-[rgb(var(--on-accent))] shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl sm:min-h-40 sm:p-7"
               >
-                <span className="whitespace-nowrap font-mono text-[11px] uppercase tracking-normal sm:text-[13px] sm:tracking-[0.14em]">{item.label}</span>
-                <span aria-hidden="true" className="hidden shrink-0 text-base text-accent-400 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:inline">↗</span>
+                <span className="font-display text-base font-bold leading-tight sm:text-3xl">{item.label}</span>
+                <span aria-hidden="true" className="self-end text-3xl leading-none transition-transform group-hover:translate-x-1 group-hover:-translate-y-1 sm:text-5xl">↗</span>
               </a>
             ))}
           </div>
@@ -221,10 +221,32 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
 }
 
 
+function MarqueeSkill({ item, t, isDark, hidden = false }) {
+  const [broken, setBroken] = useState(false);
+  const src = img(item.icon);
+  return (
+    <li
+      aria-hidden={hidden || undefined}
+      className={`flex shrink-0 items-center gap-3 rounded-full border py-2 pl-2 pr-5 ${t.border} ${isDark ? "bg-neutral-900/60" : "bg-white"} ${hidden ? "motion-reduce:hidden" : ""}`}
+    >
+      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isDark ? "bg-white" : "bg-slate-50 border border-slate-200"}`}>
+        {src && !broken ? (
+          <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} className="h-6 w-6 object-contain" />
+        ) : (
+          <span className="font-mono text-[10px] font-bold tracking-wider text-accent-400">{item.abbr}</span>
+        )}
+      </span>
+      <span className={`whitespace-nowrap font-body text-sm font-medium ${t.text}`}>{item.name}</span>
+    </li>
+  );
+}
+
+const MARQUEE_SKILLS = TOOLKIT_GROUPS.flatMap((g) => g.items);
+
 export function SkillsSection({ t, isDark, onOpenSkills }) {
   return (
     <section id="skills">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 py-24">
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-24">
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
           <Reveal>
             <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
@@ -236,46 +258,28 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
             </p>
           </Reveal>
         </div>
+      </div>
 
-        <div className="grid gap-x-14 gap-y-12 sm:grid-cols-2">
-          {TOOLKIT_GROUPS.map((group, i) => (
-            <Reveal key={group.title} delay={i * 80}>
-              <div className={`border-t pt-6 ${t.border}`}>
-                <div className="flex items-baseline gap-3">
-                  <span className={`font-mono text-xs ${t.accent}`}>{group.num}</span>
-                  <h3 className="font-display font-semibold text-lg sm:text-xl">{group.title}</h3>
-                </div>
-                <p className={`mt-1.5 font-body text-sm ${t.textMuted}`}>{group.blurb}</p>
-
-                <ul className="mt-5 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <li
-                      key={item.name}
-                      className={`font-mono text-xs sm:text-[13px] px-2.5 py-1.5 rounded-md border ${t.border} ${t.text}`}
-                    >
-                      {item.name}
-                    </li>
-                  ))}
-                </ul>
-
-                {group.proof.length > 0 && (
-                  <p className={`mt-5 font-mono text-xs sm:text-[13px] ${t.textMuted}`}>
-                    {group.proofLabel || "Seen in"}:{" "}
-                    {group.proof.map((title, idx) => (
-                      <React.Fragment key={title}>
-                        {idx > 0 && ", "}
-                        <a href={`#${slugOf(title)}`} className={`${t.text} underline underline-offset-4 decoration-1 hover:text-accent-400 transition-colors`}>
-                          {title}
-                        </a>
-                      </React.Fragment>
-                    ))}
-                  </p>
-                )}
-              </div>
-            </Reveal>
-          ))}
+      <Reveal>
+        <div
+          className="marquee-mask motion-reduce:overflow-x-auto"
+          style={{
+            WebkitMaskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
+            maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
+          }}
+        >
+          <ul className="marquee-track marquee-reverse py-1" style={{ animationDuration: `${MARQUEE_SKILLS.length * 3}s` }} aria-label="Skills">
+            {MARQUEE_SKILLS.map((item) => (
+              <MarqueeSkill key={item.name} item={item} t={t} isDark={isDark} />
+            ))}
+            {MARQUEE_SKILLS.map((item) => (
+              <MarqueeSkill key={`dup-${item.name}`} item={item} t={t} isDark={isDark} hidden />
+            ))}
+          </ul>
         </div>
+      </Reveal>
 
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 pb-24">
         <div className="mt-10 text-center">
           <ViewMore t={t} onClick={onOpenSkills}>View full toolkit</ViewMore>
         </div>
@@ -327,7 +331,19 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
 }
 
 
-export function ExperienceSection({ t, isDark }) {
+function ExperienceRow({ exp, index, t }) {
+  return (
+    <li className={`grid grid-cols-[2.25rem_1fr] sm:grid-cols-[3rem_1fr] items-baseline gap-x-3 sm:gap-x-5 border-b py-6 sm:py-8 ${t.border}`}>
+      <span className={`font-mono text-xs ${t.textFaint}`}>{String(index + 1).padStart(2, "0")}</span>
+      <span className="min-w-0">
+        <span className={`block font-display font-bold text-xl sm:text-3xl leading-tight tracking-tight ${t.text}`}>{exp.position}</span>
+        <span className={`mt-1.5 block text-sm ${t.textMuted}`}>{exp.company}</span>
+      </span>
+    </li>
+  );
+}
+
+export function ExperienceSection({ t }) {
   return (
     <section id="experience" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <SectionHeading
@@ -338,8 +354,8 @@ export function ExperienceSection({ t, isDark }) {
       />
 
       <Reveal>
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between gap-4 pb-5">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex items-center justify-between gap-4 pb-6">
             <p className={`font-mono text-xs tracking-wide ${t.textFaint}`}>Internships and work experience.</p>
             <a
               href="#experience"
@@ -350,20 +366,11 @@ export function ExperienceSection({ t, isDark }) {
             </a>
           </div>
 
-          <ul className={`border-t ${t.border}`}>
+          <ol className={`border-t ${t.border}`}>
             {EXPERIENCE.map((exp, i) => (
-              <li
-                key={`${exp.company}-${i}`}
-                className={`grid grid-cols-[3.5rem_1fr] sm:grid-cols-[6.5rem_1fr_auto] items-baseline gap-x-4 gap-y-1 border-b ${t.border} py-3.5 sm:py-4`}
-              >
-                <span className={`font-mono text-[11px] ${t.textFaint}`}>{experienceYear(exp)}</span>
-                <span className={`font-body text-sm sm:text-[15px] font-medium ${t.text}`}>{exp.position}</span>
-                <span className={`col-start-2 sm:col-start-3 font-body text-xs sm:text-sm ${t.textMuted} sm:text-right`}>
-                  {exp.company}
-                </span>
-              </li>
+              <ExperienceRow key={`${exp.company}-${i}`} exp={exp} index={i} t={t} />
             ))}
-          </ul>
+          </ol>
         </div>
       </Reveal>
     </section>
