@@ -253,10 +253,10 @@ function App() {
       {archiveOpen && <ProjectArchive t={t} isDark={isDark} onClose={closeArchive} instant={archiveInstant} />}
       {projectSlug && <ProjectDetail key={projectSlug} t={t} isDark={isDark} project={PROJECT_BY_SLUG[projectSlug]} onBack={closeProject} />}
       {panel === "activities" && <SectionPanel t={t} onClose={closePanel}><ActivitiesJourney t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "affiliation" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><AffiliationSection t={t} isDark={isDark} /></SectionPanel>}
+      {panel === "affiliation" && <SectionPanel t={t} onClose={closePanel}><AffiliationSection t={t} isDark={isDark} /></SectionPanel>}
       {panel === "aboutme" && <SectionPanel t={t} onClose={closePanel}><AboutMeSection t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "certification" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><CertificationSection t={t} isDark={isDark} /></SectionPanel>}
-      {panel === "experience" && <SectionPanel t={t} onClose={closePanel} width="max-w-3xl"><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
+      {panel === "certification" && <SectionPanel t={t} onClose={closePanel}><CertificationSection t={t} isDark={isDark} /></SectionPanel>}
+      {panel === "experience" && <SectionPanel t={t} onClose={closePanel}><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
       {skillsOpen && <SkillsArchive t={t} onClose={closeSkills} isDark={isDark} />}
       {contactOpen && <ContactChooser t={t} isDark={isDark} onClose={closeContact} />}
 

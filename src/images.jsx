@@ -60,10 +60,10 @@ const fallbackFor = (label) => {
       <path d="M0 590H1200" stroke="#f97316" stroke-opacity=".7" stroke-width="2"/>
       <circle cx="1010" cy="150" r="150" fill="none" stroke="#f97316" stroke-opacity=".25" stroke-width="2"/>
       <circle cx="1010" cy="150" r="105" fill="none" stroke="#f97316" stroke-opacity=".18" stroke-width="2"/>
-      <text x="72" y="112" fill="#fb923c" font-family="monospace" font-size="22" letter-spacing="7">ROSE KATE ZONIO / PORTFOLIO</text>
-      <text x="72" y="390" fill="#f97316" font-family="Arial,sans-serif" font-size="130" font-weight="700">${initials}</text>
-      <text x="76" y="462" fill="#f5f5f5" font-family="Arial,sans-serif" font-size="34" font-weight="600">${title}</text>
-      <text x="76" y="650" fill="#a3a3a3" font-family="monospace" font-size="18" letter-spacing="5">PREVIEW UNAVAILABLE</text>
+      <text x="72" y="112" fill="#fb923c" font-family="Georgia,serif" font-size="22" letter-spacing="7">ROSE KATE ZONIO / PORTFOLIO</text>
+      <text x="72" y="390" fill="#f97316" font-family="Georgia,serif" font-size="130" font-weight="700">${initials}</text>
+      <text x="76" y="462" fill="#f5f5f5" font-family="Georgia,serif" font-size="34" font-weight="600">${title}</text>
+      <text x="76" y="650" fill="#a3a3a3" font-family="Georgia,serif" font-size="18" letter-spacing="5">PREVIEW UNAVAILABLE</text>
       <rect x="72" y="680" width="92" height="5" rx="2.5" fill="#f97316"/>
     </svg>
   `.trim();

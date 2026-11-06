@@ -69,13 +69,31 @@ export function ActivityLink({ link, t, isDark }) {
 
 export function BackButton({ t, onClick }) {
   return (
-    <button onClick={onClick} className={`inline-flex items-center gap-2 font-mono text-xs ${t.textMuted} hover:text-accent-400 transition-colors`}>
+    <button onClick={onClick} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} transition-colors hover:text-accent-400`}>
       <ArrowRight size={14} className="rotate-180" /> Back to portfolio
     </button>
   );
 }
 
-export function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl", children }) {
+export function PageHeader({ eyebrow, EyebrowIcon, title, subtitle, t, isDark, centered = false }) {
+  const rule = isDark ? "border-neutral-100" : "border-black";
+  return (
+    <>
+      <header className={`mt-10 sm:mt-14 ${centered ? "text-center" : ""}`}>
+        {eyebrow && (
+          <p className={`mb-5 inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent}`}>
+            {EyebrowIcon && <EyebrowIcon size={13} />} {eyebrow}
+          </p>
+        )}
+        <h1 className={`font-serif-read text-[3.5rem] font-normal leading-[0.9] tracking-[-0.035em] sm:text-[6rem] lg:text-[8.5rem] ${centered ? "text-balance" : ""}`}>{title}</h1>
+        {subtitle && <p className={`mt-6 max-w-xl text-balance text-lg leading-snug ${centered ? "mx-auto" : ""} ${t.textMuted}`}>{subtitle}</p>}
+      </header>
+      <div className={`mt-12 border-t ${rule} sm:mt-16`} />
+    </>
+  );
+}
+
+export function SectionPanel({ t, onClose, listenEsc = true, children }) {
   const [closing, requestClose] = useOverlayClose(onClose);
   useEffect(() => {
     if (!listenEsc) return;
@@ -85,10 +103,10 @@ export function SectionPanel({ t, onClose, listenEsc = true, width = "max-w-6xl"
   }, [requestClose, listenEsc]);
 
   return (
-    <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto ${t.bg} ${t.text}`}>
-      <div className={`${width} mx-auto px-5 sm:px-8 pt-10 sm:pt-14 pb-20`}>
+    <div id="panel-scroll" className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
+      <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-10 sm:pt-10 lg:px-12">
         <BackButton t={t} onClick={requestClose} />
-        <div className="mt-10">{children}</div>
+        {children}
       </div>
     </div>
   );

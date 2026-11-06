@@ -13,7 +13,7 @@ export const SIDEBAR_GROUPS = [
     items: [
       { id: "aboutme", label: "About", Icon: User },
       { id: "skills", label: "Skills", Icon: Layers, count: SKILL_TOTAL },
-      { id: "activities", label: "Activities", Icon: Trophy },
+      { id: "activities", label: "Side Quest", Icon: Trophy },
     ],
   },
   {

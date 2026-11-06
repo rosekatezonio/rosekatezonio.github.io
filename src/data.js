@@ -22,7 +22,7 @@ export const RESUME_URL = cvPdf;
 export const NAV_LINKS = [
   { id: "aboutme", label: "About" },
   { id: "skills", label: "Skills" },
-  { id: "activities", label: "Activities" },
+  { id: "activities", label: "Side Quest" },
   { id: "labs", label: "Projects" },
   { id: "experience", label: "Experience" },
   { id: "github-activity", label: "GitHub" },

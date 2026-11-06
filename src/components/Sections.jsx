@@ -199,7 +199,7 @@ export function GithubActivity({ t, isDark }) {
                         x={m.wi * cell}
                         y={11}
                         fontSize="10"
-                        fontFamily="Inter, system-ui, sans-serif"
+                        fontFamily="'Source Serif 4', Georgia, serif"
                         fill={isDark ? "#7A7A7A" : "#8A8A8A"}
                       >
                         {m.label}

@@ -1,6 +1,6 @@
 import React from "react";
 import { PortfolioImage } from "../images.jsx";
-import { Reveal, headline } from "./ui.jsx";
+import { Reveal, PageHeader } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
 import { ExperienceTimeline } from "./Home.jsx";
 import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, hasLink, eduProgress, initialsOf } from "../data.js";
@@ -17,8 +17,7 @@ export function CertificationSection({ t, isDark }) {
 
   return (
     <section id="certification">
-      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Certifications</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned and the ones I'm working toward.</p>
+      <PageHeader title="Certifications" subtitle="Credentials I've earned and the ones I'm working toward." t={t} isDark={isDark} />
 
       {groups.map((group) => (
         <div key={group.label} className="mt-10 first:mt-10">
@@ -82,10 +81,9 @@ export function CertificationSection({ t, isDark }) {
 export function ExperienceHistory({ t, isDark }) {
   return (
     <section id="experience-history">
-      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Experience</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Internships and work experience, newest first.</p>
-      <div className="mt-8 sm:mt-10">
-        <ExperienceTimeline t={t} isDark={isDark} />
+      <PageHeader title="Experience" subtitle="Internships and work experience, newest first." t={t} isDark={isDark} />
+      <div className="mt-10 sm:mt-14">
+        <ExperienceTimeline t={t} isDark={isDark} className="w-full" />
       </div>
     </section>
   );
@@ -94,9 +92,8 @@ export function ExperienceHistory({ t, isDark }) {
 export function ActivitiesJourney({ t, isDark }) {
   return (
     <section>
-      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Activities</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>The journey so far: where I've been and what I've been building, newest first.</p>
-      <div className="mt-10 sm:mt-14 space-y-14 lg:space-y-28">
+      <PageHeader title="Side Quest" subtitle="The journey so far: where I've been and what I've been building, newest first." t={t} isDark={isDark} />
+      <div className="mt-12 sm:mt-16 space-y-14 lg:space-y-28">
         {ACTIVITIES.map((f, i) => (
           <Reveal key={f.title}>
             <ActivityRow f={f} reverse={i % 2 === 1} t={t} isDark={isDark} />
@@ -126,41 +123,37 @@ export function AboutPhoto({ photo, isDark }) {
 export function AboutMeSection({ t, isDark }) {
   const mainBlocks = ABOUT_ME;
   return (
-    <section id="aboutme" className="max-w-2xl mx-auto">
-      <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-        <User size={13} /> MORE ABOUT ME
-      </p>
-      <h2 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>A little more of me</h2>
-      <div className="mt-8">
-        <AboutPhoto photo={ABOUT_PHOTOS[0]} isDark={isDark} />
-      </div>
+    <section id="aboutme">
+      <PageHeader eyebrow="MORE ABOUT ME" EyebrowIcon={User} title="A little more of me" t={t} isDark={isDark} centered />
 
-      <div className="max-w-2xl mx-auto">
+      <div className="mx-auto mt-10 max-w-2xl sm:mt-14">
+        <AboutPhoto photo={ABOUT_PHOTOS[0]} isDark={isDark} />
+
         <p className="font-serif-read font-normal text-3xl sm:text-5xl tracking-[-0.025em] leading-[1.1] mt-14">
           Hi, I'm <span className={t.accent}>RK</span>!
         </p>
-      </div>
 
-      <div className="mt-8 max-w-2xl mx-auto space-y-7">
-        {mainBlocks.map((block, i) => (
-          <p
-            key={i}
-            style={{ hyphens: "auto", WebkitHyphens: "auto" }}
-            className={`font-body text-base sm:text-[17px] leading-[1.8] text-justify ${t.textMuted}`}
-          >
-            {block}
-          </p>
-        ))}
-      </div>
-
-      <div className="mt-14 max-w-2xl mx-auto">
-        <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Foundation</p>
-        <h3 className="font-serif-read font-normal text-3xl tracking-[-0.02em] mt-1">Education</h3>
-        <ul className={`mt-4 border-t ${t.border}`}>
-          {EDUCATION.map((edu) => (
-            <EducationRow key={edu.program} edu={edu} t={t} isDark={isDark} />
+        <div className="mt-8 space-y-7">
+          {mainBlocks.map((block, i) => (
+            <p
+              key={i}
+              style={{ hyphens: "auto", WebkitHyphens: "auto" }}
+              className={`font-body text-base sm:text-[17px] leading-[1.8] text-left sm:text-justify ${t.textMuted}`}
+            >
+              {block}
+            </p>
           ))}
-        </ul>
+        </div>
+
+        <div className="mt-14">
+          <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Foundation</p>
+          <h3 className="font-serif-read font-normal text-3xl tracking-[-0.02em] mt-1">Education</h3>
+          <ul className={`mt-4 border-t ${t.border}`}>
+            {EDUCATION.map((edu) => (
+              <EducationRow key={edu.program} edu={edu} t={t} isDark={isDark} />
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -169,10 +162,9 @@ export function AboutMeSection({ t, isDark }) {
 export function AffiliationSection({ t, isDark }) {
   return (
     <section id="affiliation">
-      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Affiliations</h1>
-      <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Organizations and communities I'm part of.</p>
+      <PageHeader title="Affiliations" subtitle="Organizations and communities I'm part of." t={t} isDark={isDark} />
 
-      <ul className={`mt-10 border-t ${t.border}`}>
+      <ul>
         {AFFILIATIONS.map((org) => (
           <li key={org.company} className={`border-b ${t.border}`}>
             <div className="flex items-center gap-4 sm:gap-5 py-4 sm:py-5">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
-import { renderDescription, BackButton } from "./ui.jsx";
+import { renderDescription, BackButton, PageHeader } from "./ui.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
 import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
@@ -69,12 +69,11 @@ export function SkillsArchive({ t, onClose, isDark }) {
 
   return (
     <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
-      <div className="max-w-7xl mx-auto px-5 sm:px-10 py-10 sm:py-14">
+      <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-10 sm:pt-10 lg:px-12">
         <BackButton t={t} onClick={requestClose} />
-        <h1 className="font-display font-bold text-4xl sm:text-6xl mt-12">Full Toolkit</h1>
-        <p className={`font-mono text-sm ${t.accent} mt-3`}>Grouped by what each tool lets me do.</p>
+        <PageHeader title="Full Toolkit" subtitle="Grouped by what each tool lets me do." t={t} isDark={isDark} />
 
-        <div className="mt-14 space-y-14">
+        <div className="mt-12 space-y-14">
           {SKILL_GROUPS.map((group) => (
             <section key={group.title}>
               <div className="flex items-center gap-4">

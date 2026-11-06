@@ -6,9 +6,9 @@ import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIEN
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
 
 
-export function ExperienceTimeline({ t, isDark }) {
+export function ExperienceTimeline({ t, isDark, className = "max-w-3xl mx-auto" }) {
   return (
-    <ol className="max-w-3xl mx-auto">
+    <ol className={className}>
       {EXPERIENCE.map((exp, i) => {
         const date = exp.period || exp.duration || "";
         const meta = [exp.location, exp.employment].filter((v) => v && v !== date);
@@ -33,7 +33,7 @@ export function ExperienceTimeline({ t, isDark }) {
                   </p>
 
                   {Array.isArray(exp.description) ? (
-                    <ul className={`mt-4 space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
+                    <ul className={`mt-4 max-w-3xl space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
                       {exp.description.map((line) => (
                         <li key={line} className="relative pl-4">
                           <span aria-hidden="true" className="absolute left-0">–</span>
@@ -42,7 +42,7 @@ export function ExperienceTimeline({ t, isDark }) {
                       ))}
                     </ul>
                   ) : (
-                    exp.description && <p className={`mt-4 text-sm leading-relaxed ${t.textMuted}`}>{exp.description}</p>
+                    exp.description && <p className={`mt-4 max-w-3xl text-sm leading-relaxed ${t.textMuted}`}>{exp.description}</p>
                   )}
                 </div>
               </div>
@@ -56,9 +56,8 @@ export function ExperienceTimeline({ t, isDark }) {
 
 
 export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) {
-  // Hover previews color (mouse only). Click flips whatever is currently shown.
   const [photoHover, setPhotoHover] = useState(false);
-  const [photoOverride, setPhotoOverride] = useState(null); // null | "color" | "gray"
+  const [photoOverride, setPhotoOverride] = useState(null);
   const photoColor = photoOverride ? photoOverride === "color" : photoHover;
   const togglePhoto = () => setPhotoOverride(photoColor ? "gray" : "color");
   const tiles = [
@@ -94,7 +93,6 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
                 onPointerEnter={(e) => e.pointerType === "mouse" && setPhotoHover(true)}
                 onPointerLeave={() => {
                   setPhotoHover(false);
-                  // a forced-black state ends when the cursor leaves, so hover works again next time
                   setPhotoOverride((o) => (o === "gray" ? null : o));
                 }}
                 onKeyDown={(e) => {
@@ -201,10 +199,10 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
           </div>
         </Reveal>
 
-        <section aria-label="Activities, affiliation, and certification links" className={`mt-8 border-t ${t.border} pt-7`}>
+        <section aria-label="Side Quest, affiliation, and certification links" className={`mt-8 border-t ${t.border} pt-7`}>
           <div className="grid grid-cols-3 gap-x-4 sm:gap-8">
             {[
-              { id: "activities", label: "Activities" },
+              { id: "activities", label: "Side Quest" },
               { id: "affiliation", label: "Affiliation" },
               { id: "certification", label: "Cert" },
             ].map((item) => (

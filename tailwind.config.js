@@ -4,6 +4,11 @@ export default {
   safelist: ["hover:text-neutral-400", "hover:text-slate-600"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
+        serif: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
+        mono: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
+      },
       colors: {
         black: "#000000",
         paper: "#FFFFFF",
