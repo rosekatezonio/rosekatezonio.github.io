@@ -74,7 +74,7 @@ export function ProjectShowcase({ t, isDark, item, icon: FallbackIcon, onOpenPro
 
         <div key={`info-${item.title}`} className="bento-swap-in min-w-0">
           <p className={`font-mono text-[11px] uppercase tracking-[0.2em] sm:text-xs ${t.textFaint}`}>{item.eyebrow}</p>
-          <h3 className="mt-4 font-display text-3xl font-bold leading-[1.15] tracking-tight sm:text-4xl">
+          <h3 className="mt-4 font-serif-read font-normal text-[2rem] leading-[1.05] tracking-[-0.025em] sm:text-5xl">
             <span className={t.text}>{item.title}.</span> <span className={t.textFaint}>{tagline}</span>
           </h3>
 

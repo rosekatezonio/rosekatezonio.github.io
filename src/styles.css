@@ -242,3 +242,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 }
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+.plog-row { transition: opacity 0.25s ease; }
+@media (hover: hover) {
+  .plog-list:hover .plog-row { opacity: 0.4; }
+  .plog-list:hover .plog-row:hover,
+  .plog-list:hover .plog-row:focus-within { opacity: 1; }
+}

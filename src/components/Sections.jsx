@@ -35,7 +35,7 @@ export function ActivityRow({ f, reverse, t, isDark }) {
         <p className={`font-mono text-xs tracking-wide ${t.textMuted}`}>
           <span className={t.accent}>{f.label}</span> / {f.date}
         </p>
-        <h3 className={`font-display font-bold text-[26px] sm:text-4xl tracking-tight leading-tight text-balance ${t.text} mt-4`}>{f.title}</h3>
+        <h3 className={`font-serif-read font-normal text-[2rem] sm:text-5xl tracking-[-0.025em] leading-[1.05] text-balance ${t.text} mt-4`}>{f.title}</h3>
         <p className={`inline-flex items-center gap-1.5 font-body font-semibold text-base ${t.accent} mt-3`}>
           <MapPin size={15} /> {f.location}
         </p>

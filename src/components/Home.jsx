@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PortfolioImage, img } from "../images.jsx";
-import { Reveal, SectionHeading, ViewMore } from "./ui.jsx";
+import { Reveal, SectionHeading, ViewMore, headline } from "./ui.jsx";
 import { ProjectShowcase } from "./ProjectShowcase.jsx";
 import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
@@ -249,12 +249,12 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
   return (
     <section id="skills">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-24">
-        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
+        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-14">
           <Reveal>
             <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
               <Wrench size={13} /> 02 / TECHNICAL TOOLKIT
             </p>
-            <h2 className={`font-display text-2xl sm:text-3xl font-bold ${t.text} mb-4`}>What I work with.</h2>
+            <h2 className={`${headline} text-[2.75rem] sm:text-[4.5rem] lg:text-[6.5rem] ${t.text} mb-6`}>What I work with.</h2>
             <p className={`font-body text-sm sm:text-base ${t.textMuted}`}>
               A practical toolkit for building software and understanding IT systems.
             </p>
@@ -303,11 +303,11 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
         <div className="flex flex-wrap items-baseline justify-center gap-3">
           {[["webapps", "Software"], ["labs", "Networking & IT"]].map(([key, label], i) => (
             <React.Fragment key={key}>
-              {i > 0 && <span className={`font-display text-2xl sm:text-3xl font-bold ${t.textFaint}`}>/</span>}
+              {i > 0 && <span className={`font-serif-read text-3xl sm:text-5xl ${t.textFaint}`}>/</span>}
               <button
                 onClick={() => onSwitchTab(key)}
                 aria-pressed={projectTab === key}
-                className={`font-display text-2xl sm:text-3xl font-bold pb-1 border-b-2 transition-colors ${
+                className={`font-serif-read font-normal tracking-[-0.03em] text-3xl sm:text-5xl pb-1 border-b-2 transition-colors ${
                   projectTab === key ? `${t.text} border-accent-400` : `${t.textFaint} border-transparent hover:${t.textMuted}`
                 }`}
               >
@@ -333,19 +333,71 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
 }
 
 
-function ExperienceRow({ exp, index, t }) {
+function ExperienceName({ exp, t }) {
+  const [drawn, setDrawn] = useState(false);
+  const nameClass = `font-serif-read font-normal text-[1.75rem] sm:text-4xl leading-[1.05] tracking-[-0.025em] ${t.text}`;
+  if (!exp.website) return <span className={nameClass}>{exp.company}</span>;
+
+  const onClick = (e) => {
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    setDrawn(true);
+    setTimeout(() => window.open(exp.website, "_blank", "noopener,noreferrer"), 450);
+    setTimeout(() => setDrawn(false), 1100);
+  };
+
   return (
-    <li className={`grid grid-cols-[2.25rem_1fr] sm:grid-cols-[3rem_1fr] items-baseline gap-x-3 sm:gap-x-5 border-b py-6 sm:py-8 ${t.border}`}>
-      <span className={`font-mono text-xs ${t.textFaint}`}>{String(index + 1).padStart(2, "0")}</span>
-      <span className="min-w-0">
-        <span className={`block font-display font-bold text-xl sm:text-3xl leading-tight tracking-tight ${t.text}`}>{exp.position}</span>
-        <span className={`mt-1.5 block text-sm ${t.textMuted}`}>{exp.company}</span>
-      </span>
+    <a
+      href={exp.website}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={onClick}
+      className={`relative inline-block min-w-0 ${nameClass} transition-colors hover:text-accent-400`}
+    >
+      {exp.company}
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute -bottom-1 left-0 h-[3px] w-full bg-current transition-transform duration-500 ease-out ${
+          drawn ? "origin-left scale-x-100" : "origin-right scale-x-0"
+        }`}
+      />
+    </a>
+  );
+}
+
+function ExperienceRow({ exp, t, isDark }) {
+  return (
+    <li className={`flex items-center justify-between gap-4 sm:gap-8 border-b py-6 sm:py-8 ${t.border}`}>
+      <div className="min-w-0">
+        <div className="flex items-start gap-3 sm:gap-5">
+          <div className={`h-11 w-11 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-xl border ${t.border} bg-white p-1`}>
+            <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-full w-full object-contain" />
+          </div>
+          <div className="min-w-0">
+            <ExperienceName exp={exp} t={t} />
+            <p className={`mt-2 text-base sm:text-lg leading-snug ${t.textMuted}`}>{exp.position}</p>
+          </div>
+        </div>
+      </div>
+      {exp.website && (
+        <a
+          href={exp.website}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={`Visit ${exp.company} website`}
+          className={`group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium ${t.text} transition-colors hover:text-accent-400`}
+        >
+          <span className="hidden sm:inline">Visit website</span>
+          <span className="sm:hidden">Website</span>
+          <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </a>
+      )}
     </li>
   );
 }
 
-export function ExperienceSection({ t }) {
+export function ExperienceSection({ t, isDark }) {
   return (
     <section id="experience" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <SectionHeading
@@ -370,7 +422,7 @@ export function ExperienceSection({ t }) {
 
           <ol className={`border-t ${t.border}`}>
             {EXPERIENCE.map((exp, i) => (
-              <ExperienceRow key={`${exp.company}-${i}`} exp={exp} index={i} t={t} />
+              <ExperienceRow key={`${exp.company}-${i}`} exp={exp} t={t} isDark={isDark} />
             ))}
           </ol>
         </div>

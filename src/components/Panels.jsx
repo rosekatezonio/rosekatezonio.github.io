@@ -1,6 +1,6 @@
 import React from "react";
 import { PortfolioImage } from "../images.jsx";
-import { Reveal } from "./ui.jsx";
+import { Reveal, headline } from "./ui.jsx";
 import { ActivityRow } from "./Sections.jsx";
 import { ExperienceTimeline } from "./Home.jsx";
 import { CERTIFICATIONS, ACTIVITIES, ABOUT_ME, ABOUT_PHOTOS, EDUCATION, AFFILIATIONS, hasLink, eduProgress, initialsOf } from "../data.js";
@@ -17,7 +17,7 @@ export function CertificationSection({ t, isDark }) {
 
   return (
     <section id="certification">
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Certifications</h1>
+      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Certifications</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Credentials I've earned and the ones I'm working toward.</p>
 
       {groups.map((group) => (
@@ -82,7 +82,7 @@ export function CertificationSection({ t, isDark }) {
 export function ExperienceHistory({ t, isDark }) {
   return (
     <section id="experience-history">
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Experience</h1>
+      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Experience</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Internships and work experience, newest first.</p>
       <div className="mt-8 sm:mt-10">
         <ExperienceTimeline t={t} isDark={isDark} />
@@ -94,7 +94,7 @@ export function ExperienceHistory({ t, isDark }) {
 export function ActivitiesJourney({ t, isDark }) {
   return (
     <section>
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Activities</h1>
+      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Activities</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>The journey so far: where I've been and what I've been building, newest first.</p>
       <div className="mt-10 sm:mt-14 space-y-14 lg:space-y-28">
         {ACTIVITIES.map((f, i) => (
@@ -130,13 +130,13 @@ export function AboutMeSection({ t, isDark }) {
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
         <User size={13} /> MORE ABOUT ME
       </p>
-      <h2 className="font-display font-bold text-4xl sm:text-5xl tracking-tight">A little more of me</h2>
+      <h2 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>A little more of me</h2>
       <div className="mt-8">
         <AboutPhoto photo={ABOUT_PHOTOS[0]} isDark={isDark} />
       </div>
 
       <div className="max-w-2xl mx-auto">
-        <p className="font-display text-2xl sm:text-3xl font-medium leading-snug mt-14">
+        <p className="font-serif-read font-normal text-3xl sm:text-5xl tracking-[-0.025em] leading-[1.1] mt-14">
           Hi, I'm <span className={t.accent}>RK</span>!
         </p>
       </div>
@@ -155,7 +155,7 @@ export function AboutMeSection({ t, isDark }) {
 
       <div className="mt-14 max-w-2xl mx-auto">
         <p className={`font-mono text-[11px] tracking-widest uppercase ${t.accent}`}>Foundation</p>
-        <h3 className="font-display font-semibold text-xl mt-1">Education</h3>
+        <h3 className="font-serif-read font-normal text-3xl tracking-[-0.02em] mt-1">Education</h3>
         <ul className={`mt-4 border-t ${t.border}`}>
           {EDUCATION.map((edu) => (
             <EducationRow key={edu.program} edu={edu} t={t} isDark={isDark} />
@@ -169,7 +169,7 @@ export function AboutMeSection({ t, isDark }) {
 export function AffiliationSection({ t, isDark }) {
   return (
     <section id="affiliation">
-      <h1 className="font-display font-bold text-3xl sm:text-5xl">Affiliations</h1>
+      <h1 className={`${headline} text-[3.25rem] sm:text-[6rem]`}>Affiliations</h1>
       <p className={`text-sm sm:text-base ${t.textMuted} mt-3`}>Organizations and communities I'm part of.</p>
 
       <ul className={`mt-10 border-t ${t.border}`}>

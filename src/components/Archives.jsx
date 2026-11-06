@@ -111,56 +111,9 @@ const galleryUrl = (key) => {
   return u.replace("/upload/", "/upload/w_1400,c_limit/");
 };
 
-function ProjectCard({ p, t, isDark }) {
-  const featured = FEATURED_TITLES.includes(p.title);
-  const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
-  return (
-    <li className={`min-w-0 border-t first:border-t-0 ${t.border}`}>
-      <a
-        href={`#${slugOf(p.title)}`}
-        className="group flex items-center gap-3.5 px-3.5 py-3 transition-colors hover:bg-accent-400/5"
-      >
-        <div className={`h-12 w-[4.25rem] shrink-0 overflow-hidden rounded-md border ${t.border} sm:h-14 sm:w-24 ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
-          <PortfolioImage
-            src={thumb}
-            alt={`${p.title} preview`}
-            fallbackLabel={p.title}
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full object-cover object-top"
-          />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h2 className="truncate font-display text-[15px] font-bold leading-tight transition-colors group-hover:text-accent-400 sm:text-base">{p.title}</h2>
-            {featured && (
-              <span className="shrink-0 font-mono text-[11px] uppercase tracking-wide text-accent-400">
-                <span aria-hidden="true" className="sm:hidden">●</span>
-                <span className="hidden sm:inline">Featured</span>
-                <span className="sr-only sm:hidden">Featured</span>
-              </span>
-            )}
-          </div>
-          <p className={`mt-1 truncate text-[13px] ${t.textMuted}`}>
-            <span className={`font-mono text-xs ${t.textFaint}`}>{monthYearOf(p)}</span>
-            <span className={t.textFaint}> · </span>
-            {renderDescription(p.description, t)}
-          </p>
-        </div>
-        <ArrowRight size={16} className={`shrink-0 ${t.textFaint} transition-all group-hover:translate-x-0.5 group-hover:text-accent-400`} />
-      </a>
-    </li>
-  );
-}
-
 const featuredRank = (p) => {
   const i = FEATURED_TITLES.indexOf(p.title);
   return i === -1 ? FEATURED_TITLES.length : i;
-};
-
-const monthYearOf = (p) => {
-  const m = (p.meta || "").match(/(January|February|March|April|May|June|July|August|September|October|November|December)\s+20\d{2}/);
-  return m ? m[0] : yearOf(p);
 };
 
 const SORT_OPTIONS = [
@@ -171,13 +124,26 @@ const SORT_OPTIONS = [
 ];
 
 const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const FULL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTH_RE = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\.?";
 
 // Year + month as one number. A project that only lists a year counts as late in that year.
 const dateKeyOf = (p) => {
-  const m = (p.meta || "").match(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\.?\s+(20\d{2})/i);
+  const m = (p.meta || "").match(new RegExp(`\\b${MONTH_RE}\\s+(20\\d{2})`, "i"));
   if (m) return parseInt(m[2], 10) * 12 + MONTHS.indexOf(m[1].toLowerCase());
   return (parseInt(yearOf(p), 10) || 0) * 12 + 11;
 };
+
+const dateLabelOf = (p) => {
+  const m = (p.meta || "").match(new RegExp(`\\b${MONTH_RE}\\s+(20\\d{2})`, "i"));
+  return m ? `${FULL_MONTHS[MONTHS.indexOf(m[1].toLowerCase())]} ${m[2]}` : yearOf(p);
+};
+
+const contextPartsOf = (p) =>
+  (p.meta || p.category || "")
+    .split(" · ")
+    .map((part) => part.trim())
+    .filter((part) => part && !new RegExp(`^(${MONTH_RE}\\s+)?20\\d{2}$`, "i").test(part));
 
 const sortProjects = (list, mode) =>
   [...list].sort((a, b) => {
@@ -187,160 +153,85 @@ const sortProjects = (list, mode) =>
     return diff || featuredRank(a) - featuredRank(b);
   });
 
-function SortSelect({ value, onChange, t, isDark, className = "" }) {
+const inTrack = (p, track) => {
+  if (track === "All") return true;
+  const tr = trackOf(p.title);
+  return tr === track || (tr === "Both" && (track === "Software" || track === "Networking & IT")) || p.category === track;
+};
+
+function SortSelect({ value, onChange, t, isDark }) {
   return (
-    <div className={`relative shrink-0 ${className}`}>
+    <div className="relative shrink-0">
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         aria-label="Sort projects"
-        className={`h-10 appearance-none rounded-lg border ${t.border} bg-transparent pl-3 pr-8 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
+        className={`h-9 cursor-pointer appearance-none bg-transparent pr-5 text-[15px] ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none transition-colors hover:text-accent-400`}
       >
         {SORT_OPTIONS.map((o) => (
           <option key={o.value} value={o.value} className={`${t.surfaceSolid} ${t.text}`}>{o.label}</option>
         ))}
       </select>
-      <ArrowDown size={13} className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
+      <ArrowDown size={12} className={`pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
     </div>
   );
 }
 
-// Laptop-and-up layout (lg+): an index on the left, a sticky preview of the selected project on the right.
-// Clicking a row only selects it; "View project" is the one way into the full project.
-// Mobile and tablet keep the original single-column list rendered by ProjectArchive.
-function ProjectLogDesktop({ t, isDark, sorted, total, query, setQuery, track, setTrack, sort, setSort, onClose }) {
-  const [activeTitle, setActiveTitle] = useState(null);
-  const active = sorted.find((p) => p.title === activeTitle) || sorted[0];
-  const activeThumb = active && active.thumbnail ? img(thumbFor(active, isDark)) : undefined;
-
+function ProjectRow({ p, t, isDark }) {
+  const featured = FEATURED_TITLES.includes(p.title);
+  const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
+  const titleId = `plog-${slugOf(p.title)}`;
+  const context = contextPartsOf(p);
+  const tags = (p.tags || []).slice(0, 5);
   return (
-    <div className="hidden lg:block max-w-7xl mx-auto px-12 py-10">
-      <BackButton t={t} onClick={onClose} />
-
-      <div className="mt-8 grid grid-cols-12 gap-x-14 items-start">
-        {/* Left: heading, search, filters, index */}
-        <div className="col-span-5">
-          <div className="flex items-baseline justify-between gap-4">
-            <h1 className="font-display font-bold text-5xl leading-none">Project Log</h1>
-            <p className={`shrink-0 font-mono text-xs ${t.textFaint}`}>{sorted.length} of {total} projects</p>
-          </div>
-          <p className={`mt-3 text-[15px] ${t.textMuted}`}>Everything I've built, wired up, and shipped.</p>
-
-          <div className={`mt-7 flex items-center gap-2.5 rounded-lg border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5 focus-within:border-accent-400/60 transition-colors`}>
-            <Search size={15} className={`shrink-0 ${t.textFaint}`} />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search projects..."
-              aria-label="Search projects"
-              className="w-full min-w-0 bg-transparent font-body text-[15px] outline-none placeholder:text-slate-400"
-            />
-            {query && (
-              <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
-                <X size={14} />
-              </button>
-            )}
-          </div>
-
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
-          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="Filter projects">
-            {TRACK_FILTERS.map((name) => (
-              <button
-                key={name}
-                role="tab"
-                aria-selected={track === name}
-                onClick={() => setTrack(name)}
-                className={`text-[15px] font-medium underline underline-offset-8 decoration-1 transition-colors ${
-                  track === name
-                    ? `${t.text} decoration-accent-400 decoration-2`
-                    : `${t.textMuted} decoration-transparent hover:text-accent-400 hover:decoration-accent-400/60`
-                }`}
-              >
-                {name}
-              </button>
-            ))}
-          </div>
-          <SortSelect value={sort} onChange={setSort} t={t} isDark={isDark} />
-          </div>
-
-          {sorted.length > 0 ? (
-            <ul className="mt-6">
-              {sorted.map((p) => {
-                const isActive = active && p.title === active.title;
-                return (
-                  <li key={p.title} className={`border-t ${t.border}`}>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTitle(p.title)}
-                      aria-pressed={isActive}
-                      className="group grid w-full grid-cols-[3.25rem_1fr_auto] items-baseline gap-4 py-4 text-left"
-                    >
-                      <span className={`font-mono text-xs ${isActive ? "text-accent-400" : t.textFaint} transition-colors`}>{yearOf(p)}</span>
-                      <span className="block min-w-0">
-                        <span className={`block font-display text-xl font-bold leading-tight transition-colors ${isActive ? "text-accent-400" : ""}`}>
-                          {p.title}
-                        </span>
-                        <span className={`mt-1 block font-mono text-xs ${t.textFaint}`}>
-                          {taglineOf(p)}
-                          {FEATURED_TITLES.includes(p.title) && (
-                            <span className="ml-2 text-[10px] uppercase tracking-widest text-accent-400">· Featured</span>
-                          )}
-                        </span>
-                      </span>
-                      <ArrowRight size={16} className={`transition-all ${isActive ? "translate-x-0.5 text-accent-400" : t.textFaint}`} />
-                    </button>
-                  </li>
-                );
-              })}
-              <li className={`border-t ${t.border}`} aria-hidden="true" />
-            </ul>
-          ) : (
-            <p className={`mt-8 text-sm ${t.textMuted}`}>No projects match{query.trim() ? ` "${query.trim()}"` : ""}.</p>
+    <li className={`plog-row border-b ${t.border}`}>
+      <a
+        href={`#${slugOf(p.title)}`}
+        aria-labelledby={titleId}
+        className="group grid gap-x-10 gap-y-5 py-8 sm:py-10 md:grid-cols-[9rem_minmax(0,1fr)] lg:grid-cols-[10rem_minmax(0,1fr)_21rem] lg:gap-x-12"
+      >
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-sm leading-snug md:block md:space-y-0.5 md:pt-3">
+          <p className="font-medium">{dateLabelOf(p)}</p>
+          {context.map((c) => (
+            <p key={c} className={t.textMuted}>{c}</p>
+          ))}
+          {p.status && p.status !== "Completed" && <p className={t.textMuted}>{p.status}</p>}
+          {featured && (
+            <p className="inline-flex items-center gap-1.5 font-medium">
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent-400" />
+              Featured
+            </p>
           )}
         </div>
 
-        {/* Right: sticky preview */}
-        <div className="col-span-7 sticky top-10">
-          {active && (
-            <div className={`overflow-hidden rounded-2xl border ${t.border} ${t.surfaceSolid}`}>
-              <div className={`aspect-[16/9] overflow-hidden border-b ${t.border} ${isDark ? "bg-neutral-950" : "bg-slate-100"}`}>
-                <PortfolioImage
-                  key={active.title}
-                  src={activeThumb}
-                  alt={`${active.title} preview`}
-                  fallbackLabel={active.title}
-                  className="h-full w-full object-cover object-top"
-                />
-              </div>
-              <div className="p-7">
-                <p className={`font-mono text-xs ${t.textFaint}`}>
-                  {monthYearOf(active)}
-                  <span> · </span>
-                  {contextOf(active)}
-                  {active.status && (<><span> · </span><span className="text-accent-400">{active.status}</span></>)}
-                </p>
-                <h2 className="mt-2 font-display text-3xl font-bold leading-tight">{active.title}</h2>
-                <p className={`mt-3 text-[15px] leading-relaxed line-clamp-3 ${t.textMuted}`}>{renderDescription(active.description, t)}</p>
-                {active.tags && active.tags.length > 0 && (
-                  <ul className="mt-5 flex flex-wrap gap-2">
-                    {active.tags.slice(0, 6).map((tag) => (
-                      <li key={tag} className={`font-mono text-xs px-2.5 py-1 rounded-md border ${t.border} ${t.textMuted}`}>{tag}</li>
-                    ))}
-                  </ul>
-                )}
-                <a
-                  href={`#${slugOf(active.title)}`}
-                  className="mt-6 inline-flex items-center gap-2 rounded-lg bg-accent-400 px-5 py-2.5 text-sm font-semibold text-onaccent transition-opacity hover:opacity-90"
-                >
-                  View project <ArrowUpRight size={14} />
-                </a>
-              </div>
-            </div>
-          )}
+        <div className="min-w-0">
+          <h2
+            id={titleId}
+            className="font-serif-read text-balance text-[2.25rem] font-normal leading-[1.05] tracking-[-0.025em] sm:text-[2.75rem] lg:text-[3.25rem]"
+          >
+            <span className="underline decoration-transparent decoration-[3px] underline-offset-[0.14em] transition-[text-decoration-color] group-hover:decoration-accent-400">
+              {p.title}
+            </span>
+          </h2>
+          <p className={`mt-3 text-lg leading-snug ${t.text}`}>{taglineOf(p)}</p>
+          <p className={`mt-4 max-w-[34rem] text-base leading-relaxed line-clamp-3 ${t.textMuted}`}>
+            {renderDescription(p.description, t)}
+          </p>
+          {tags.length > 0 && <p className={`mt-5 text-sm ${t.textMuted}`}>{tags.join(", ")}</p>}
         </div>
-      </div>
-    </div>
+
+        <div className={`aspect-[16/10] overflow-hidden md:col-start-2 lg:col-start-3 lg:row-start-1 lg:mt-2 ${isDark ? "bg-neutral-900" : "bg-slate-100"}`}>
+          <PortfolioImage
+            src={thumb}
+            alt={`${p.title} preview`}
+            fallbackLabel={p.title}
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover object-top"
+          />
+        </div>
+      </a>
+    </li>
   );
 }
 
@@ -357,94 +248,98 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
   const q = query.trim().toLowerCase();
   const matches = (p) => {
-    if (track !== "All") {
-      const tr = trackOf(p.title);
-      // A project that sits in both lists ("Both") belongs under Software and Networking & IT.
-      const inTrack = tr === track || (tr === "Both" && (track === "Software" || track === "Networking & IT"));
-      if (!inTrack && p.category !== track) return false;
-    }
+    if (!inTrack(p, track)) return false;
     if (!q) return true;
     const hay = [p.title, p.eyebrow, p.meta, p.category, ...(p.tags || [])].filter(Boolean).join(" ").toLowerCase();
     return hay.includes(q);
   };
   const filtered = ALL_PROJECTS.filter(matches);
   const sorted = sortProjects(filtered, sort);
+  const total = ALL_PROJECTS.length;
+  const rule = isDark ? "border-neutral-100" : "border-black";
+  const resetAll = () => { setQuery(""); setTrack("All"); };
 
   return (
     <div className={`${closing ? "overlay-sink" : instant ? "" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
-      <div className="lg:hidden max-w-3xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
-        <BackButton t={t} onClick={requestClose} />
+      <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-10 sm:pt-10 lg:px-12">
+        <button onClick={requestClose} className={`inline-flex items-center gap-2 text-sm ${t.textMuted} transition-colors hover:text-accent-400`}>
+          <ArrowRight size={14} className="rotate-180" /> Back to portfolio
+        </button>
 
-        <div className="mt-4 flex items-baseline justify-between gap-3">
-          <h1 className="font-display font-bold text-2xl sm:text-3xl">Project Log</h1>
-          <p className={`shrink-0 font-mono text-xs ${t.textFaint}`}>
-            {filtered.length} of {ALL_PROJECTS.length}
-            <span className="hidden sm:inline"> projects</span>
+        <header className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-4 sm:mt-14">
+          <div>
+            <h1 className="font-serif-read text-[3.5rem] font-normal leading-[0.9] tracking-[-0.035em] sm:text-[6rem] lg:text-[8.5rem]">Project Log</h1>
+            <p className={`mt-6 max-w-md text-balance text-lg leading-snug ${t.textMuted}`}>Everything I’ve built, wired up, and shipped.</p>
+          </div>
+          <p className={`text-sm tabular-nums ${t.textMuted}`} aria-live="polite">
+            {sorted.length === total ? total : `${sorted.length} of ${total}`} {total === 1 ? "project" : "projects"}
           </p>
-        </div>
-        <p className={`text-sm ${t.textMuted} mt-1`}>Everything I've built, wired up, and shipped.</p>
+        </header>
 
-        <div className="mt-4 flex items-center gap-2">
-          <div className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-lg border ${t.border} ${t.surfaceSolid} px-3.5 py-2.5`}>
-            <Search size={15} className={`shrink-0 ${t.textFaint}`} />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search projects..."
-              aria-label="Search projects"
-              className="w-full min-w-0 bg-transparent font-body text-[15px] outline-none placeholder:text-slate-400"
-            />
-            {query && (
-              <button onClick={() => setQuery("")} className={`shrink-0 ${t.textFaint} hover:text-accent-400 transition-colors`} aria-label="Clear search">
-                <X size={14} />
-              </button>
-            )}
+        <div className={`mt-12 border-t ${rule} sm:mt-16`}>
+          <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+            <div role="group" aria-label="Filter projects" className="no-scrollbar -mx-5 flex gap-x-7 overflow-x-auto px-5 sm:mx-0 sm:px-0">
+              {TRACK_FILTERS.map((name) => {
+                const active = track === name;
+                const count = ALL_PROJECTS.filter((p) => inTrack(p, name)).length;
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setTrack(name)}
+                    className={`shrink-0 whitespace-nowrap py-1 text-[15px] underline decoration-2 underline-offset-[10px] transition-colors ${
+                      active
+                        ? `${t.text} font-medium decoration-accent-400`
+                        : `${t.textMuted} decoration-transparent hover:text-accent-400`
+                    }`}
+                  >
+                    {name}
+                    <span className={`ml-1.5 text-xs tabular-nums ${t.textMuted}`}>{count}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex items-center gap-6">
+              <label className={`flex min-w-0 flex-1 items-center gap-2 border-b ${t.border} transition-colors focus-within:border-accent-400 lg:w-64 lg:flex-none`}>
+                <Search size={14} className={`shrink-0 ${t.textMuted}`} />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search projects"
+                  aria-label="Search projects"
+                  className={`h-9 w-full min-w-0 bg-transparent text-[15px] ${t.text} outline-none placeholder:text-slate-500`}
+                />
+                {query && (
+                  <button type="button" onClick={() => setQuery("")} className={`shrink-0 ${t.textMuted} transition-colors hover:text-accent-400`} aria-label="Clear search">
+                    <X size={14} />
+                  </button>
+                )}
+              </label>
+              <SortSelect value={sort} onChange={setSort} t={t} isDark={isDark} />
+            </div>
           </div>
-          <div className="relative shrink-0">
-            <select
-              value={track}
-              onChange={(e) => setTrack(e.target.value)}
-              aria-label="Filter projects"
-              className={`h-11 appearance-none rounded-lg border ${t.border} bg-transparent pl-3 pr-8 text-sm font-medium ${t.text} ${isDark ? "[color-scheme:dark]" : "[color-scheme:light]"} outline-none cursor-pointer hover:border-accent-400/60 hover:text-accent-400 focus-visible:border-accent-400/60 transition-colors`}
-            >
-              {TRACK_FILTERS.map((name) => (
-                <option key={name} value={name} className={`${t.surfaceSolid} ${t.text}`}>{name}</option>
-              ))}
-            </select>
-            <ArrowDown size={13} className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 ${t.textMuted}`} />
-          </div>
         </div>
 
-        <div className="mt-3 flex items-center justify-end gap-2.5">
-          <span className={`text-sm ${t.textMuted}`}>Sort by</span>
-          <SortSelect value={sort} onChange={setSort} t={t} isDark={isDark} />
-        </div>
-
-        {sorted.length > 0 && (
-          <ul className={`mt-3 overflow-hidden rounded-xl border ${t.border} ${t.surfaceSolid}`}>
+        {sorted.length > 0 ? (
+          <ul className={`plog-list border-t ${t.border}`}>
             {sorted.map((p) => (
-              <ProjectCard key={p.title} p={p} t={t} isDark={isDark} />
+              <ProjectRow key={p.title} p={p} t={t} isDark={isDark} />
             ))}
           </ul>
-        )}
-        {sorted.length === 0 && (
-          <p className={`mt-4 text-sm ${t.textMuted}`}>No projects match{q ? ` "${query.trim()}"` : ""}.</p>
+        ) : (
+          <div className={`border-t ${t.border} py-16`}>
+            <p className="font-serif-read text-3xl tracking-[-0.02em] sm:text-4xl">
+              Nothing matches{q ? ` “${query.trim()}”` : " this filter"}.
+            </p>
+            <button type="button" onClick={resetAll} className="mt-5 text-[15px] underline underline-offset-4 transition-colors hover:text-accent-400">
+              Clear search and filters
+            </button>
+          </div>
         )}
       </div>
-      <ProjectLogDesktop
-        t={t}
-        isDark={isDark}
-        sorted={sorted}
-        total={ALL_PROJECTS.length}
-        query={query}
-        setQuery={setQuery}
-        track={track}
-        setTrack={setTrack}
-        sort={sort}
-        setSort={setSort}
-        onClose={requestClose}
-      />
     </div>
   );
 }

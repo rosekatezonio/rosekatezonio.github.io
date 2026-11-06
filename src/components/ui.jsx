@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useReveal, useOverlayClose } from "../hooks.js";
 import { ArrowRight, ArrowUp, ArrowUpRight } from "../icons.jsx";
 
+export const headline = "font-serif-read font-normal leading-[0.92] tracking-[-0.035em] text-balance";
+
 export function Reveal({ children, className = "", delay = 0 }) {
   const [ref, visible] = useReveal();
   return (
@@ -30,11 +32,11 @@ export function renderDescription(description, t) {
 
 export function SectionHeading({ eyebrow, title, subtitle, caption, icon: Icon, t }) {
   return (
-    <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+    <div className="text-center max-w-5xl mx-auto mb-10 sm:mb-14">
       <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
         {Icon && <Icon size={13} />} {eyebrow}
       </p>
-      <h2 className={`font-display text-3xl sm:text-4xl font-bold ${t.text} mb-2`}>{title}</h2>
+      <h2 className={`${headline} text-[3.25rem] sm:text-[5.5rem] lg:text-[8rem] ${t.text} mb-6`}>{title}</h2>
       {subtitle && <p className={`font-body text-sm sm:text-base ${t.textMuted} mx-auto`}>{subtitle}</p>}
       {caption && <p className={`font-mono text-xs ${t.textFaint} mt-3`}>{caption}</p>}
     </div>
