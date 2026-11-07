@@ -1,3 +1,4 @@
+import { PlayerProvider, CDDisc, PlayerControls, StereoMeter, EqMeter } from "./CDPlayer.jsx";
 import React, { useState } from "react";
 import { PortfolioImage, img } from "../images.jsx";
 import { Reveal, SectionHeading, ViewMore, headline } from "./ui.jsx";
@@ -67,71 +68,51 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
     { big: "GitHub", label: "See my code", href: PROFILE.github, external: true },
   ];
   return (
-    <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center" style={{ minHeight: "92vh" }}>
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-12 sm:py-16">
-        <div className="grid lg:grid-cols-2 gap-x-14 gap-y-10 items-stretch">
+    <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center lg:min-h-[92vh]">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-5 md:py-12 lg:py-16">
+        <PlayerProvider>
+<div className="grid max-lg:mx-auto max-lg:max-w-[38rem] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
 
-          <div className="min-w-0">
-            <Reveal delay={60}>
-              <h2 className="hero-role font-display font-bold uppercase text-center lg:text-left">
-                <span className={`block ${t.text}`}>Software &</span>
-                <span className={`block hero-outline ${t.accent}`}>Networking</span>
-              </h2>
-              <p className={`mt-4 text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} sm:hidden`}>
+          <div className="min-w-0 max-lg:contents">
+            <Reveal delay={60} className="max-lg:order-1">
+              <div className="mx-auto w-fit max-w-full lg:mx-0">
+                <div className={`flex items-center justify-between gap-4 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] sm:text-[11px] ${t.textFaint}`}>
+                  <span>Side A / <span className={t.accent}>001</span></span>
+                  <StereoMeter />
+                </div>
+                <h2 className="hero-role font-display font-bold uppercase text-center lg:text-left">
+                  <span className={`block ${t.text}`}>Software</span>
+                  <span className={`block hero-outline ${t.accent}`}>Networking</span>
+                </h2>
+                <div className={`mt-2 flex items-center justify-between gap-4 border-t pt-2 text-[10px] font-semibold uppercase tracking-[0.22em] sm:text-[11px] ${t.border} ${t.textFaint}`}>
+                  <span>Side B / <span className={t.accent}>002</span></span>
+                  <EqMeter />
+                </div>
+              </div>
+              <p className={`mt-4 text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} lg:hidden`}>
                 01 / From {PROFILE.location}
               </p>
             </Reveal>
 
-            <Reveal delay={180}>
-              <div
-                role="button"
-                tabIndex={0}
-                aria-pressed={photoColor}
-                aria-label={photoColor ? "Photo is in color. Click to make it black and white" : "Photo is black and white. Click to show color"}
-                className={`mt-7 sm:mt-9 aspect-[16/9] overflow-hidden rounded-md border cursor-pointer select-none ${t.border}`}
-                onClick={togglePhoto}
-                onPointerEnter={(e) => e.pointerType === "mouse" && setPhotoHover(true)}
-                onPointerLeave={() => {
-                  setPhotoHover(false);
-                  setPhotoOverride((o) => (o === "gray" ? null : o));
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    togglePhoto();
-                  }
-                }}
-              >
-                <PortfolioImage
-                  imageKey="aboutme-photo-main"
-                  alt="Rose Kate Zonio"
-                  loading="lazy"
-                  decoding="async"
-                  className={`h-full w-full object-cover transition-[filter] duration-500 ${
-                    photoColor ? "grayscale-0 contrast-100" : "grayscale contrast-110"
-                  }`}
-                />
-              </div>
-            </Reveal>
+            <Reveal delay={180} className="max-lg:order-3"><div className="lg:mt-3"><CDDisc /></div></Reveal>
           </div>
 
-          <div className="flex min-w-0 flex-col gap-7 sm:gap-10 lg:text-right">
+          <div className="flex min-w-0 flex-col gap-7 sm:gap-10 max-lg:contents lg:text-right">
             <Reveal delay={120} className="hidden lg:block">
               <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.textFaint}`}>
                 01 / From {PROFILE.location}
               </p>
             </Reveal>
 
-            <Reveal delay={220}>
+            <Reveal delay={220} className="max-lg:order-2">
               <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-center lg:text-right">
-                <p className={t.text}>Websites on one side. Networks on the other.</p>
                 <p className={`normal-case text-xs sm:text-sm ${t.textMuted}`}>
                   I build web experiences, configure networks, and explore practical cybersecurity solutions.
                 </p>
               </div>
             </Reveal>
 
-            <Reveal delay={320} className="mt-4 lg:mt-8">
+            <Reveal delay={320} className="max-lg:order-5 lg:mt-8">
               <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
                 <a
                   href="#aboutme"
@@ -154,8 +135,12 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
               </div>
             </Reveal>
 
-            <Reveal delay={400} className="lg:mt-auto">
-              <h1 className="hero-name mt-3 hidden w-full flex-col items-center self-center font-display font-bold uppercase lg:mt-0 lg:inline-flex lg:w-auto lg:self-end">
+            <Reveal delay={360} className="flex flex-col max-lg:order-4 lg:my-auto">
+              <PlayerControls t={t} />
+            </Reveal>
+
+            <Reveal delay={400} className="flex flex-col max-lg:sr-only lg:mt-0">
+              <h1 className="hero-name mt-3 inline-flex w-full flex-col items-center self-center font-display font-bold uppercase lg:mt-0 lg:w-auto lg:self-end">
                 <span className={t.text}>Rose Kate</span>
                 <span className="flex w-full items-baseline justify-between">
                   <span className={`hero-handle ${t.textMuted}`}>(@arkyxo)</span>
@@ -165,6 +150,7 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </Reveal>
           </div>
         </div>
+        </PlayerProvider>
 
         <Reveal delay={440}>
           <div id="contact" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>

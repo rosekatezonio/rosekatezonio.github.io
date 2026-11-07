@@ -7,8 +7,11 @@ const MAX_SPEED = 18;
 
 const network = { nodes: [] };
 
+const isSmall = () => window.matchMedia("(max-width: 1023px)").matches;
+const isLowPower = () => (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2) || (navigator.deviceMemory && navigator.deviceMemory <= 2);
+
 function targetCounts(width, height) {
-  const area = width * height;
+  const area = width * height * (isSmall() ? 0.4 : 1);
   return {
     dark: Math.round(Math.min(NODE_COUNT_BASE * 1.6, Math.max(22, area / 22000))),
     light: Math.round(Math.min(NODE_COUNT_BASE * 0.7, Math.max(12, area / 50000))),
@@ -45,6 +48,7 @@ export function NetworkCanvas({ isDark }) {
     const container = containerRef.current;
     if (!canvas || !container) return;
     const ctx = canvas.getContext("2d");
+    if (isLowPower()) return;
     const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
     let width = 0;
@@ -64,6 +68,7 @@ export function NetworkCanvas({ isDark }) {
       const lineColor = dark ? "160, 160, 160" : "90, 90, 90";
       const nodeColor = dark ? "200, 200, 200" : "90, 90, 90";
       const nodes = visibleNodes();
+      const maxDist = isSmall() ? 110 : MAX_DIST;
 
       ctx.lineWidth = dark ? 1 : 0.75;
       for (let i = 0; i < nodes.length; i++) {
@@ -71,8 +76,8 @@ export function NetworkCanvas({ isDark }) {
           const a = nodes[i], b = nodes[j];
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < MAX_DIST) {
-            const opacity = (1 - dist / MAX_DIST) * (dark ? 0.75 : 0.45);
+          if (dist < maxDist) {
+            const opacity = (1 - dist / maxDist) * (dark ? 0.75 : 0.45);
             ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -102,7 +107,7 @@ export function NetworkCanvas({ isDark }) {
     }
 
     function tick(now) {
-      const dt = Math.min((now - last) / 1000, 0.05); // cap so tab switches don't cause jumps
+      const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       step(dt);
       draw();
@@ -144,7 +149,7 @@ export function NetworkCanvas({ isDark }) {
   }, []);
 
   return (
-    <div ref={containerRef} aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+    <div ref={containerRef} aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden pointer-events-none max-lg:opacity-[0.3]">
       <canvas ref={canvasRef} className="absolute inset-0" />
     </div>
   );

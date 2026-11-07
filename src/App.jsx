@@ -13,7 +13,7 @@ import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJou
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
 function App() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("theme-light", !isDark);
@@ -112,8 +112,6 @@ function App() {
   }, []);
   const navigateTo = useCallback(
     (id) => {
-      // "experience" is intentionally NOT here: the sidebar scrolls to the Experience
-      // section on the page. The panel only opens via the section's "Full history" link (#experience).
       if (["activities", "affiliation", "certification", "aboutme"].includes(id)) {
         openPanel(id);
       } else {

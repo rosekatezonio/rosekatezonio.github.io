@@ -530,8 +530,6 @@ export const AI_TOOLING = [
   { name: "Gemini", abbr: "GEM", icon: "https://cdn.simpleicons.org/googlegemini" },
 ];
 
-// Skills are grouped by what they let me do, not by technology type.
-// `proof` lists the projects that back each group up (linked from the Skills section).
 
 export const TOOLKIT_GROUPS = [
   {
@@ -565,16 +563,13 @@ export const TOOLKIT_GROUPS = [
   },
 ];
 
-// Secondary tools: shown only on the Full Toolkit page, not as headline skills.
 export const ADDITIONAL_ITEMS = pickSkills(["Lua (Roblox)", "Progressive Web Apps (PWA)", "Local AI with Ollama"]);
 
-// The AI brands are grouped into one quiet row instead of three equal-weight skills.
 export const AI_ASSISTED_ITEM = {
   name: "AI-assisted development tools",
   icons: AI_TOOLING.map((a) => a.icon),
 };
 
-// Full reference page (opened from "View full toolkit"): the four groups plus the secondary tools.
 export const SKILL_GROUPS = [
   ...TOOLKIT_GROUPS,
   {

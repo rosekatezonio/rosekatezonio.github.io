@@ -24,7 +24,6 @@ export function SkillTile({ item, t, isDark }) {
   );
 }
 
-// Small logo box that falls back to a text abbreviation if the image can't load.
 function CompactIcon({ src, abbr, t, isDark }) {
   const [broken, setBroken] = useState(false);
   const box = `h-7 min-w-7 rounded-md border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center`;
@@ -40,7 +39,6 @@ function CompactIcon({ src, abbr, t, isDark }) {
   );
 }
 
-// Quieter row for secondary tools: small logo(s), name, and an optional note on what it was actually used for.
 function CompactSkill({ item, t, isDark }) {
   const icons = item.icons || [item.icon];
   const abbr = item.abbr || "AI";
@@ -102,8 +100,6 @@ export function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
-// Gallery screenshots only need to fill a ~768px column (up to ~2x for sharp screens),
-// so ask Cloudinary for a capped width instead of the full-size original.
 const galleryUrl = (key) => {
   const u = img(key);
   if (!u || !/res\.cloudinary\.com/.test(u) || /\/upload\/[^/]*w_\d/.test(u)) return u;
@@ -126,7 +122,6 @@ const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "
 const FULL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const MONTH_RE = "(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\\.?";
 
-// Year + month as one number. A project that only lists a year counts as late in that year.
 const dateKeyOf = (p) => {
   const m = (p.meta || "").match(new RegExp(`\\b${MONTH_RE}\\s+(20\\d{2})`, "i"));
   if (m) return parseInt(m[2], 10) * 12 + MONTHS.indexOf(m[1].toLowerCase());
@@ -356,14 +351,13 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
   const slideUrls = images.map(galleryUrl);
   const slideUrlKey = slideUrls.join("|");
   useEffect(() => {
-    // Warm the browser cache for every screenshot so switching slides is instant.
     slideUrls.forEach((u) => {
       if (!u) return;
       const im = new Image();
       im.decoding = "async";
       im.src = u;
     });
-  }, [slideUrlKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [slideUrlKey]);
   const idx = ALL_PROJECTS.indexOf(p);
   const next = ALL_PROJECTS[(idx + 1) % ALL_PROJECTS.length];
   const links = [

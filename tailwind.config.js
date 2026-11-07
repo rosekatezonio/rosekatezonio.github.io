@@ -5,12 +5,12 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
-        serif: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
-        mono: ["'Source Serif 4'", "Charter", "Georgia", "'Times New Roman'", "serif"],
+        sans: ["Archivo", "Helvetica Neue", "Arial", "sans-serif"],
+        serif: ["Archivo", "Helvetica Neue", "Arial", "sans-serif"],
+        mono: ["Archivo", "Helvetica Neue", "Arial", "sans-serif"],
       },
       colors: {
-        black: "#000000",
+        black: "#0B0B0C",
         paper: "#FFFFFF",
         accent: {
           300: "rgb(var(--accent-300) / <alpha-value>)",
@@ -20,8 +20,8 @@ export default {
         },
         onaccent: "rgb(var(--on-accent) / <alpha-value>)",
         slate: {
-          50: "#F7F7F7", 100: "#EFEFEF", 200: "#E0E0E0", 300: "#CCCCCC", 400: "#8A8A8A",
-          500: "#666666", 600: "#4A4A4A", 700: "#333333", 800: "#1F1F1F", 900: "#000000", 950: "#000000",
+          50: "#F3F2EE", 100: "#EFEFEF", 200: "#E0E0E0", 300: "#CCCCCC", 400: "#8A8A8A",
+          500: "#666666", 600: "#4A4A4A", 700: "#333333", 800: "#1F1F1F", 900: "#000000", 950: "#0B0B0C",
         },
         neutral: {
           50: "#FFFFFF", 100: "#F5F5F5", 200: "#E0E0E0", 300: "#C2C2C2", 400: "#A0A0A0",
