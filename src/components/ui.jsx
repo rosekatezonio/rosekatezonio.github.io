@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { EqMeter } from "./CDPlayer.jsx";
+import { EqMeter, WaveDivider } from "./CDPlayer.jsx";
 import { useReveal, useOverlayClose } from "../hooks.js";
 import { ArrowRight, ArrowUp, ArrowUpRight } from "../icons.jsx";
 
@@ -77,7 +77,6 @@ export function BackButton({ t, onClick }) {
 }
 
 export function PageHeader({ eyebrow, EyebrowIcon, title, subtitle, t, isDark, centered = false }) {
-  const rule = isDark ? "border-neutral-100" : "border-black";
   return (
     <>
       <header className={`mt-10 sm:mt-14 ${centered ? "text-center" : ""}`}>
@@ -89,7 +88,9 @@ export function PageHeader({ eyebrow, EyebrowIcon, title, subtitle, t, isDark, c
         <h1 className={`font-serif-read text-[3.5rem] font-normal leading-[0.9] tracking-[-0.035em] sm:text-[6rem] lg:text-[8.5rem] ${centered ? "text-balance" : ""}`}>{title}</h1>
         {subtitle && <p className={`mt-6 max-w-xl text-balance text-lg leading-snug ${centered ? "mx-auto" : ""} ${t.textMuted}`}>{subtitle}</p>}
       </header>
-      <div className={`mt-12 border-t ${rule} sm:mt-16`} />
+      <div className={`mt-10 w-56 max-w-full sm:mt-14 ${centered ? "mx-auto" : ""}`}>
+        <WaveDivider className="wave-short" />
+      </div>
     </>
   );
 }

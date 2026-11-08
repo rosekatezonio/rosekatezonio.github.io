@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
 import { renderDescription, BackButton, PageHeader } from "./ui.jsx";
-import { EqMeter } from "./CDPlayer.jsx";
+import { EqMeter, StereoMeter, WaveDivider } from "./CDPlayer.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
 import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
@@ -10,17 +10,20 @@ export function SkillTile({ item, t, isDark }) {
   const [broken, setBroken] = useState(false);
   const showImg = img(item.icon) && !broken;
   return (
-    <div className="flex flex-col items-center text-center gap-2.5" title={item.name}>
-      <div className={`h-16 w-16 rounded-2xl border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center p-1.5 card-glow`}>
+    <div
+      title={item.name}
+      className={`rack-mod group flex items-center gap-3 rounded-lg border px-3 py-3 transition-colors hover:border-accent-400 ${t.border} ${isDark ? "bg-black/30" : "bg-white"}`}
+    >
+      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-400 opacity-30 transition-all group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgb(var(--accent-400))]" />
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white p-1.5 shadow-sm">
         {showImg ? (
-          <div className="h-full w-full rounded-lg bg-white flex items-center justify-center p-1.5 shadow-sm">
-            <img src={img(item.icon)} alt={item.name} onError={() => setBroken(true)} className="h-full w-full object-contain" />
-          </div>
+          <img src={img(item.icon)} alt={item.name} onError={() => setBroken(true)} className="h-full w-full object-contain" />
         ) : (
-          <span className={`font-mono text-xs font-bold tracking-wider ${t.accent}`}>{item.abbr}</span>
+          <span className="font-mono text-[10px] font-bold tracking-wider text-slate-900">{item.abbr}</span>
         )}
-      </div>
-      <span className={`font-body text-sm leading-snug ${t.text}`}>{item.name}</span>
+      </span>
+      <span className={`min-w-0 flex-1 font-body text-sm font-medium leading-snug ${t.text}`}>{item.name}</span>
+      <span className="rack-eq opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true"><i /><i /><i /></span>
     </div>
   );
 }
@@ -44,7 +47,7 @@ function CompactSkill({ item, t, isDark }) {
   const icons = item.icons || [item.icon];
   const abbr = item.abbr || "AI";
   return (
-    <li className="flex items-start gap-3 min-w-0">
+    <li className={`rack-mod group flex min-w-0 items-start gap-3 rounded-lg border px-3 py-3 transition-colors hover:border-accent-400 ${t.border} ${isDark ? "bg-black/30" : "bg-white"}`}>
       <div className="flex shrink-0 -space-x-1.5 pt-0.5">
         {icons.map((ic, i) => (
           <CompactIcon key={i} src={ic} abbr={abbr} t={t} isDark={isDark} />
@@ -55,6 +58,29 @@ function CompactSkill({ item, t, isDark }) {
         {item.note && <p className={`font-body text-xs leading-snug mt-0.5 ${t.textFaint}`}>{item.note}</p>}
       </div>
     </li>
+  );
+}
+
+const RACK_NAMES = ["Software Production", "Network Operations", "Backend & Data Systems", "Development Workflow"];
+
+function RackGlyph({ index, count }) {
+  if (index === 0) return <EqMeter />;
+  if (index === 1) return <StereoMeter />;
+  if (index === 2) {
+    return (
+      <span className="flex gap-1" aria-hidden="true">
+        {[0, 1, 2, 3, 4].map((n) => (
+          <i key={n} className={`h-1.5 w-3 rounded-sm bg-accent-400 ${n < Math.min(5, count) ? "" : "opacity-25"}`} />
+        ))}
+      </span>
+    );
+  }
+  return (
+    <span className="flex gap-1.5" aria-hidden="true">
+      {[0, 1, 2, 3, 4, 5].map((n) => (
+        <i key={n} className={`h-1 w-1 rounded-full bg-accent-400 ${n < Math.min(6, count) ? "" : "opacity-25"}`} />
+      ))}
+    </span>
   );
 }
 
@@ -70,24 +96,32 @@ export function SkillsArchive({ t, onClose, isDark }) {
     <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-10 sm:pt-10 lg:px-12">
         <BackButton t={t} onClick={requestClose} />
-        <PageHeader title="Full Toolkit" subtitle="Grouped by what each tool lets me do." t={t} isDark={isDark} />
+        <PageHeader eyebrow="SIDE A / 003 — STUDIO EQUIPMENT" title="Full Toolkit" subtitle="Grouped by what each tool lets me do." t={t} isDark={isDark} />
 
-        <div className="mt-12 space-y-14">
-          {SKILL_GROUPS.map((group) => (
-            <section key={group.title}>
-              <div className="flex items-center gap-4">
-                <h2 className={`font-mono text-xs tracking-[0.25em] uppercase ${t.textFaint}`}>{group.num} — {group.title}</h2>
-                <span className={`h-px flex-1 border-t ${t.border}`} />
+        <div className="mt-12 space-y-8 sm:space-y-10">
+          {SKILL_GROUPS.map((group, gi) => (
+            <section key={group.title} className={`rounded-xl border p-4 sm:p-6 ${t.border}`}>
+              <div className="flex items-start justify-between gap-4">
+                <div className="min-w-0">
+                  <h2 className={`font-display text-xl font-bold tracking-tight sm:text-2xl ${t.text}`}>
+                    <span className={`mr-3 font-mono text-xs font-normal tracking-widest ${t.accent}`}>{group.num}</span>
+                    {RACK_NAMES[gi] || group.title}
+                  </h2>
+                  <p className={`mt-1 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>
+                    {group.title} · {String(group.items.length).padStart(2, "0")} units
+                  </p>
+                </div>
+                <div className={`mt-1 shrink-0 ${t.accent}`}><RackGlyph index={gi} count={group.items.length} /></div>
               </div>
-              {group.blurb && <p className={`font-body text-sm ${t.textMuted} mt-2 mb-8`}>{group.blurb}</p>}
+              {group.blurb && <p className={`mb-6 mt-3 font-body text-sm ${t.textMuted}`}>{group.blurb}</p>}
               {group.compact ? (
-                <ul className="grid gap-x-10 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+                <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                   {group.items.map((item) => (
                     <CompactSkill key={item.name} item={item} t={t} isDark={isDark} />
                   ))}
                 </ul>
               ) : (
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(8.5rem,1fr))] gap-x-4 gap-y-9">
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))] gap-3">
                   {group.items.map((item) => (
                     <SkillTile key={item.name} item={item} t={t} isDark={isDark} />
                   ))}
@@ -254,7 +288,6 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
   const filtered = ALL_PROJECTS.filter(matches);
   const sorted = sortProjects(filtered, sort);
   const total = ALL_PROJECTS.length;
-  const rule = isDark ? "border-neutral-100" : "border-black";
   const resetAll = () => { setQuery(""); setTrack("All"); };
 
   return (
@@ -280,7 +313,11 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
           </p>
         </header>
 
-        <div className={`mt-12 border-t ${rule} sm:mt-16`}>
+        <div className="mt-10 w-56 max-w-full sm:mt-14">
+          <WaveDivider className="wave-short" />
+        </div>
+
+        <div className="mt-6">
           <div className="flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
             <div role="group" aria-label="Filter projects" className="no-scrollbar -mx-5 flex gap-x-7 overflow-x-auto px-5 sm:mx-0 sm:px-0">
               {TRACK_FILTERS.map((name) => {

@@ -304,3 +304,11 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 
 .journey-title{font-size:clamp(1.4rem,7.2vw,3.4rem)}
 @media (min-width:1024px){.journey-title{font-size:clamp(2.6rem,calc(min(68rem,100vw - 21rem) / 12.6),5.25rem)}}
+
+.wave.wave-short{height:14px;padding:0;max-width:none;margin:0}
+.rack-eq{display:flex;align-items:flex-end;gap:2px;height:14px}
+.rack-eq i{width:3px;height:30%;background:rgb(var(--accent-400));border-radius:1px}
+.rack-mod:hover .rack-eq i,.rack-mod:focus-visible .rack-eq i{animation:eq .9s ease-in-out infinite}
+.rack-mod:hover .rack-eq i:nth-child(2){animation-delay:-.3s}
+.rack-mod:hover .rack-eq i:nth-child(3){animation-delay:-.6s}
+@media (prefers-reduced-motion:reduce){.rack-mod:hover .rack-eq i{animation:none!important}}

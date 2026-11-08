@@ -162,43 +162,64 @@ export function AboutMeSection({ t, isDark }) {
 export function AffiliationSection({ t, isDark }) {
   return (
     <section id="affiliation">
-      <PageHeader title="Affiliations" subtitle="Organizations and communities I'm part of." t={t} isDark={isDark} />
+      <PageHeader
+        eyebrow="CREDITS / SIDE C"
+        title="Affiliations"
+        subtitle="A collection of organizations and communities I've been part of."
+        t={t}
+        isDark={isDark}
+      />
 
-      <ul>
-        {AFFILIATIONS.map((org) => (
-          <li key={org.company} className={`border-b ${t.border}`}>
-            <div className="flex items-center gap-4 sm:gap-5 py-4 sm:py-5">
-              <div className={`shrink-0 aspect-square w-14 sm:w-16 rounded-lg border ${t.border} overflow-hidden bg-white p-1.5 flex items-center justify-center`}>
-                {org.logo ? (
-                  <PortfolioImage imageKey={org.logo} alt={`${org.company} logo`} fallbackLabel={org.company} className="max-h-full max-w-full object-contain" />
-                ) : (
-                  <span className="font-display font-semibold text-sm text-slate-900">{org.abbr}</span>
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="font-display font-semibold">{org.company}</span>
-                <p className={`text-sm ${t.textMuted} mt-1 leading-snug`}>{org.position}</p>
-                {org.links.length > 0 && (
-                  <div className="mt-1.5 flex flex-wrap items-center gap-x-5 gap-y-1">
-                    {org.links.map((link) => (
-                      <a
-                        key={link.url}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`inline-flex items-center gap-1 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} hover:text-accent-400 transition-colors`}
-                      >
-                        {link.label} <ArrowUpRight size={12} />
-                      </a>
-                    ))}
+      <ol className="mt-12 sm:mt-14">
+        {AFFILIATIONS.map((org, i) => {
+          const current = /present/i.test(org.duration || "");
+          const since = ((org.duration || "").match(/^(.*?)\s*[-–]\s*present/i) || [])[1];
+          return (
+            <li key={org.company} className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-x-8">
+              <p className={`font-display text-3xl font-bold leading-none tabular-nums sm:text-4xl ${current ? t.accent : t.text}`}>{String(i + 1).padStart(2, "0")}</p>
+
+              <div className={`relative min-w-0 border-l pb-10 pl-5 sm:pl-8 ${t.border}`}>
+                <span
+                  aria-hidden="true"
+                  className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full ${current ? "bg-accent-400 ring-4 ring-accent-400/20" : isDark ? "bg-neutral-600" : "bg-slate-400"}`}
+                />
+                <p className={`mb-3 font-mono text-[11px] uppercase tracking-widest ${current ? t.accent : t.textFaint}`}>
+                  {current ? `Active since ${since || org.duration}` : "Past credit"}
+                </p>
+                <div className="flex items-start gap-4">
+                  <div className={`flex aspect-square w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white p-1.5 sm:w-16 ${t.border}`}>
+                    {org.logo ? (
+                      <PortfolioImage imageKey={org.logo} alt={`${org.company} logo`} fallbackLabel={org.company} className="max-h-full max-w-full object-contain" />
+                    ) : (
+                      <span className="font-display text-sm font-semibold text-slate-900">{org.abbr}</span>
+                    )}
                   </div>
-                )}
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-display text-lg font-bold leading-snug tracking-tight sm:text-xl">{org.company}</h3>
+                    <p className={`mt-1 font-mono text-xs uppercase tracking-wider ${t.textMuted}`}>{org.position}</p>
+                    <p className={`mt-1 font-mono text-xs uppercase tracking-wider ${t.textFaint}`}>{org.duration}</p>
+                    {org.links.length > 0 && (
+                      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1">
+                        {org.links.map((link) => (
+                          <a
+                            key={link.url}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`inline-flex items-center gap-1 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} transition-colors hover:text-accent-400`}
+                          >
+                            {link.label} <ArrowUpRight size={12} />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-              <span className={`hidden sm:block shrink-0 text-sm ${t.textFaint}`}>{org.duration}</span>
-            </div>
-          </li>
-        ))}
-      </ul>
+            </li>
+          );
+        })}
+      </ol>
     </section>
   );
 }
