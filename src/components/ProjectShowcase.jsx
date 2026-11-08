@@ -82,7 +82,7 @@ export function ProjectShowcase({ t, isDark, item, icon: FallbackIcon, onOpenPro
             {item.highlights.slice(0, 3).map((line) => (
               <li key={line} className={`flex items-start gap-3.5 font-body text-[15px] leading-relaxed sm:text-base ${t.text}`}>
                 <span aria-hidden="true" className="mt-[0.6em] h-1.5 w-1.5 shrink-0 bg-accent-400" />
-                {line}
+                <span className="copy-justify min-w-0 flex-1">{line}</span>
               </li>
             ))}
           </ul>

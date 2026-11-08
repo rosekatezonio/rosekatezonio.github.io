@@ -312,3 +312,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 .rack-mod:hover .rack-eq i:nth-child(2){animation-delay:-.3s}
 .rack-mod:hover .rack-eq i:nth-child(3){animation-delay:-.6s}
 @media (prefers-reduced-motion:reduce){.rack-mod:hover .rack-eq i{animation:none!important}}
+
+.copy-justify{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+
+.tour-title{font-size:clamp(2.6rem,11.2vw,5.5rem)}
+@media (min-width:1024px){.tour-title{font-size:clamp(4rem,calc(min(68rem,100vw - 21rem) / 7.6),9rem)}}

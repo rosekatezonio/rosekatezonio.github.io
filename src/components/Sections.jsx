@@ -40,7 +40,7 @@ export function ActivityRow({ f, reverse, t, isDark }) {
         <p className={`inline-flex items-center gap-1.5 font-body font-semibold text-base ${t.accent} mt-3`}>
           <MapPin size={15} /> {f.location}
         </p>
-        <p className={`font-body text-base leading-relaxed text-left ${t.textMuted} mt-5 max-w-lg mx-auto lg:mx-0`}>{f.description}</p>
+        <p style={{ hyphens: "auto", WebkitHyphens: "auto" }} lang="en" className={`font-body text-base leading-relaxed text-justify ${t.textMuted} mt-5 w-full`}>{f.description}</p>
         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-x-6 gap-y-3 sm:gap-x-8 mt-8">
           {f.links.map((link) => (
             <ActivityLink key={link.label} link={link} t={t} isDark={isDark} />

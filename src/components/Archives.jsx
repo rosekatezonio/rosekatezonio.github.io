@@ -246,7 +246,7 @@ function ProjectRow({ p, no, t, isDark }) {
             </span>
           </h2>
           <p className={`mt-3 text-lg leading-snug ${t.text}`}>{taglineOf(p)}</p>
-          <p className={`mt-4 max-w-[34rem] text-base leading-relaxed line-clamp-3 ${t.textMuted}`}>
+          <p className={`mt-4 max-w-[34rem] text-base leading-relaxed line-clamp-3 copy-justify ${t.textMuted}`}>
             {renderDescription(p.description, t)}
           </p>
           {tags.length > 0 && <p className={`mt-5 text-sm ${t.textMuted}`}>{tags.join(", ")}</p>}
@@ -466,20 +466,20 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
 
         <section className="mt-12">
           <h2 className="font-display font-semibold text-lg">Overview</h2>
-          <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
+          <p className={`mt-3 leading-relaxed copy-justify ${t.textMuted}`}>{renderDescription(p.description, t)}</p>
         </section>
 
         {p.detail?.problem && (
           <section className="mt-10">
             <h2 className="font-display font-semibold text-lg">The problem</h2>
-            <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{p.detail.problem}</p>
+            <p className={`mt-3 leading-relaxed copy-justify ${t.textMuted}`}>{p.detail.problem}</p>
           </section>
         )}
 
         {p.detail?.approach && (
           <section className="mt-10">
             <h2 className="font-display font-semibold text-lg">Goal & approach</h2>
-            <p className={`mt-3 leading-relaxed ${t.textMuted}`}>{p.detail.approach}</p>
+            <p className={`mt-3 leading-relaxed copy-justify ${t.textMuted}`}>{p.detail.approach}</p>
           </section>
         )}
 
@@ -490,7 +490,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
               {p.highlights.map((h) => (
                 <li key={h} className={`flex gap-3 leading-relaxed ${t.textMuted}`}>
                   <span className="mt-3 h-px w-3 shrink-0 bg-current" />
-                  <span>{h}</span>
+                  <span className="copy-justify min-w-0 flex-1">{h}</span>
                 </li>
               ))}
             </ul>
@@ -513,7 +513,7 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
               {p.detail.challenges.map((c) => (
                 <li key={c.title} className={`border-b ${t.border} py-4`}>
                   <p className="font-medium">{c.title}</p>
-                  <p className={`mt-1 leading-relaxed ${t.textMuted}`}>{c.fix}</p>
+                  <p className={`mt-1 leading-relaxed copy-justify ${t.textMuted}`}>{c.fix}</p>
                 </li>
               ))}
             </ul>
@@ -524,13 +524,13 @@ export function ProjectDetail({ t, isDark, project: p, onBack }) {
           <section className="mt-10">
             <h2 className="font-display font-semibold text-lg">Takeaways & next steps</h2>
             {p.detail.learned && (
-              <p className={`mt-3 leading-relaxed ${t.textMuted}`}>
+              <p className={`mt-3 leading-relaxed copy-justify ${t.textMuted}`}>
                 <span className={`font-medium ${t.text}`}>Learned: </span>
                 {p.detail.learned}
               </p>
             )}
             {p.detail.next && (
-              <p className={`mt-3 leading-relaxed ${t.textMuted}`}>
+              <p className={`mt-3 leading-relaxed copy-justify ${t.textMuted}`}>
                 <span className={`font-medium ${t.text}`}>Improve next: </span>
                 {p.detail.next}
               </p>

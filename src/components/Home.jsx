@@ -7,7 +7,7 @@ import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIEN
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
 
 
-export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact = false }) {
+export function ExperienceTimeline({ t, isDark, className = "max-w-4xl" }) {
   return (
     <ol className={className}>
       {EXPERIENCE.map((exp, i) => {
@@ -15,7 +15,6 @@ export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact
         const current = /present/i.test(date);
         const no = String(i + 1).padStart(2, "0");
         const lines = Array.isArray(exp.description) ? exp.description : exp.description ? [exp.description] : [];
-        const typeLabel = exp.employment && exp.employment !== date ? exp.employment : exp.type;
         const facts = [
           { label: "Location", value: exp.location },
           { label: "Employment", value: exp.employment && exp.employment !== date ? exp.employment : "" },
@@ -50,14 +49,6 @@ export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact
                   <ExperienceName exp={exp} t={t} className={`font-display text-lg font-semibold leading-snug sm:text-xl ${t.text}`} />
                 </div>
 
-                {compact ? (
-                  <>
-                    <p className={`mt-3 text-sm ${t.textMuted}`}>{[exp.location, typeLabel].filter(Boolean).join(" · ")}</p>
-                    {lines[0] && (
-                      <p className={`mt-3 line-clamp-2 max-w-2xl text-[15px] leading-relaxed ${t.textMuted}`}>{lines[0]}</p>
-                    )}
-                  </>
-                ) : (
                 <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-4">
                   {facts.map((f) => (
                     <div key={f.label}>
@@ -66,9 +57,8 @@ export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact
                     </div>
                   ))}
                 </dl>
-                )}
 
-                {!compact && lines.length > 0 && (
+                {lines.length > 0 && (
                   <div className="mt-7">
                     <p className={`mb-3 font-mono text-[10px] uppercase tracking-widest ${t.textFaint}`}>Responsibilities</p>
                     <ol className="space-y-3">
@@ -82,7 +72,7 @@ export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact
                   </div>
                 )}
 
-                {i < EXPERIENCE.length - 1 && <div className={compact ? "mt-7 pb-7" : "mt-10 pb-10"}><WaveDivider className="wave-sm" /></div>}
+                {i < EXPERIENCE.length - 1 && <div className="mt-10 pb-10"><WaveDivider className="wave-sm" /></div>}
               </div>
             </li>
           </Reveal>
@@ -382,25 +372,95 @@ function ExperienceName({ exp, t, className }) {
   );
 }
 
+function TourDates({ t }) {
+  return (
+    <ol className={`border-t ${t.border}`}>
+      {EXPERIENCE.map((exp, i) => {
+        const date = exp.period || exp.duration || "";
+        const parts = date.split(/\s+[-–]\s+/);
+        const current = /present/i.test(date);
+        const no = String(i + 1).padStart(2, "0");
+        const status = current ? (
+          <span className={`inline-flex items-center gap-1.5 ${t.accent}`}>
+            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent-400" />
+            Current
+          </span>
+        ) : (
+          <span className={t.textFaint}>Completed</span>
+        );
+        return (
+          <Reveal key={`${exp.company}-${i}`} delay={i * 80}>
+            <li className={`group grid grid-cols-[4.25rem_minmax(0,1fr)] gap-x-4 border-b py-6 sm:grid-cols-[3rem_10rem_minmax(0,1fr)] sm:gap-x-6 sm:py-8 lg:grid-cols-[3rem_10rem_minmax(0,1fr)_14rem] lg:py-11 ${t.border}`}>
+              <div className="sm:hidden">
+                <p className={`font-mono text-xs tabular-nums ${current ? t.accent : t.textFaint}`}>{no}</p>
+                <p className={`mt-3 font-mono text-[11px] uppercase leading-snug tracking-wider ${current ? t.text : t.textMuted}`}>
+                  {parts.map((part, pi) => (
+                    <span key={pi} className="block">{pi > 0 ? "– " : ""}{part}</span>
+                  ))}
+                </p>
+                <p className="mt-2 font-mono text-[10px] uppercase tracking-widest">{status}</p>
+              </div>
+
+              <p className={`hidden pt-1 font-mono text-xs tabular-nums transition-colors group-hover:text-accent-400 sm:block ${current ? t.accent : t.textFaint}`}>{no}</p>
+
+              <div className="hidden sm:block">
+                <p className="mb-1.5 font-mono text-[10px] uppercase tracking-widest">{status}</p>
+                <p className={`font-mono text-xs uppercase tracking-wider ${current ? t.text : t.textMuted}`}>{date}</p>
+              </div>
+
+              <div className="min-w-0">
+                <h3 className="text-balance">
+                  <ExperienceName
+                    exp={exp}
+                    t={t}
+                    className={`font-display text-[1.5rem] font-bold uppercase leading-[1.04] tracking-tight sm:text-4xl lg:text-5xl ${t.text}`}
+                  />
+                </h3>
+                <p className={`mt-3 flex items-center gap-2 font-mono text-xs uppercase tracking-widest ${t.textMuted}`}>
+                  {exp.logo && (
+                    <span className={`h-5 w-5 shrink-0 overflow-hidden rounded bg-white p-px`}>
+                      <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-full w-full object-contain" />
+                    </span>
+                  )}
+                  <span className="min-w-0">{exp.location}</span>
+                </p>
+                <p className={`mt-2 font-mono text-[11px] uppercase leading-relaxed tracking-widest sm:hidden ${t.textFaint}`}>{exp.position}</p>
+              </div>
+
+              <p className={`hidden font-mono text-[11px] uppercase leading-relaxed tracking-widest sm:col-start-3 sm:mt-1 sm:block lg:col-start-auto lg:text-right ${t.textFaint}`}>
+                {exp.position}
+              </p>
+            </li>
+          </Reveal>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function ExperienceSection({ t, isDark }) {
   return (
     <section id="experience" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <Reveal>
         <SectionLabel side="SIDE B" no="005" name="Tour History" t={t} />
-        <h2 className="journey-title mt-6 whitespace-nowrap font-display font-bold uppercase leading-[0.95] tracking-tight">
-          <span className={t.text}>The journey</span>{" "}
-          <span className={`hero-outline ${t.accent}`}>so far.</span>
+        <h2 className="tour-title mt-6 whitespace-nowrap font-display font-bold uppercase leading-[0.92] tracking-tight">
+          <span className={t.text}>Tour history</span>
         </h2>
-        <p className={`mt-6 max-w-xl font-body text-base leading-relaxed sm:text-lg ${t.textMuted}`}>
-          A timeline of roles, responsibilities, and professional growth.
-        </p>
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-x-10 gap-y-3">
+          <p className={`hero-outline font-display text-2xl font-bold uppercase leading-none tracking-tight sm:text-4xl ${t.accent}`}>
+            The journey so far.
+          </p>
+          <p className={`max-w-xs font-body text-sm leading-relaxed ${t.textMuted}`}>
+            A timeline of roles, responsibilities, and professional growth.
+          </p>
+        </div>
       </Reveal>
 
-      <div className="mt-14 sm:mt-16">
-        <ExperienceTimeline t={t} isDark={isDark} compact />
+      <div className="mt-12 sm:mt-14">
+        <TourDates t={t} />
       </div>
 
-      <div className="mt-6 max-w-4xl">
+      <div className="mt-6 text-right">
         <a
           href="#experience"
           className={`group inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] ${t.textMuted} hover:text-accent-400 transition-colors`}
