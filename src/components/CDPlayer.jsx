@@ -14,7 +14,7 @@ const fmt = (s) => {
   return `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, "0")}`;
 };
 const Ctx = createContext(null);
-const usePlayer = () => useContext(Ctx);
+export const usePlayer = () => useContext(Ctx);
 
 export function PlayerProvider({ children }) {
   const supported = typeof Audio !== "undefined";
@@ -145,6 +145,19 @@ export function EqMeter() {
   const { playing } = usePlayer();
   return (
     <span className={`eq eq-sm ${playing ? "eq-on" : ""}`} aria-hidden="true"><i /><i /><i /><i /><i /></span>
+  );
+}
+
+const WAVE = Array.from({ length: 72 }, (_, i) => 0.2 + 0.8 * Math.abs(Math.sin(i * 0.55) * Math.cos(i * 0.17)));
+
+export function WaveDivider({ className = "" }) {
+  const { playing } = usePlayer();
+  return (
+    <div className={`wave ${className}`} data-on={playing} aria-hidden="true">
+      {WAVE.map((h, i) => (
+        <i key={i} style={{ height: `${h * 100}%`, animationDelay: `${(i % 9) * -0.15}s` }} />
+      ))}
+    </div>
   );
 }
 

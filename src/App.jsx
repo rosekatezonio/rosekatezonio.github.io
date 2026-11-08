@@ -5,14 +5,15 @@ import { useScrollProgress } from "./hooks.js";
 import { Sun, Moon, Menu, X, ArrowUp } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
-import { SectionPanel } from "./components/ui.jsx";
+import { SectionPanel, ScrollProgress } from "./components/ui.jsx";
+import { PlayerProvider, WaveDivider } from "./components/CDPlayer.jsx";
 import { ContactChooser } from "./components/ContactChooser.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
 import { GithubActivity } from "./components/Sections.jsx";
 import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, ExperienceHistory } from "./components/Panels.jsx";
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
-function App() {
+function AppInner() {
   const [isDark, setIsDark] = useState(true);
   useEffect(() => {
     const root = document.documentElement;
@@ -227,8 +228,10 @@ function App() {
         </nav>
       </header>
 
+      <ScrollProgress />
       <HeroSection t={t} isDark={isDark} onContact={openContact} openResumes={openResumes} onOpenAbout={() => openPanel("aboutme")} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
+      <WaveDivider />
       <ProjectsSection
         t={t}
         isDark={isDark}
@@ -238,6 +241,7 @@ function App() {
         onOpenArchive={openArchive}
       />
       <ExperienceSection t={t} isDark={isDark} />
+      <WaveDivider />
       <GithubActivity t={t} isDark={isDark} />
 
       <footer className={`border-t ${t.border}`}>
@@ -286,4 +290,10 @@ function App() {
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <PlayerProvider>
+      <AppInner />
+    </PlayerProvider>
+  );
+}

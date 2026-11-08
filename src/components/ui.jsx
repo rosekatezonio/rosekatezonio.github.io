@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { EqMeter } from "./CDPlayer.jsx";
 import { useReveal, useOverlayClose } from "../hooks.js";
 import { ArrowRight, ArrowUp, ArrowUpRight } from "../icons.jsx";
 
@@ -122,5 +123,37 @@ export function ViewMore({ t, href, onClick, children }) {
       <ArrowUp size={15} className="transition-transform group-hover:-translate-y-0.5" />
       {children}
     </Tag>
+  );
+}
+export function SectionLabel({ side, no, name, t, className = "" }) {
+  return (
+    <p className={`inline-flex items-center gap-3 font-mono text-xs uppercase tracking-widest ${t.accent} ${className}`}>
+      <span>{side} / {no}</span>
+      <span aria-hidden="true" className={t.textFaint}>—</span>
+      <span>{name}</span>
+      <EqMeter />
+    </p>
+  );
+}
+
+export function ScrollProgress() {
+  const bar = useRef(null);
+  useEffect(() => {
+    const update = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (bar.current) bar.current.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+  return (
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-[70] h-[2px]" aria-hidden="true">
+      <div ref={bar} className="h-full origin-left bg-accent-400" style={{ transform: "scaleX(0)" }} />
+    </div>
   );
 }

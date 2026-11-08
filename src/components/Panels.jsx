@@ -17,7 +17,7 @@ export function CertificationSection({ t, isDark }) {
 
   return (
     <section id="certification">
-      <PageHeader title="Certifications" subtitle="Credentials I've earned and the ones I'm working toward." t={t} isDark={isDark} />
+      <PageHeader eyebrow="SIDE B / 007 — AWARDS & RECORDS" title="Certifications" subtitle="Credentials I've earned and the ones I'm working toward." t={t} isDark={isDark} />
 
       {groups.map((group) => (
         <div key={group.label} className="mt-10 first:mt-10">
@@ -81,7 +81,7 @@ export function CertificationSection({ t, isDark }) {
 export function ExperienceHistory({ t, isDark }) {
   return (
     <section id="experience-history">
-      <PageHeader title="Experience" subtitle="Internships and work experience, newest first." t={t} isDark={isDark} />
+      <PageHeader eyebrow="SIDE B / 005 — TOUR HISTORY" title="Experience" subtitle="Internships and work experience, newest first." t={t} isDark={isDark} />
       <div className="mt-10 sm:mt-14">
         <ExperienceTimeline t={t} isDark={isDark} className="w-full" />
       </div>
@@ -92,7 +92,7 @@ export function ExperienceHistory({ t, isDark }) {
 export function ActivitiesJourney({ t, isDark }) {
   return (
     <section>
-      <PageHeader title="Side Quest" subtitle="The journey so far: where I've been and what I've been building, newest first." t={t} isDark={isDark} />
+      <PageHeader eyebrow="SIDE B / 006 — LIVE SESSIONS" title="Side Quest" subtitle="The journey so far: where I've been and what I've been building, newest first." t={t} isDark={isDark} />
       <div className="mt-12 sm:mt-16 space-y-14 lg:space-y-28">
         {ACTIVITIES.map((f, i) => (
           <Reveal key={f.title}>
@@ -124,7 +124,7 @@ export function AboutMeSection({ t, isDark }) {
   const mainBlocks = ABOUT_ME;
   return (
     <section id="aboutme">
-      <PageHeader eyebrow="MORE ABOUT ME" EyebrowIcon={User} title="A little more of me" t={t} isDark={isDark} centered />
+      <PageHeader eyebrow="SIDE A / 002 — ARTIST PROFILE" EyebrowIcon={User} title="A little more of me" t={t} isDark={isDark} centered />
 
       <div className="mx-auto mt-10 max-w-2xl sm:mt-14">
         <AboutPhoto photo={ABOUT_PHOTOS[0]} isDark={isDark} />

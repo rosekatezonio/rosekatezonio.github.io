@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
 import { renderDescription, BackButton, PageHeader } from "./ui.jsx";
+import { EqMeter } from "./CDPlayer.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
 import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
@@ -171,7 +172,7 @@ function SortSelect({ value, onChange, t, isDark }) {
   );
 }
 
-function ProjectRow({ p, t, isDark }) {
+function ProjectRow({ p, no, t, isDark }) {
   const featured = FEATURED_TITLES.includes(p.title);
   const thumb = p.thumbnail ? img(thumbFor(p, isDark)) : undefined;
   const titleId = `plog-${slugOf(p.title)}`;
@@ -193,12 +194,15 @@ function ProjectRow({ p, t, isDark }) {
           {featured && (
             <p className="inline-flex items-center gap-1.5 font-medium">
               <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent-400" />
-              Featured
+              Featured release
             </p>
           )}
         </div>
 
         <div className="min-w-0">
+          <p className={`mb-3 font-mono text-xs uppercase tracking-widest ${t.textMuted}`}>
+            <span className="text-accent-400">{no}</span> — {p.category} · {yearOf(p)}
+          </p>
           <h2
             id={titleId}
             className="font-serif-read text-balance text-[2.25rem] font-normal leading-[1.05] tracking-[-0.025em] sm:text-[2.75rem] lg:text-[3.25rem]"
@@ -262,11 +266,17 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
 
         <header className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-4 sm:mt-14">
           <div>
-            <h1 className="font-serif-read text-[3.5rem] font-normal leading-[0.9] tracking-[-0.035em] sm:text-[6rem] lg:text-[8.5rem]">Project Log</h1>
+            <p className={`mb-5 inline-flex items-center gap-3 font-mono text-xs uppercase tracking-widest ${t.accent}`}>
+              <span>Tracklist / Side B</span>
+              <span aria-hidden="true" className={t.textFaint}>—</span>
+              <span>{String(total).padStart(2, "0")} releases</span>
+              <EqMeter />
+            </p>
+            <h1 className="font-serif-read text-[3.5rem] font-normal leading-[0.9] tracking-[-0.035em] sm:text-[6rem] lg:text-[8.5rem]">Tracklist</h1>
             <p className={`mt-6 max-w-md text-balance text-lg leading-snug ${t.textMuted}`}>Everything I’ve built, wired up, and shipped.</p>
           </div>
           <p className={`text-sm tabular-nums ${t.textMuted}`} aria-live="polite">
-            {sorted.length === total ? total : `${sorted.length} of ${total}`} {total === 1 ? "project" : "projects"}
+            {sorted.length === total ? total : `${sorted.length} of ${total}`} {total === 1 ? "release" : "releases"}
           </p>
         </header>
 
@@ -320,7 +330,7 @@ export function ProjectArchive({ t, isDark, onClose, instant }) {
         {sorted.length > 0 ? (
           <ul className={`plog-list border-t ${t.border}`}>
             {sorted.map((p) => (
-              <ProjectRow key={p.title} p={p} t={t} isDark={isDark} />
+              <ProjectRow key={p.title} p={p} no={String(ALL_PROJECTS.findIndex((x) => x.title === p.title) + 1).padStart(2, "0")} t={t} isDark={isDark} />
             ))}
           </ul>
         ) : (

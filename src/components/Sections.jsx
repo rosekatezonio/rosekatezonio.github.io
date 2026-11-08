@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { PortfolioImage } from "../images.jsx";
 import { PROFILE } from "../data.js";
-import { Reveal, SectionHeading, ActivityLink } from "./ui.jsx";
-import { Github, MapPin, ArrowLeftRight, ArrowRight } from "../icons.jsx";
+import { Reveal, SectionHeading, SectionLabel, ActivityLink } from "./ui.jsx";
+import { usePlayer } from "./CDPlayer.jsx";
+import { MapPin, ArrowLeftRight, ArrowRight } from "../icons.jsx";
 
 export function ActivityRow({ f, reverse, t, isDark }) {
   const [swapped, setSwapped] = useState(false);
@@ -50,10 +51,11 @@ export function ActivityRow({ f, reverse, t, isDark }) {
   );
 }
 
-export const HEAT_LIGHT = ["#EBEDF0", "#9BE9A8", "#40C463", "#30A14E", "#216E39"];
-export const HEAT_DARK = ["#161B22", "#0E4429", "#006D32", "#26A641", "#39D353"];
+export const HEAT_LIGHT = ["#E4E3DE", "#CFE69A", "#A4D44A", "#6AA312", "#3F6B00"];
+export const HEAT_DARK = ["#1B1B1D", "#34460F", "#587A14", "#86BD1E", "#B6FF2E"];
 
 export function GithubActivity({ t, isDark }) {
+  const { playing } = usePlayer();
   const [status, setStatus] = useState("loading");
   const [weeks, setWeeks] = useState([]);
   const [stats, setStats] = useState({ total: 0, activeDays: 0, longest: 0, current: 0 });
@@ -110,6 +112,7 @@ export function GithubActivity({ t, isDark }) {
     };
   }, []);
 
+
   useEffect(() => {
     if (status === "ready" && scrollRef.current) {
       scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
@@ -136,111 +139,127 @@ export function GithubActivity({ t, isDark }) {
     }
   });
 
+  const weekly = weeks.map((w) => w.reduce((n, d) => n + (d ? d.count : 0), 0));
+  const maxWeek = Math.max(1, ...weekly);
+  const statItems = [
+    { label: "Contributions", value: stats.total, note: "last 12 months" },
+    { label: "Active days", value: stats.activeDays },
+    { label: "Longest streak", value: stats.longest, note: "days" },
+    { label: "Current streak", value: stats.current, note: "days" },
+  ];
+
   return (
-    <section id="github-activity" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
-      <SectionHeading
-        eyebrow="07 · GITHUB"
-        title="GitHub Activity"
-        caption="Live contribution data pulled directly from GitHub."
-        icon={Github}
-        t={t}
-      />
-
+    <section id="github-activity" className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-24 sm:pt-28">
       <Reveal>
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3">
-              <PortfolioImage
-                imageKey={PROFILE.photo}
-                alt={`${PROFILE.githubUsername} avatar`}
-                fallbackLabel="RK"
-                className={`h-10 w-10 shrink-0 rounded-full object-cover border ${t.border}`}
-              />
-              <div className="min-w-0">
-                <p className="font-display text-base font-semibold leading-tight truncate">@{PROFILE.githubUsername}</p>
-                <p className={`text-xs ${t.textFaint} leading-tight mt-1`}>Last 12 months</p>
-              </div>
-            </div>
-            <a
-              href={PROFILE.github}
-              target="_blank"
-              rel="noreferrer"
-              className={`shrink-0 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} hover:text-accent-400 transition-colors`}
-            >
-              View profile <ArrowRight size={14} />
-            </a>
-          </div>
-
-          {status === "loading" && (
-            <div className="mt-8 animate-pulse" aria-label="Loading contribution data">
-              <div className={`h-32 rounded-md ${isDark ? "bg-neutral-900" : "bg-slate-100"}`} />
-            </div>
-          )}
-
-          {status === "error" && (
-            <p className={`mt-8 border-y ${t.border} py-6 text-sm ${t.textMuted}`}>
-              Couldn't load contribution data right now. You can view it directly on{" "}
-              <a href={PROFILE.github} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-accent-400">
-                github.com
-              </a>
-              .
-            </p>
-          )}
-
-          {status === "ready" && (
-            <>
-
-              <div className="mt-8">
-                <div ref={scrollRef} className="overflow-x-auto pb-1">
-                  <svg viewBox={`0 0 ${width} ${height}`} style={{ minWidth: `${width}px`, height: "auto" }} className="block">
-                    {monthLabels.map((m) => (
-                      <text
-                        key={m.wi}
-                        x={m.wi * cell}
-                        y={11}
-                        fontSize="10"
-                        fontFamily="'Source Serif 4', Georgia, serif"
-                        fill={isDark ? "#7A7A7A" : "#8A8A8A"}
-                      >
-                        {m.label}
-                      </text>
-                    ))}
-                    {weeks.map((week, wi) =>
-                      week.map((day, di) => {
-                        if (!day) return null;
-                        const level = day.level ?? 0;
-                        return (
-                          <rect
-                            key={`${wi}-${di}`}
-                            x={wi * cell + 1.5}
-                            y={topPad + di * cell + 1.5}
-                            width={cell - 3}
-                            height={cell - 3}
-                            rx={2}
-                            fill={heat[level]}
-                          >
-                            <title>{`${day.count} contributions on ${day.date}`}</title>
-                          </rect>
-                        );
-                      })
-                    )}
-                  </svg>
-                </div>
-
-                <div className={`mt-4 flex items-center justify-between gap-3 text-xs ${t.textFaint}`}>
-                  <span>{stats.current > 0 ? `${stats.current}-day current streak` : ""}</span>
-                  <span className="inline-flex items-center gap-1.5">
-                    Less
-                    {heat.map((c, i) => (
-                      <span key={i} className="h-2.5 w-2.5 rounded-[2px]" style={{ background: c }} />
-                    ))}
-                    More
-                  </span>
-                </div>
-              </div>
-            </>
-          )}
+        <div className="text-center">
+        <SectionLabel side="OUTRO" no="008" name="Final Track" t={t} />
+        <h2 className="mt-6 font-display text-[2.4rem] font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
+          <span className={`block ${t.text}`}>The work doesn't</span>
+          <span className={`block hero-outline ${t.accent}`}>stop here.</span>
+        </h2>
+        <p className={`mx-auto mt-8 max-w-xl font-body text-base leading-relaxed sm:text-lg ${t.textMuted}`}>
+          Every commit, every experiment, and every project is another step forward.
+        </p>
         </div>
+
+        <div className={`mt-12 flex items-center justify-between gap-4 border-t pt-6 ${t.border}`}>
+          <div className="flex min-w-0 items-center gap-3">
+            <PortfolioImage
+              imageKey={PROFILE.photo}
+              alt={`${PROFILE.githubUsername} avatar`}
+              fallbackLabel="RK"
+              className={`h-10 w-10 shrink-0 rounded-full object-cover border ${t.border}`}
+            />
+            <div className="min-w-0">
+              <p className="font-display text-base font-semibold leading-tight truncate">@{PROFILE.githubUsername}</p>
+              <p className={`mt-1 font-mono text-[11px] uppercase tracking-widest leading-tight ${t.textFaint}`}>GitHub / last 12 months</p>
+            </div>
+          </div>
+          <a href={PROFILE.github} target="_blank" rel="noreferrer" className={`shrink-0 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} hover:text-accent-400 transition-colors`}>
+            View profile <ArrowRight size={14} />
+          </a>
+        </div>
+
+        {status === "loading" && (
+          <div className="mt-8 animate-pulse" aria-label="Loading contribution data">
+            <div className={`h-32 rounded-md ${isDark ? "bg-neutral-900" : "bg-slate-100"}`} />
+          </div>
+        )}
+
+        {status === "error" && (
+          <p className={`mt-8 border-y ${t.border} py-6 text-sm ${t.textMuted}`}>
+            Couldn't load contribution data right now. You can view it directly on{" "}
+            <a href={PROFILE.github} target="_blank" rel="noreferrer" className="underline underline-offset-4 hover:text-accent-400">github.com</a>.
+          </p>
+        )}
+
+        {status === "ready" && (
+          <>
+            <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
+              {statItems.map((s) => (
+                <div key={s.label}>
+                  <dt className={`font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>{s.label}</dt>
+                  <dd className={`mt-1 font-display text-3xl font-bold tabular-nums sm:text-4xl ${t.text}`}>
+                    {s.value}
+                    {s.note && <span className={`ml-1.5 font-mono text-[11px] font-normal uppercase tracking-widest ${t.textFaint}`}>{s.note}</span>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className="mt-10" role="img" aria-label="Weekly contribution totals over the last 12 months">
+              <p className={`mb-2 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>Weekly output</p>
+              <div className="gh-eq flex h-14 items-end gap-[2px]" data-on={playing}>
+                {weekly.map((n, i) => (
+                  <i key={i} title={`${n} contributions`} style={{ height: `${Math.max(6, (n / maxWeek) * 100)}%`, animationDelay: `${(i % 9) * -0.17}s` }} />
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <div ref={scrollRef} className="overflow-x-auto pb-1">
+                <svg viewBox={`0 0 ${width} ${height}`} style={{ minWidth: `${width}px`, height: "auto" }} className="gh-cal block" data-on={playing}>
+                  {monthLabels.map((m) => (
+                    <text key={m.wi} x={m.wi * cell} y={11} fontSize="10" fontFamily="'Archivo', Arial, sans-serif" fill={isDark ? "#7A7A7A" : "#8A8A8A"}>
+                      {m.label}
+                    </text>
+                  ))}
+                  {weeks.map((week, wi) =>
+                    week.map((day, di) => {
+                      if (!day) return null;
+                      const level = day.level ?? 0;
+                      return (
+                        <rect
+                          key={`${wi}-${di}`}
+                          className={level >= 3 ? "gh-cell" : undefined}
+                          style={level >= 3 ? { animationDelay: `${(wi % 8) * -0.2}s` } : undefined}
+                          x={wi * cell + 2}
+                          y={topPad + di * cell + 1.5}
+                          width={cell - 4}
+                          height={cell - 3}
+                          rx={(cell - 4) / 2}
+                          fill={heat[level]}
+                        >
+                          <title>{`${day.count} contributions on ${day.date}`}</title>
+                        </rect>
+                      );
+                    })
+                  )}
+                </svg>
+              </div>
+              <div className={`mt-4 flex items-center justify-between gap-3 text-xs ${t.textFaint}`}>
+                <span>{stats.current > 0 ? `${stats.current}-day current streak` : ""}</span>
+                <span className="inline-flex items-center gap-1.5">
+                  Less
+                  {heat.map((c, i) => (
+                    <span key={i} className="h-2.5 w-1.5 rounded-full" style={{ background: c }} />
+                  ))}
+                  More
+                </span>
+              </div>
+            </div>
+          </>
+        )}
       </Reveal>
     </section>
   );

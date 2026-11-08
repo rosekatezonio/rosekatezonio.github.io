@@ -1,51 +1,88 @@
-import { PlayerProvider, CDDisc, PlayerControls, StereoMeter, EqMeter } from "./CDPlayer.jsx";
+import { CDDisc, PlayerControls, StereoMeter, EqMeter, WaveDivider } from "./CDPlayer.jsx";
 import React, { useState } from "react";
 import { PortfolioImage, img } from "../images.jsx";
-import { Reveal, SectionHeading, ViewMore, headline } from "./ui.jsx";
+import { Reveal, SectionHeading, SectionLabel, ViewMore, headline } from "./ui.jsx";
 import { ProjectShowcase } from "./ProjectShowcase.jsx";
 import { PROFILE, TOOLKIT_GROUPS, slugOf, LABS, WEB_APPS, ALL_PROJECTS, EXPERIENCE, PATHWAY_ICONS, experienceYear, HOME_PROJECT_BY_TAB } from "../data.js";
 import { Wrench, Code2, Network, ArrowUpRight, ArrowRight, Briefcase } from "../icons.jsx";
 
 
-export function ExperienceTimeline({ t, isDark, className = "max-w-3xl mx-auto" }) {
+export function ExperienceTimeline({ t, isDark, className = "max-w-4xl", compact = false }) {
   return (
     <ol className={className}>
       {EXPERIENCE.map((exp, i) => {
         const date = exp.period || exp.duration || "";
-        const meta = [exp.location, exp.employment].filter((v) => v && v !== date);
+        const current = /present/i.test(date);
+        const no = String(i + 1).padStart(2, "0");
+        const lines = Array.isArray(exp.description) ? exp.description : exp.description ? [exp.description] : [];
+        const typeLabel = exp.employment && exp.employment !== date ? exp.employment : exp.type;
+        const facts = [
+          { label: "Location", value: exp.location },
+          { label: "Employment", value: exp.employment && exp.employment !== date ? exp.employment : "" },
+          { label: "Category", value: exp.type },
+        ].filter((f) => f.value);
         return (
           <Reveal key={`${exp.company}-${i}`} delay={i * 80}>
-            <li className={`py-7 sm:py-8 border-t first:border-t-0 first:pt-0 ${t.border}`}>
-              <div className="sm:grid sm:grid-cols-[9.5rem_1fr] sm:gap-8">
-                <p className={`font-mono text-xs ${t.textFaint} sm:pt-1.5`}>{date}</p>
-                <div className="mt-1.5 sm:mt-0 min-w-0">
-                  <h3 className="font-display font-semibold text-lg sm:text-xl leading-snug">{exp.position}</h3>
-                  <p className={`mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm ${t.textMuted}`}>
-                    {exp.logo && (
-                      <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-4 w-4 rounded-sm object-cover" />
-                    )}
-                    <span className={`font-medium ${t.text}`}>{exp.company}</span>
-                    {meta.map((m) => (
-                      <React.Fragment key={m}>
-                        <span aria-hidden="true">·</span>
-                        <span>{m}</span>
-                      </React.Fragment>
-                    ))}
-                  </p>
+            <li className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-x-8">
+              <div>
+                <p className={`font-display text-3xl font-bold leading-none tabular-nums sm:text-5xl ${current ? t.accent : t.text}`}>{no}</p>
+                <p className={`mt-3 hidden font-mono text-xs uppercase tracking-wider sm:block ${t.textFaint}`}>{date}</p>
+              </div>
 
-                  {Array.isArray(exp.description) ? (
-                    <ul className={`mt-4 max-w-3xl space-y-2 text-sm leading-relaxed ${t.textMuted}`}>
-                      {exp.description.map((line) => (
-                        <li key={line} className="relative pl-4">
-                          <span aria-hidden="true" className="absolute left-0">–</span>
-                          {line}
+              <div className={`relative min-w-0 border-l pl-5 sm:pl-8 ${t.border}`}>
+                <span
+                  aria-hidden="true"
+                  className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full ${current ? "bg-accent-400 ring-4 ring-accent-400/20" : isDark ? "bg-neutral-600" : "bg-slate-400"}`}
+                />
+                <p className={`mb-3 inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest ${current ? t.accent : t.textFaint}`}>
+                  {current ? "Current tour stop" : "Completed tour stop"}
+                  {current && <EqMeter />}
+                </p>
+                <p className={`mb-2 font-mono text-xs uppercase tracking-wider sm:hidden ${t.textFaint}`}>{date}</p>
+                <h3 className={`font-display text-2xl font-bold leading-tight tracking-tight sm:text-3xl ${t.text}`}>{exp.position}</h3>
+
+                <div className="mt-4 flex items-center gap-3">
+                  {exp.logo && (
+                    <span className={`h-8 w-8 shrink-0 overflow-hidden rounded-lg border bg-white p-0.5 ${t.border}`}>
+                      <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-full w-full object-contain" />
+                    </span>
+                  )}
+                  <ExperienceName exp={exp} t={t} className={`font-display text-lg font-semibold leading-snug sm:text-xl ${t.text}`} />
+                </div>
+
+                {compact ? (
+                  <>
+                    <p className={`mt-3 text-sm ${t.textMuted}`}>{[exp.location, typeLabel].filter(Boolean).join(" · ")}</p>
+                    {lines[0] && (
+                      <p className={`mt-3 line-clamp-2 max-w-2xl text-[15px] leading-relaxed ${t.textMuted}`}>{lines[0]}</p>
+                    )}
+                  </>
+                ) : (
+                <dl className="mt-6 flex flex-wrap gap-x-10 gap-y-4">
+                  {facts.map((f) => (
+                    <div key={f.label}>
+                      <dt className={`font-mono text-[10px] uppercase tracking-widest ${t.textFaint}`}>{f.label}</dt>
+                      <dd className={`mt-1 text-sm ${t.text}`}>{f.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                )}
+
+                {!compact && lines.length > 0 && (
+                  <div className="mt-7">
+                    <p className={`mb-3 font-mono text-[10px] uppercase tracking-widest ${t.textFaint}`}>Responsibilities</p>
+                    <ol className="space-y-3">
+                      {lines.map((line, li) => (
+                        <li key={line} className="flex gap-4">
+                          <span className={`shrink-0 pt-0.5 font-mono text-[11px] tabular-nums ${t.accent}`}>{String(li + 1).padStart(2, "0")}</span>
+                          <span className={`text-[15px] leading-relaxed ${t.textMuted}`}>{line}</span>
                         </li>
                       ))}
-                    </ul>
-                  ) : (
-                    exp.description && <p className={`mt-4 max-w-3xl text-sm leading-relaxed ${t.textMuted}`}>{exp.description}</p>
-                  )}
-                </div>
+                    </ol>
+                  </div>
+                )}
+
+                {i < EXPERIENCE.length - 1 && <div className={compact ? "mt-7 pb-7" : "mt-10 pb-10"}><WaveDivider className="wave-sm" /></div>}
               </div>
             </li>
           </Reveal>
@@ -70,8 +107,7 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
   return (
     <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center lg:min-h-[92vh]">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-5 md:py-12 lg:py-16">
-        <PlayerProvider>
-<div className="grid max-lg:mx-auto max-lg:max-w-[38rem] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
+        <div className="grid max-lg:mx-auto max-lg:max-w-[38rem] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
 
           <div className="min-w-0 max-lg:contents">
             <Reveal delay={60} className="max-lg:order-1">
@@ -150,7 +186,6 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </Reveal>
           </div>
         </div>
-        </PlayerProvider>
 
         <Reveal delay={440}>
           <div id="contact" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>
@@ -236,9 +271,7 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
       <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-24">
         <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-14">
           <Reveal>
-            <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-              <Wrench size={13} /> 02 / TECHNICAL TOOLKIT
-            </p>
+            <SectionLabel side="SIDE A" no="003" name="The Soundboard" t={t} className="mb-3" />
             <h2 className={`${headline} text-[2.75rem] sm:text-[4.5rem] lg:text-[6.5rem] ${t.text} mb-6`}>What I work with.</h2>
             <p className={`font-body text-sm sm:text-base ${t.textMuted}`}>
               A practical toolkit for building software and understanding IT systems.
@@ -282,9 +315,7 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
   return (
     <section id="labs" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
       <div className="text-center mb-10 sm:mb-14">
-        <p className={`inline-flex items-center gap-2 font-mono text-xs tracking-widest ${t.accent} mb-3`}>
-          <Code2 size={13} /> {isLabs ? "04 · NETWORKING & IT LOG" : "04 · SOFTWARE LOG"}
-        </p>
+        <SectionLabel side="SIDE B" no="004" name="Tracklist" t={t} className="mb-3" />
         <div className="flex flex-wrap items-baseline justify-center gap-3">
           {[["webapps", "Software"], ["labs", "Networking & IT"]].map(([key, label], i) => (
             <React.Fragment key={key}>
@@ -318,9 +349,9 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
 }
 
 
-function ExperienceName({ exp, t }) {
+function ExperienceName({ exp, t, className }) {
   const [drawn, setDrawn] = useState(false);
-  const nameClass = `font-serif-read font-normal text-[1.75rem] sm:text-4xl leading-[1.05] tracking-[-0.025em] ${t.text}`;
+  const nameClass = className || `font-serif-read font-normal text-[1.75rem] sm:text-4xl leading-[1.05] tracking-[-0.025em] ${t.text}`;
   if (!exp.website) return <span className={nameClass}>{exp.company}</span>;
 
   const onClick = (e) => {
@@ -351,67 +382,33 @@ function ExperienceName({ exp, t }) {
   );
 }
 
-function ExperienceRow({ exp, t, isDark }) {
-  return (
-    <li className={`flex items-center justify-between gap-4 sm:gap-8 border-b py-6 sm:py-8 ${t.border}`}>
-      <div className="min-w-0">
-        <div className="flex items-start gap-3 sm:gap-5">
-          <div className={`h-11 w-11 sm:h-14 sm:w-14 shrink-0 overflow-hidden rounded-xl border ${t.border} bg-white p-1`}>
-            <PortfolioImage imageKey={exp.logo} alt="" fallbackLabel={exp.company} className="h-full w-full object-contain" />
-          </div>
-          <div className="min-w-0">
-            <ExperienceName exp={exp} t={t} />
-            <p className={`mt-2 text-base sm:text-lg leading-snug ${t.textMuted}`}>{exp.position}</p>
-          </div>
-        </div>
-      </div>
-      {exp.website && (
-        <a
-          href={exp.website}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Visit ${exp.company} website`}
-          className={`group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium ${t.text} transition-colors hover:text-accent-400`}
-        >
-          <span className="hidden sm:inline">Visit website</span>
-          <span className="sm:hidden">Website</span>
-          <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </a>
-      )}
-    </li>
-  );
-}
-
 export function ExperienceSection({ t, isDark }) {
   return (
     <section id="experience" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
-      <SectionHeading
-        eyebrow="05 · TIMELINE"
-        title="Experience"
-        icon={Briefcase}
-        t={t}
-      />
-
       <Reveal>
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between gap-4 pb-6">
-            <p className={`font-mono text-xs tracking-wide ${t.textFaint}`}>Internships and work experience.</p>
-            <a
-              href="#experience"
-              className={`group inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] ${t.textMuted} hover:text-accent-400 transition-colors`}
-            >
-              Full history
-              <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
-            </a>
-          </div>
-
-          <ol className={`border-t ${t.border}`}>
-            {EXPERIENCE.map((exp, i) => (
-              <ExperienceRow key={`${exp.company}-${i}`} exp={exp} t={t} isDark={isDark} />
-            ))}
-          </ol>
-        </div>
+        <SectionLabel side="SIDE B" no="005" name="Tour History" t={t} />
+        <h2 className="journey-title mt-6 whitespace-nowrap font-display font-bold uppercase leading-[0.95] tracking-tight">
+          <span className={t.text}>The journey</span>{" "}
+          <span className={`hero-outline ${t.accent}`}>so far.</span>
+        </h2>
+        <p className={`mt-6 max-w-xl font-body text-base leading-relaxed sm:text-lg ${t.textMuted}`}>
+          A timeline of roles, responsibilities, and professional growth.
+        </p>
       </Reveal>
+
+      <div className="mt-14 sm:mt-16">
+        <ExperienceTimeline t={t} isDark={isDark} compact />
+      </div>
+
+      <div className="mt-6 max-w-4xl">
+        <a
+          href="#experience"
+          className={`group inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] ${t.textMuted} hover:text-accent-400 transition-colors`}
+        >
+          Full history
+          <ArrowRight size={12} className="transition-transform group-hover:translate-x-0.5" />
+        </a>
+      </div>
     </section>
   );
 }
