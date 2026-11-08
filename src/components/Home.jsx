@@ -75,12 +75,12 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
 
           <div className="min-w-0 max-lg:contents">
             <Reveal delay={60} className="max-lg:order-1">
-              <div className="mx-auto w-fit max-w-full lg:mx-0">
+              <div className="w-full md:mx-auto md:w-fit md:max-w-full lg:mx-0">
                 <div className={`flex items-center justify-between gap-4 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] sm:text-[11px] ${t.textFaint}`}>
                   <span>Side A / <span className={t.accent}>001</span></span>
                   <StereoMeter />
                 </div>
-                <h2 className="hero-role font-display font-bold uppercase text-center lg:text-left">
+                <h2 className="hero-role font-display font-bold uppercase text-left md:text-center lg:text-left">
                   <span className={`block ${t.text}`}>Software</span>
                   <span className={`block hero-outline ${t.accent}`}>Networking</span>
                 </h2>
@@ -89,7 +89,7 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
                   <EqMeter />
                 </div>
               </div>
-              <p className={`mt-4 text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} lg:hidden`}>
+              <p className={`mt-4 text-left md:text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} lg:hidden`}>
                 01 / From {PROFILE.location}
               </p>
             </Reveal>
@@ -105,7 +105,7 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </Reveal>
 
             <Reveal delay={220} className="max-lg:order-2">
-              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-center lg:text-right">
+              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-left md:text-center lg:text-right">
                 <p className={`normal-case text-xs sm:text-sm ${t.textMuted}`}>
                   I build web experiences, configure networks, and explore practical cybersecurity solutions.
                 </p>
@@ -113,21 +113,21 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </Reveal>
 
             <Reveal delay={320} className="max-lg:order-5 lg:mt-8">
-              <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
+              <div className="flex flex-col items-start gap-2 sm:gap-3 md:items-center lg:items-end">
                 <a
                   href="#aboutme"
                   onClick={(event) => {
                     event.preventDefault();
                     onOpenAbout();
                   }}
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-xl font-medium uppercase leading-tight sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[1.05rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   More about me
                   <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
                 </a>
                 <a
                   href="#labs"
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-xl font-medium uppercase leading-tight sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[1.05rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   View selected projects
                   <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
@@ -210,19 +210,20 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
 function MarqueeSkill({ item, t, isDark, hidden = false }) {
   const [broken, setBroken] = useState(false);
   const src = img(item.icon);
+  const hasIcon = src && !broken;
   return (
     <li
       aria-hidden={hidden || undefined}
-      className={`flex shrink-0 items-center gap-3 rounded-full border py-2 pl-2 pr-5 ${t.border} ${isDark ? "bg-neutral-900/60" : "bg-white"} ${hidden ? "motion-reduce:hidden" : ""}`}
+      className={`flex shrink-0 items-center gap-2.5 rounded-xl border px-3.5 py-2.5 transition-colors hover:border-accent-400 ${t.border} ${isDark ? "bg-neutral-900/60" : "bg-white"} ${hidden ? "motion-reduce:hidden" : ""}`}
     >
-      <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isDark ? "bg-white" : "bg-slate-50 border border-slate-200"}`}>
-        {src && !broken ? (
-          <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} className="h-6 w-6 object-contain" />
+      <span className={`flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-md ${hasIcon ? (isDark ? "bg-white p-0.5" : "") : "bg-neutral-500/15"}`}>
+        {hasIcon ? (
+          <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} className="h-full w-full object-contain" />
         ) : (
-          <span className="font-mono text-[10px] font-bold tracking-wider text-accent-400">{item.abbr}</span>
+          <span className={`font-mono text-[9px] font-bold tracking-wider ${t.accent}`}>{item.abbr}</span>
         )}
       </span>
-      <span className={`whitespace-nowrap font-body text-sm font-medium ${t.text}`}>{item.name}</span>
+      <span className={`whitespace-nowrap font-display text-sm font-semibold tracking-tight ${t.text}`}>{item.name}</span>
     </li>
   );
 }
@@ -250,8 +251,8 @@ export function SkillsSection({ t, isDark, onOpenSkills }) {
         <div
           className="marquee-mask motion-reduce:overflow-x-auto"
           style={{
-            WebkitMaskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
-            maskImage: "linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent)",
+            WebkitMaskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)",
+            maskImage: "linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent)",
           }}
         >
           <ul className="marquee-track marquee-reverse py-1" style={{ animationDuration: `${MARQUEE_SKILLS.length * 3}s` }} aria-label="Skills">

@@ -1,100 +1,132 @@
 import React, { useState, useRef, useEffect, useCallback, createContext, useContext } from "react";
+import july from "../assets/music/July.mp3";
+import snow from "../assets/music/Snow_on_The_Bluff.mp3";
+import radiate from "../assets/music/Radiate.mp3";
 
-const TICKS = 128;
-const SCALE = [110, 130.8, 146.8, 164.8, 196, 220, 261.6, 293.7, 329.6];
 export const TRACKS = [
-  { title: "Build Pipeline", step: 0.25, root: 1, wave: "triangle", peak: 0.22, pat: [0, 4, 2, 5, 3, 6, 4, 7, 2, 5, 3, 8, 4, 6, 2, 5] },
-  { title: "Packet Loss", step: 0.2, root: 1.125, wave: "square", peak: 0.07, pat: [0, 2, 4, 2, 5, 4, 2, 0, 3, 5, 7, 5, 6, 4, 3, 1] },
-  { title: "Hot Reload", step: 0.3, root: 0.89, wave: "sine", peak: 0.28, pat: [0, 3, 5, 3, 6, 5, 3, 2, 4, 7, 8, 7, 5, 4, 2, 3] },
+  { title: "July", src: july },
+  { title: "Snow on The Bluff", src: snow },
+  { title: "Radiate", src: radiate },
 ];
-const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+
+const fmt = (s) => {
+  const v = Number.isFinite(s) ? s : 0;
+  return `${Math.floor(v / 60)}:${String(Math.floor(v % 60)).padStart(2, "0")}`;
+};
 const Ctx = createContext(null);
 const usePlayer = () => useContext(Ctx);
 
 export function PlayerProvider({ children }) {
-  const AC = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
+  const supported = typeof Audio !== "undefined";
   const [playing, setPlaying] = useState(false);
-  const [tick, setTick] = useState(0);
   const [track, setTrack] = useState(0);
+  const [time, setTime] = useState(0);
+  const [dur, setDur] = useState(0);
   const [vol, setVol] = useState(0.6);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [burst, setBurst] = useState(0);
-  const ctxRef = useRef(null), gainRef = useRef(null), timer = useRef(null);
-  const tickRef = useRef(0), trackRef = useRef(0), playRef = useRef(false), shufRef = useRef(false), repRef = useRef(false);
-  shufRef.current = shuffle; repRef.current = repeat;
+  const [failed, setFailed] = useState(false);
+  const audio = useRef(null);
+  const trackRef = useRef(0);
+  const shufRef = useRef(false);
+  const repRef = useRef(false);
+  shufRef.current = shuffle;
+  repRef.current = repeat;
 
-  const tone = useCallback((freq, type, dur, peak, when, slide) => {
-    const c = ctxRef.current, o = c.createOscillator(), g = c.createGain();
-    o.type = type;
-    o.frequency.setValueAtTime(freq, when);
-    if (slide) o.frequency.exponentialRampToValueAtTime(slide, when + 0.15);
-    g.gain.setValueAtTime(0.0001, when);
-    g.gain.exponentialRampToValueAtTime(peak, when + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.0001, when + dur);
-    o.connect(g).connect(gainRef.current);
-    o.start(when); o.stop(when + dur + 0.05);
+  const load = useCallback((n, autoplay) => {
+    const a = audio.current;
+    if (!a) return;
+    trackRef.current = n;
+    setTrack(n);
+    setTime(0);
+    setDur(0);
+    setFailed(false);
+    a.src = TRACKS[n].src;
+    if (autoplay) a.play().catch(() => setPlaying(false));
   }, []);
 
-  const stopTimer = () => clearInterval(timer.current);
-  const startTimer = useCallback(() => {
-    stopTimer();
-    timer.current = setInterval(() => stepRef.current(), TRACKS[trackRef.current].step * 1000);
-  }, []);
-  const stepRef = useRef(() => {});
+  const randomOther = () => {
+    let n;
+    do n = Math.floor(Math.random() * TRACKS.length);
+    while (n === trackRef.current && TRACKS.length > 1);
+    return n;
+  };
 
-  const goTo = useCallback((n) => {
-    trackRef.current = n; tickRef.current = 0;
-    setTrack(n); setTick(0);
-    if (playRef.current) startTimer();
-  }, [startTimer]);
+  const next = useCallback(() => {
+    const a = audio.current;
+    load(shufRef.current ? randomOther() : (trackRef.current + 1) % TRACKS.length, a && !a.paused);
+  }, [load]);
 
-  const randomOther = () => { let n; do n = Math.floor(Math.random() * TRACKS.length); while (n === trackRef.current && TRACKS.length > 1); return n; };
-  const next = useCallback(() => goTo(shufRef.current ? randomOther() : (trackRef.current + 1) % TRACKS.length), [goTo]);
   const prev = useCallback(() => {
-    if (tickRef.current * TRACKS[trackRef.current].step > 3) { tickRef.current = 0; setTick(0); return; }
-    goTo((trackRef.current - 1 + TRACKS.length) % TRACKS.length);
-  }, [goTo]);
-
-  const pause = useCallback(async () => {
-    stopTimer(); playRef.current = false; setPlaying(false);
-    await ctxRef.current?.suspend();
-  }, []);
-
-  stepRef.current = () => {
-    const tr = TRACKS[trackRef.current], i = tickRef.current;
-    if (i >= TICKS) {
-      if (repRef.current) { tickRef.current = 0; setTick(0); return; }
-      if (shufRef.current || trackRef.current < TRACKS.length - 1) return next();
-      goTo(0); return pause();
+    const a = audio.current;
+    if (a.currentTime > 3) {
+      a.currentTime = 0;
+      return;
     }
-    const now = ctxRef.current.currentTime + 0.02;
-    if (i % 4 === 0) tone(120, "sine", 0.25, 0.8, now, 42);
-    if (i % 2 === 1) tone(SCALE[tr.pat[i % 16]] * 2 * tr.root, tr.wave, 0.35, tr.peak, now);
-    if (i % 16 === 0) tone(SCALE[(Math.floor(i / 16) % 3) * 2] * tr.root, "sawtooth", 3.6, 0.07, now);
-    tickRef.current = i + 1; setTick(i + 1);
+    load((trackRef.current - 1 + TRACKS.length) % TRACKS.length, !a.paused);
+  }, [load]);
+
+  useEffect(() => {
+    if (!supported) return;
+    const a = new Audio();
+    a.preload = "metadata";
+    a.src = TRACKS[0].src;
+    audio.current = a;
+    const onTime = () => setTime(a.currentTime);
+    const onMeta = () => setDur(a.duration);
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+    const onError = () => { setFailed(true); setPlaying(false); };
+    const onEnd = () => {
+      if (repRef.current) {
+        a.currentTime = 0;
+        a.play().catch(() => setPlaying(false));
+      } else if (shufRef.current) {
+        load(randomOther(), true);
+      } else if (trackRef.current < TRACKS.length - 1) {
+        load(trackRef.current + 1, true);
+      } else {
+        load(0, false);
+      }
+    };
+    a.addEventListener("timeupdate", onTime);
+    a.addEventListener("loadedmetadata", onMeta);
+    a.addEventListener("durationchange", onMeta);
+    a.addEventListener("play", onPlay);
+    a.addEventListener("pause", onPause);
+    a.addEventListener("error", onError);
+    a.addEventListener("ended", onEnd);
+    return () => {
+      a.pause();
+      a.removeAttribute("src");
+      a.load();
+    };
+  }, [supported, load]);
+
+  useEffect(() => {
+    if (audio.current) audio.current.volume = vol;
+  }, [vol]);
+
+  const toggle = () => {
+    const a = audio.current;
+    if (!a) return;
+    if (a.paused) {
+      setFailed(false);
+      setBurst((b) => b + 1);
+      a.play().catch(() => { setFailed(true); setPlaying(false); });
+    } else {
+      a.pause();
+    }
   };
 
-  const toggle = async () => {
-    if (!AC) return;
-    if (playing) return pause();
-    if (!ctxRef.current) {
-      ctxRef.current = new AC();
-      gainRef.current = ctxRef.current.createGain();
-      gainRef.current.connect(ctxRef.current.destination);
-    }
-    gainRef.current.gain.value = vol * 0.5;
-    await ctxRef.current.resume();
-    playRef.current = true; setPlaying(true); setBurst((b) => b + 1);
-    startTimer();
+  const seek = (v) => {
+    if (audio.current) audio.current.currentTime = v;
+    setTime(v);
   };
-  const seek = (v) => { tickRef.current = v; setTick(v); };
-
-  useEffect(() => { if (gainRef.current) gainRef.current.gain.value = vol * 0.5; }, [vol]);
-  useEffect(() => () => { stopTimer(); ctxRef.current?.close(); }, []);
 
   return (
-    <Ctx.Provider value={{ AC, playing, tick, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
+    <Ctx.Provider value={{ AC: supported && !failed, failed, playing, time, dur, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
       {children}
     </Ctx.Provider>
   );
@@ -139,7 +171,9 @@ const btn = "group relative flex h-11 w-11 items-center justify-center rounded-f
 export function PlayerControls({ t }) {
   const p = usePlayer();
   const [volOpen, setVolOpen] = useState(false);
-  const tr = TRACKS[p.track], len = TICKS * tr.step, cur = (p.tick % TICKS) * tr.step;
+  const tr = TRACKS[p.track];
+  const max = p.dur > 0 ? p.dur : 1;
+  const pct = Math.min(100, (p.time / max) * 100);
   const toggleBtn = (on, set, label, icon) => (
     <button type="button" onClick={() => set(!on)} aria-pressed={on} aria-label={label}
       className={`${btn} ${on ? "text-accent-400" : t.textMuted} hover:text-accent-400`}>
@@ -147,12 +181,12 @@ export function PlayerControls({ t }) {
     </button>
   );
   return (
-    <div className="w-full max-w-[26rem] self-center md:max-w-[30rem] lg:max-w-[26rem] lg:self-end text-left" aria-label="Music player">
+    <div className="w-full max-w-[26rem] self-center text-left max-md:max-w-none max-md:self-stretch md:max-w-[30rem] lg:max-w-[26rem] lg:self-end" aria-label="Music player">
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
           <p className={`truncate font-display text-base font-bold ${t.text}`}>{tr.title}</p>
           <p className={`truncate text-xs ${t.textMuted}`} role="status" aria-live="polite">
-            {!p.AC ? "Audio isn't supported in this browser" : p.playing ? "Now playing" : p.tick ? "Paused" : "Press play. Nothing autoplays."}
+            {!p.AC ? "Audio unavailable" : p.playing ? "Now playing" : p.time > 0 ? "Paused" : "Press play. Nothing autoplays."}
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -163,10 +197,10 @@ export function PlayerControls({ t }) {
         </div>
       </div>
 
-      <input type="range" min="0" max={TICKS - 1} value={p.tick % TICKS} onChange={(e) => p.seek(+e.target.value)}
-        aria-label="Track progress" aria-valuetext={`${fmt(cur)} of ${fmt(len)}`} disabled={!p.AC}
-        className="cd-range mt-2 w-full" style={{ "--p": `${((p.tick % TICKS) / (TICKS - 1)) * 100}%` }} />
-      <div className={`-mt-1 flex justify-between text-[11px] tabular-nums ${t.textFaint}`}><span>{fmt(cur)}</span><span>{fmt(len)}</span></div>
+      <input type="range" min="0" max={max} step="0.1" value={Math.min(p.time, max)} onChange={(e) => p.seek(+e.target.value)}
+        aria-label="Track progress" aria-valuetext={`${fmt(p.time)} of ${fmt(p.dur)}`} disabled={!p.AC || !p.dur}
+        className="cd-range mt-2 w-full" style={{ "--p": `${pct}%` }} />
+      <div className={`-mt-1 flex justify-between text-[11px] tabular-nums ${t.textFaint}`}><span>{fmt(p.time)}</span><span>{fmt(p.dur)}</span></div>
       {volOpen && (
         <input type="range" min="0" max="1" step="0.05" value={p.vol} onChange={(e) => p.setVol(+e.target.value)}
           aria-label="Volume" className="cd-range mt-1 w-full lg:hidden" style={{ "--p": `${p.vol * 100}%` }} />
