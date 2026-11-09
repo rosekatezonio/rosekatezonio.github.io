@@ -4,9 +4,9 @@ import snow from "../assets/music/Snow_on_The_Bluff.mp3";
 import radiate from "../assets/music/Radiate.mp3";
 
 export const TRACKS = [
-  { title: "July", src: july },
-  { title: "Snow on The Bluff", src: snow },
-  { title: "Radiate", src: radiate },
+  { title: "July", src: july, duration: 214.465 },
+  { title: "Snow on The Bluff", src: snow, duration: 186.122 },
+  { title: "Radiate", src: radiate, duration: 178.834 },
 ];
 
 const fmt = (s) => {
@@ -21,12 +21,17 @@ export function PlayerProvider({ children }) {
   const [playing, setPlaying] = useState(false);
   const [track, setTrack] = useState(0);
   const [time, setTime] = useState(0);
-  const [dur, setDur] = useState(0);
+  const [dur, setDur] = useState(TRACKS[0].duration);
   const [vol, setVol] = useState(0.6);
   const [shuffle, setShuffle] = useState(false);
   const [repeat, setRepeat] = useState(false);
   const [burst, setBurst] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [buffering, setBuffering] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [overlayOpen, setOverlayOpen] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(false);
+  const flowing = useRef(false);
   const audio = useRef(null);
   const trackRef = useRef(0);
   const shufRef = useRef(false);
@@ -40,7 +45,7 @@ export function PlayerProvider({ children }) {
     trackRef.current = n;
     setTrack(n);
     setTime(0);
-    setDur(0);
+    setDur(TRACKS[n].duration);
     setFailed(false);
     a.src = TRACKS[n].src;
     if (autoplay) a.play().catch(() => setPlaying(false));
@@ -70,14 +75,37 @@ export function PlayerProvider({ children }) {
   useEffect(() => {
     if (!supported) return;
     const a = new Audio();
-    a.preload = "metadata";
+    a.preload = "none";
     a.src = TRACKS[0].src;
     audio.current = a;
     const onTime = () => setTime(a.currentTime);
-    const onMeta = () => setDur(a.duration);
-    const onPlay = () => setPlaying(true);
-    const onPause = () => setPlaying(false);
-    const onError = () => { setFailed(true); setPlaying(false); };
+    const onMeta = () => {
+      if (Number.isFinite(a.duration) && a.duration > 0) setDur(a.duration);
+    };
+    const onPlay = () => setBuffering(true);
+    const onPlaying = () => {
+      if (!flowing.current) setBurst((b) => b + 1);
+      flowing.current = true;
+      setPlaying(true);
+      setBuffering(false);
+      setStarted(true);
+    };
+    const onPause = () => {
+      flowing.current = false;
+      setPlaying(false);
+      setBuffering(false);
+    };
+    const onWait = () => {
+      flowing.current = false;
+      setPlaying(false);
+      if (!a.paused) setBuffering(true);
+    };
+    const onError = () => {
+      flowing.current = false;
+      setFailed(true);
+      setPlaying(false);
+      setBuffering(false);
+    };
     const onEnd = () => {
       if (repRef.current) {
         a.currentTime = 0;
@@ -94,6 +122,9 @@ export function PlayerProvider({ children }) {
     a.addEventListener("loadedmetadata", onMeta);
     a.addEventListener("durationchange", onMeta);
     a.addEventListener("play", onPlay);
+    a.addEventListener("playing", onPlaying);
+    a.addEventListener("waiting", onWait);
+    a.addEventListener("stalled", onWait);
     a.addEventListener("pause", onPause);
     a.addEventListener("error", onError);
     a.addEventListener("ended", onEnd);
@@ -113,7 +144,6 @@ export function PlayerProvider({ children }) {
     if (!a) return;
     if (a.paused) {
       setFailed(false);
-      setBurst((b) => b + 1);
       a.play().catch(() => { setFailed(true); setPlaying(false); });
     } else {
       a.pause();
@@ -126,7 +156,7 @@ export function PlayerProvider({ children }) {
   };
 
   return (
-    <Ctx.Provider value={{ AC: supported && !failed, failed, playing, time, dur, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
+    <Ctx.Provider value={{ AC: supported && !failed, failed, playing, buffering, active: playing || buffering, started, overlayOpen, setOverlayOpen, controlsVisible, setControlsVisible, time, dur, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
       {children}
     </Ctx.Provider>
   );
@@ -162,17 +192,26 @@ export function WaveDivider({ className = "" }) {
 }
 
 export function CDDisc() {
-  const { playing, burst } = usePlayer();
+  const { AC, playing, active, burst, toggle, track, time, dur } = usePlayer();
+  const pct = dur > 0 ? Math.min(1, time / dur) : 0;
   return (
-    <div className="cd-stage" data-playing={playing} role="img" aria-label={playing ? "Compact disc, spinning" : "Compact disc, stopped"}>
+    <button
+      type="button"
+      onClick={toggle}
+      disabled={!AC}
+      className="cd-stage"
+      data-playing={playing}
+      aria-label={active ? "Pause track" : "Play track"}
+    >
+      <span className="cd-ring" style={{ "--prog": `${pct * 360}deg` }} aria-hidden="true" />
       {burst > 0 && <span key={burst} className="cd-burst" aria-hidden="true" />}
-      <div className="cd-disc" aria-hidden="true">
-        <div className="cd-grooves" />
-        <div className="cd-label" />
-        <div className="cd-hole" />
-      </div>
-      <div className="cd-gloss" aria-hidden="true" />
-    </div>
+      <span key={track} className="cd-disc" aria-hidden="true">
+        <span className="cd-grooves" />
+        <span className="cd-label"><span>{String(track + 1).padStart(2, "0")}</span></span>
+        <span className="cd-hole" />
+      </span>
+      <span className="cd-gloss" aria-hidden="true" />
+    </button>
   );
 }
 
@@ -184,6 +223,18 @@ const btn = "group relative flex h-11 w-11 items-center justify-center rounded-f
 export function PlayerControls({ t }) {
   const p = usePlayer();
   const [volOpen, setVolOpen] = useState(false);
+  const rootRef = useRef(null);
+  const { setControlsVisible } = p;
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return undefined;
+    const io = new IntersectionObserver(([entry]) => setControlsVisible(entry.isIntersecting), { threshold: 0.15 });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      setControlsVisible(false);
+    };
+  }, [setControlsVisible]);
   const tr = TRACKS[p.track];
   const max = p.dur > 0 ? p.dur : 1;
   const pct = Math.min(100, (p.time / max) * 100);
@@ -194,12 +245,16 @@ export function PlayerControls({ t }) {
     </button>
   );
   return (
-    <div className="w-full max-w-[26rem] self-center text-left max-md:max-w-none max-md:self-stretch md:max-w-[30rem] lg:max-w-[26rem] lg:self-end" aria-label="Music player">
+    <div ref={rootRef} className="w-full max-w-[26rem] self-center text-left max-md:max-w-none max-md:self-stretch md:max-w-[30rem] lg:max-w-[26rem] lg:self-end" aria-label="Music player">
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <p className={`truncate font-display text-base font-bold ${t.text}`}>{tr.title}</p>
-          <p className={`truncate text-xs ${t.textMuted}`} role="status" aria-live="polite">
-            {!p.AC ? "Audio unavailable" : p.playing ? "Now playing" : p.time > 0 ? "Paused" : "Press play. Nothing autoplays."}
+          <p className={`truncate font-display text-xl font-bold leading-tight tracking-tight ${t.text}`}>
+            <span className={`mr-2 font-mono text-xs font-normal tracking-widest ${t.accent}`}>{String(p.track + 1).padStart(2, "0")}</span>
+            {tr.title}
+          </p>
+          <p className={`mt-1 flex items-center gap-2 truncate font-mono text-[11px] uppercase tracking-widest ${t.textMuted}`} role="status" aria-live="polite">
+            <span aria-hidden="true" className={`h-1.5 w-1.5 shrink-0 rounded-full ${p.playing ? "animate-pulse bg-accent-400 motion-reduce:animate-none" : p.buffering ? "bg-accent-400/60" : "bg-neutral-500"}`} />
+            {!p.AC ? "Audio unavailable" : p.buffering ? "Buffering" : p.playing ? "Now spinning" : p.time > 0 ? "Paused" : "Press play · no autoplay"}
           </p>
         </div>
         <div className="flex items-center gap-1">
@@ -211,7 +266,7 @@ export function PlayerControls({ t }) {
       </div>
 
       <input type="range" min="0" max={max} step="0.1" value={Math.min(p.time, max)} onChange={(e) => p.seek(+e.target.value)}
-        aria-label="Track progress" aria-valuetext={`${fmt(p.time)} of ${fmt(p.dur)}`} disabled={!p.AC || !p.dur}
+        aria-label="Track progress" aria-valuetext={`${fmt(p.time)} of ${fmt(p.dur)}`} disabled={!p.AC}
         className="cd-range mt-2 w-full" style={{ "--p": `${pct}%` }} />
       <div className={`-mt-1 flex justify-between text-[11px] tabular-nums ${t.textFaint}`}><span>{fmt(p.time)}</span><span>{fmt(p.dur)}</span></div>
       {volOpen && (
@@ -225,9 +280,9 @@ export function PlayerControls({ t }) {
           <button type="button" onClick={p.prev} aria-label="Previous track" disabled={!p.AC} className={`${btn} ${t.text} hover:text-accent-400 hover:-translate-x-0.5`}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z" /></svg>
           </button>
-          <button type="button" onClick={p.toggle} disabled={!p.AC} aria-label={p.playing ? "Pause" : "Play"}
+          <button type="button" onClick={p.toggle} disabled={!p.AC} aria-label={p.active ? "Pause" : "Play"}
             className="mx-1 flex h-12 w-12 items-center justify-center rounded-full bg-accent-400 text-onaccent transition-all duration-200 hover:scale-105 hover:shadow-[0_0_24px_rgba(182,255,46,.45)] active:scale-95 disabled:opacity-40">
-            {p.playing
+            {p.active
               ? <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1" /><rect x="14" y="4" width="5" height="16" rx="1" /></svg>
               : <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.5z" /></svg>}
           </button>
@@ -242,6 +297,46 @@ export function PlayerControls({ t }) {
             aria-label="Volume" className="cd-range w-full" style={{ "--p": `${p.vol * 100}%` }} />
         </label>
       </div>
+    </div>
+  );
+}
+
+export function MiniPlayer({ t }) {
+  const p = usePlayer();
+  const tr = TRACKS[p.track];
+  if (!p.started || !(p.overlayOpen || !p.controlsVisible)) return null;
+  const mini = `flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:text-accent-400 ${t.text}`;
+  return (
+    <div
+      role="group"
+      aria-label="Mini music player"
+      className={`fixed bottom-4 left-1/2 z-[85] flex w-[min(26rem,calc(100vw-8.5rem))] -translate-x-1/2 items-center gap-2.5 rounded-full border py-1.5 pl-2 pr-1.5 shadow-lg backdrop-blur-md ${t.border} ${t.surface}`}
+    >
+      <span className="cd-stage mini-cd" data-playing={p.playing} aria-hidden="true">
+        <span className="cd-disc">
+          <span className="cd-grooves" />
+          <span className="cd-label" />
+          <span className="cd-hole" />
+        </span>
+        <span className="cd-gloss" />
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className={`truncate font-display text-sm font-bold leading-tight ${t.text}`}>{tr.title}</p>
+        <p className={`truncate font-mono text-[10px] uppercase tracking-widest ${t.textMuted}`}>
+          {p.buffering ? "Buffering" : p.playing ? "Playing" : "Paused"}
+        </p>
+      </div>
+      <button type="button" onClick={p.prev} aria-label="Previous track" className={mini}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9 12z" /></svg>
+      </button>
+      <button type="button" onClick={p.toggle} aria-label={p.active ? "Pause" : "Play"} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-400 text-onaccent transition-transform active:scale-95">
+        {p.active
+          ? <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1" /><rect x="14" y="4" width="5" height="16" rx="1" /></svg>
+          : <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.9l12-7.5a1 1 0 0 0 0-1.8l-12-7.5A1 1 0 0 0 7 4.5z" /></svg>}
+      </button>
+      <button type="button" onClick={p.next} aria-label="Next track" className={mini}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l11-7z" /></svg>
+      </button>
     </div>
   );
 }

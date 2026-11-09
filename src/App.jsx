@@ -6,7 +6,7 @@ import { Sun, Moon, Menu, X, ArrowUp } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel, ScrollProgress } from "./components/ui.jsx";
-import { PlayerProvider, WaveDivider } from "./components/CDPlayer.jsx";
+import { PlayerProvider, WaveDivider, MiniPlayer, usePlayer } from "./components/CDPlayer.jsx";
 import { ContactChooser } from "./components/ContactChooser.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
 import { GithubActivity } from "./components/Sections.jsx";
@@ -89,6 +89,7 @@ function AppInner() {
   }, []);
 
   const [panel, setPanel] = useState(null);
+  const { setOverlayOpen } = usePlayer();
   useEffect(() => {
     const sync = () => {
       const h = window.location.hash.slice(1);
@@ -145,6 +146,10 @@ function AppInner() {
   useEffect(() => {
     document.body.style.overflow = menuOpen || archiveOpen || skillsOpen || projectSlug || panel || contactOpen ? "hidden" : "";
   }, [menuOpen, archiveOpen, skillsOpen, projectSlug, panel, contactOpen]);
+
+  useEffect(() => {
+    setOverlayOpen(Boolean(archiveOpen || skillsOpen || projectSlug || panel));
+  }, [archiveOpen, skillsOpen, projectSlug, panel, setOverlayOpen]);
   useEffect(() => {
     if (!menuOpen) return;
     const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
@@ -229,6 +234,7 @@ function AppInner() {
       </header>
 
       <ScrollProgress />
+      <MiniPlayer t={t} />
       <HeroSection t={t} isDark={isDark} onContact={openContact} openResumes={openResumes} onOpenAbout={() => openPanel("aboutme")} />
       <SkillsSection t={t} isDark={isDark} onOpenSkills={openSkills} />
       <WaveDivider />

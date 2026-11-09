@@ -317,3 +317,13 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 
 .tour-title{font-size:clamp(2.6rem,11.2vw,5.5rem)}
 @media (min-width:1024px){.tour-title{font-size:clamp(4rem,calc(min(68rem,100vw - 21rem) / 7.6),9rem)}}
+
+.cd-stage{display:block;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.cd-stage:disabled{cursor:not-allowed;opacity:.6}
+.cd-stage:focus-visible{outline:2px solid rgb(var(--accent-400));outline-offset:10px;border-radius:50%}
+.cd-disc{display:block;will-change:transform}
+.cd-grooves,.cd-label,.cd-hole,.cd-gloss,.cd-burst,.cd-ring{display:block}
+.cd-ring{position:absolute;inset:-9px;border-radius:50%;pointer-events:none;background:conic-gradient(rgb(var(--accent-400)) var(--prog,0deg),rgba(128,128,128,.22) 0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2.5px))}
+.cd-label>span{position:absolute;left:0;right:0;bottom:11%;text-align:center;font:800 clamp(.5rem,1.9vw,.8rem)/1 'Archivo',sans-serif;letter-spacing:.08em;color:#0b0b0c}
+.cd-stage.mini-cd{width:34px;margin:0;flex-shrink:0;cursor:default}
+.cd-stage.mini-cd .cd-disc{box-shadow:0 0 0 1px #26262a}
