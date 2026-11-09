@@ -173,48 +173,46 @@ export function AffiliationSection({ t, isDark }) {
       <ol className="mt-12 sm:mt-14">
         {AFFILIATIONS.map((org, i) => {
           const current = /present/i.test(org.duration || "");
-          const since = ((org.duration || "").match(/^(.*?)\s*[-–]\s*present/i) || [])[1];
+          const date = (org.duration || "").replace(/\s+[-–]\s+/g, " — ");
           return (
-            <li key={org.company} className="grid grid-cols-[3rem_minmax(0,1fr)] gap-x-4 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-x-8">
-              <p className={`font-display text-3xl font-bold leading-none tabular-nums sm:text-4xl ${current ? t.accent : t.text}`}>{String(i + 1).padStart(2, "0")}</p>
-
-              <div className={`relative min-w-0 border-l pb-10 pl-5 sm:pl-8 ${t.border}`}>
-                <span
-                  aria-hidden="true"
-                  className={`absolute -left-[5px] top-1.5 h-2.5 w-2.5 rounded-full ${current ? "bg-accent-400 ring-4 ring-accent-400/20" : isDark ? "bg-neutral-600" : "bg-slate-400"}`}
-                />
-                <p className={`mb-3 font-mono text-[11px] uppercase tracking-widest ${current ? t.accent : t.textFaint}`}>
-                  {current ? `Active since ${since || org.duration}` : "Past credit"}
+            <li key={org.company} className={`grid gap-x-10 gap-y-4 border-t py-8 sm:grid-cols-[12rem_minmax(0,1fr)] sm:py-10 lg:grid-cols-[14rem_minmax(0,1fr)] ${t.border}`}>
+              <div className="order-2 min-w-0 sm:order-1">
+                <p className={`font-mono text-xs uppercase tracking-widest ${current ? t.accent : t.textMuted}`}>{org.position}</p>
+                <p className={`mt-2 flex items-center gap-2 font-mono text-xs uppercase tracking-widest ${t.textFaint}`}>
+                  {current && <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-400" />}
+                  {date}
                 </p>
-                <div className="flex items-start gap-4">
-                  <div className={`flex aspect-square w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white p-1.5 sm:w-16 ${t.border}`}>
-                    {org.logo ? (
-                      <PortfolioImage imageKey={org.logo} alt={`${org.company} logo`} fallbackLabel={org.company} className="max-h-full max-w-full object-contain" />
-                    ) : (
-                      <span className="font-display text-sm font-semibold text-slate-900">{org.abbr}</span>
-                    )}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="font-display text-lg font-bold leading-snug tracking-tight sm:text-xl">{org.company}</h3>
-                    <p className={`mt-1 font-mono text-xs uppercase tracking-wider ${t.textMuted}`}>{org.position}</p>
-                    <p className={`mt-1 font-mono text-xs uppercase tracking-wider ${t.textFaint}`}>{org.duration}</p>
-                    {org.links.length > 0 && (
-                      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1">
-                        {org.links.map((link) => (
-                          <a
-                            key={link.url}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={`inline-flex items-center gap-1 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} transition-colors hover:text-accent-400`}
-                          >
-                            {link.label} <ArrowUpRight size={12} />
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                {org.links.length > 0 && (
+                  <p className="mt-4 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm">
+                    {org.links.map((link, li) => (
+                      <React.Fragment key={link.url}>
+                        {li > 0 && <span aria-hidden="true" className={t.textFaint}>/</span>}
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`inline-flex items-center gap-1 underline underline-offset-4 decoration-1 ${t.textMuted} transition-colors hover:text-accent-400`}
+                        >
+                          {link.label} <ArrowUpRight size={12} />
+                        </a>
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )}
+              </div>
+
+              <div className="order-1 flex min-w-0 items-start gap-4 sm:order-2 sm:gap-5">
+                <div className={`flex aspect-square w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-white p-1 sm:w-14 ${t.border}`}>
+                  {org.logo ? (
+                    <PortfolioImage imageKey={org.logo} alt={`${org.company} logo`} fallbackLabel={org.company} className="max-h-full max-w-full object-contain" />
+                  ) : (
+                    <span className="font-display text-sm font-semibold text-slate-900">{org.abbr}</span>
+                  )}
                 </div>
+                <h3 className={`min-w-0 text-balance font-display text-[1.65rem] font-bold uppercase leading-[1.04] tracking-tight sm:text-4xl lg:text-[2.6rem] ${t.text}`}>
+                  <span className={`mr-2 font-mono text-sm font-normal tracking-widest ${t.accent}`}>{String(i + 1).padStart(2, "0")} —</span>
+                  {org.company}
+                </h3>
               </div>
             </li>
           );

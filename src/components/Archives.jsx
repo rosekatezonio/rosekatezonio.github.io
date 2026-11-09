@@ -2,90 +2,121 @@ import React, { useState, useEffect } from "react";
 import { img, PortfolioImage } from "../images.jsx";
 import { useOverlayClose } from "../hooks.js";
 import { renderDescription, BackButton, PageHeader } from "./ui.jsx";
-import { EqMeter, StereoMeter, WaveDivider } from "./CDPlayer.jsx";
+import { EqMeter, WaveDivider } from "./CDPlayer.jsx";
 import { SKILL_GROUPS, ALL_PROJECTS, FEATURED_TITLES, TRACK_FILTERS, trackOf, yearOf, contextOf, taglineOf, slugOf, thumbFor, galleryFor, hasLink } from "../data.js";
 import { ArrowRight, ArrowUpRight, ArrowDown, Search, X } from "../icons.jsx";
 
-export function SkillTile({ item, t, isDark }) {
-  const [broken, setBroken] = useState(false);
-  const showImg = img(item.icon) && !broken;
-  return (
-    <div
-      title={item.name}
-      className={`rack-mod group flex items-center gap-3 rounded-lg border px-3 py-3 transition-colors hover:border-accent-400 ${t.border} ${isDark ? "bg-black/30" : "bg-white"}`}
-    >
-      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-400 opacity-30 transition-all group-hover:opacity-100 group-hover:shadow-[0_0_8px_rgb(var(--accent-400))]" />
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white p-1.5 shadow-sm">
-        {showImg ? (
-          <img src={img(item.icon)} alt={item.name} onError={() => setBroken(true)} className="h-full w-full object-contain" />
-        ) : (
-          <span className="font-mono text-[10px] font-bold tracking-wider text-slate-900">{item.abbr}</span>
-        )}
-      </span>
-      <span className={`min-w-0 flex-1 font-body text-sm font-medium leading-snug ${t.text}`}>{item.name}</span>
-      <span className="rack-eq opacity-0 transition-opacity group-hover:opacity-100" aria-hidden="true"><i /><i /><i /></span>
-    </div>
+function projectsUsing(name) {
+  const lower = name.toLowerCase();
+  const tokens = new Set([lower, ...lower.split(/[\/()]/).map((x) => x.trim()).filter(Boolean)]);
+  const words = lower.split(/[^a-z0-9.+#]+/).filter((w) => w.length >= 5);
+  return ALL_PROJECTS.filter((p) =>
+    (p.tags || []).some((tag) => {
+      const tl = tag.toLowerCase();
+      return tokens.has(tl) || (tl.length >= 5 && words.includes(tl));
+    })
   );
 }
 
-function CompactIcon({ src, abbr, t, isDark }) {
+function ToolIcon({ item, isDark }) {
   const [broken, setBroken] = useState(false);
-  const box = `h-7 min-w-7 rounded-md border ${t.border} ${isDark ? "bg-black/40" : "bg-slate-50"} flex items-center justify-center`;
-  if (!img(src) || broken) {
-    return <span className={`${box} px-1 font-mono text-[9px] font-bold ${t.accent}`}>{abbr}</span>;
-  }
+  const src = item.icon && img(item.icon);
+  if (!src || broken) return null;
   return (
-    <span className={`${box} w-7 p-1`}>
-      <span className="h-full w-full rounded bg-white flex items-center justify-center p-0.5">
-        <img src={img(src)} alt="" onError={() => setBroken(true)} className="h-full w-full object-contain" />
-      </span>
+    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white p-0.5">
+      <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} className="h-full w-full object-contain" />
     </span>
   );
 }
 
-function CompactSkill({ item, t, isDark }) {
-  const icons = item.icons || [item.icon];
-  const abbr = item.abbr || "AI";
+function ProjectLinks({ titles, t }) {
+  return titles.map((title, i) => (
+    <React.Fragment key={title}>
+      {i > 0 && <span aria-hidden="true" className={t.textFaint}> / </span>}
+      <a
+        href={`#${slugOf(title)}`}
+        className={`underline underline-offset-4 decoration-1 transition-colors hover:text-accent-400 ${t.textMuted}`}
+      >
+        {title}
+      </a>
+    </React.Fragment>
+  ));
+}
+
+function ToolkitCategory({ group, open, onToggle, t, isDark }) {
+  const panelId = `toolkit-${group.num}`;
+  const columns = "grid grid-cols-[2.25rem_minmax(0,1fr)_1.5rem] gap-x-4 sm:grid-cols-[3.5rem_minmax(0,1fr)_2rem]";
   return (
-    <li className={`rack-mod group flex min-w-0 items-start gap-3 rounded-lg border px-3 py-3 transition-colors hover:border-accent-400 ${t.border} ${isDark ? "bg-black/30" : "bg-white"}`}>
-      <div className="flex shrink-0 -space-x-1.5 pt-0.5">
-        {icons.map((ic, i) => (
-          <CompactIcon key={i} src={ic} abbr={abbr} t={t} isDark={isDark} />
-        ))}
-      </div>
-      <div className="min-w-0">
-        <p className={`font-body text-sm leading-snug ${t.text}`}>{item.name}</p>
-        {item.note && <p className={`font-body text-xs leading-snug mt-0.5 ${t.textFaint}`}>{item.note}</p>}
+    <li className={`border-t last:border-b ${t.border}`}>
+      <h2>
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          aria-controls={panelId}
+          className={`group ${columns} w-full items-start py-6 text-left sm:py-8`}
+        >
+          <span className={`pt-1 font-mono text-xs tabular-nums sm:pt-2 ${t.accent}`}>{group.num}</span>
+          <span className="min-w-0">
+            <span className={`block font-display text-2xl font-bold uppercase leading-tight tracking-tight transition-colors group-hover:text-accent-400 sm:text-4xl ${open ? t.accent : t.text}`}>
+              {group.title}
+            </span>
+            <span className={`mt-2 block font-mono text-xs uppercase leading-relaxed tracking-wider ${t.textMuted}`}>
+              {group.items.map((item) => item.name).join(" · ")}
+            </span>
+          </span>
+          <span aria-hidden="true" className={`text-right font-mono text-2xl leading-none transition-transform duration-300 group-hover:text-accent-400 motion-reduce:transition-none ${open ? "rotate-45 " + t.accent : t.textMuted}`}>+</span>
+        </button>
+      </h2>
+
+      <div
+        id={panelId}
+        role="region"
+        aria-label={group.title}
+        className="grid transition-[grid-template-rows] duration-300 motion-reduce:transition-none"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <div className={`${columns} pb-8 sm:pb-10`}>
+            <div className="col-start-2 min-w-0">
+              {group.blurb && <p className={`font-body text-sm ${t.textMuted}`}>{group.blurb}</p>}
+              {group.proof && group.proof.length > 0 && (
+                <p className={`mt-3 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>
+                  {group.proofLabel || "Applied in"}: <ProjectLinks titles={group.proof} t={t} />
+                </p>
+              )}
+              <ul className="mt-5">
+                {group.items.map((item) => {
+                  const used = projectsUsing(item.name).map((p) => p.title);
+                  return (
+                    <li key={item.name} className={`flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t py-3 ${t.border}`}>
+                      <span className="flex min-w-0 items-center gap-2.5">
+                        <ToolIcon item={item} isDark={isDark} />
+                        <span className="min-w-0">
+                          <span className={`font-body text-[15px] font-medium ${t.text}`}>{item.name}</span>
+                          {item.note && <span className={`block font-body text-xs ${t.textFaint}`}>{item.note}</span>}
+                        </span>
+                      </span>
+                      {used.length > 0 && (
+                        <span className={`font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>
+                          Used in <ProjectLinks titles={used} t={t} />
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </li>
   );
 }
 
-const RACK_NAMES = ["Software Production", "Network Operations", "Backend & Data Systems", "Development Workflow"];
-
-function RackGlyph({ index, count }) {
-  if (index === 0) return <EqMeter />;
-  if (index === 1) return <StereoMeter />;
-  if (index === 2) {
-    return (
-      <span className="flex gap-1" aria-hidden="true">
-        {[0, 1, 2, 3, 4].map((n) => (
-          <i key={n} className={`h-1.5 w-3 rounded-sm bg-accent-400 ${n < Math.min(5, count) ? "" : "opacity-25"}`} />
-        ))}
-      </span>
-    );
-  }
-  return (
-    <span className="flex gap-1.5" aria-hidden="true">
-      {[0, 1, 2, 3, 4, 5].map((n) => (
-        <i key={n} className={`h-1 w-1 rounded-full bg-accent-400 ${n < Math.min(6, count) ? "" : "opacity-25"}`} />
-      ))}
-    </span>
-  );
-}
-
 export function SkillsArchive({ t, onClose, isDark }) {
   const [closing, requestClose] = useOverlayClose(onClose);
+  const [openIdx, setOpenIdx] = useState(0);
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
@@ -96,40 +127,22 @@ export function SkillsArchive({ t, onClose, isDark }) {
     <div className={`${closing ? "overlay-sink" : "overlay-rise"} fixed inset-0 z-[60] overflow-y-auto no-scrollbar ${t.bg} ${t.text}`}>
       <div className="mx-auto max-w-7xl px-5 pb-24 pt-6 sm:px-10 sm:pt-10 lg:px-12">
         <BackButton t={t} onClick={requestClose} />
-        <PageHeader eyebrow="SIDE A / 003 — STUDIO EQUIPMENT" title="Full Toolkit" subtitle="Grouped by what each tool lets me do." t={t} isDark={isDark} />
+        <PageHeader eyebrow="SIDE B / 002 — TECHNICAL CREDITS" title="Full Toolkit" subtitle="TOOLS, LANGUAGES & SYSTEMS IN THE ROTATION." t={t} isDark={isDark} />
 
-        <div className="mt-12 space-y-8 sm:space-y-10">
+        <ol className="mt-12 sm:mt-14">
           {SKILL_GROUPS.map((group, gi) => (
-            <section key={group.title} className={`rounded-xl border p-4 sm:p-6 ${t.border}`}>
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <h2 className={`font-display text-xl font-bold tracking-tight sm:text-2xl ${t.text}`}>
-                    <span className={`mr-3 font-mono text-xs font-normal tracking-widest ${t.accent}`}>{group.num}</span>
-                    {RACK_NAMES[gi] || group.title}
-                  </h2>
-                  <p className={`mt-1 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>
-                    {group.title} · {String(group.items.length).padStart(2, "0")} units
-                  </p>
-                </div>
-                <div className={`mt-1 shrink-0 ${t.accent}`}><RackGlyph index={gi} count={group.items.length} /></div>
-              </div>
-              {group.blurb && <p className={`mb-6 mt-3 font-body text-sm ${t.textMuted}`}>{group.blurb}</p>}
-              {group.compact ? (
-                <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {group.items.map((item) => (
-                    <CompactSkill key={item.name} item={item} t={t} isDark={isDark} />
-                  ))}
-                </ul>
-              ) : (
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(10.5rem,1fr))] gap-3">
-                  {group.items.map((item) => (
-                    <SkillTile key={item.name} item={item} t={t} isDark={isDark} />
-                  ))}
-                </div>
-              )}
-            </section>
+            <ToolkitCategory
+              key={group.title}
+              group={group}
+              open={openIdx === gi}
+              onToggle={() => setOpenIdx(openIdx === gi ? -1 : gi)}
+              t={t}
+              isDark={isDark}
+            />
           ))}
-        </div>
+        </ol>
+
+        <p className={`mt-10 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>End of side B — Technical inventory</p>
       </div>
     </div>
   );
