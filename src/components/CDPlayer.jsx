@@ -30,6 +30,7 @@ export function PlayerProvider({ children }) {
   const [buffering, setBuffering] = useState(false);
   const [started, setStarted] = useState(false);
   const [overlayOpen, setOverlayOpen] = useState(false);
+  const [atEnd, setAtEnd] = useState(false);
   const [controlsVisible, setControlsVisible] = useState(false);
   const flowing = useRef(false);
   const audio = useRef(null);
@@ -156,7 +157,7 @@ export function PlayerProvider({ children }) {
   };
 
   return (
-    <Ctx.Provider value={{ AC: supported && !failed, failed, playing, buffering, active: playing || buffering, started, overlayOpen, setOverlayOpen, controlsVisible, setControlsVisible, time, dur, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
+    <Ctx.Provider value={{ AC: supported && !failed, failed, playing, buffering, active: playing || buffering, started, overlayOpen, setOverlayOpen, atEnd, setAtEnd, controlsVisible, setControlsVisible, time, dur, track, vol, setVol, shuffle, setShuffle, repeat, setRepeat, burst, toggle, next, prev, seek }}>
       {children}
     </Ctx.Provider>
   );
@@ -310,7 +311,7 @@ export function MiniPlayer({ t }) {
     <div
       role="group"
       aria-label="Mini music player"
-      className={`fixed bottom-4 left-1/2 z-[85] flex w-[min(26rem,calc(100vw-8.5rem))] -translate-x-1/2 items-center gap-2.5 rounded-full border py-1.5 pl-2 pr-1.5 shadow-lg backdrop-blur-md ${t.border} ${t.surface}`}
+      className={`fixed bottom-4 left-1/2 z-[85] flex w-[min(26rem,calc(100vw-2rem))] -translate-x-1/2 items-center gap-2.5 rounded-full border py-1.5 pl-2 pr-1.5 shadow-lg backdrop-blur-md ${t.border} ${t.surface}`}
     >
       <span className="cd-stage mini-cd" data-playing={p.playing} aria-hidden="true">
         <span className="cd-disc">
@@ -323,7 +324,7 @@ export function MiniPlayer({ t }) {
       <div className="min-w-0 flex-1">
         <p className={`truncate font-display text-sm font-bold leading-tight ${t.text}`}>{tr.title}</p>
         <p className={`truncate font-mono text-[10px] uppercase tracking-widest ${t.textMuted}`}>
-          {p.buffering ? "Buffering" : p.playing ? "Playing" : "Paused"}
+          {p.atEnd ? "End of album" : p.buffering ? "Buffering" : p.playing ? "Playing" : "Paused"}
         </p>
       </div>
       <button type="button" onClick={p.prev} aria-label="Previous track" className={mini}>

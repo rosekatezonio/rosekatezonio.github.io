@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const NODE_COUNT_BASE = 42;
 const MAX_DIST = 170;
@@ -148,8 +148,21 @@ export function NetworkCanvas({ isDark }) {
     };
   }, []);
 
+  const [quiet, setQuiet] = useState(false);
+  useEffect(() => {
+    const el = document.getElementById("github-activity");
+    if (!el || typeof IntersectionObserver === "undefined") return undefined;
+    const io = new IntersectionObserver(([entry]) => setQuiet(entry.isIntersecting), { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div ref={containerRef} aria-hidden="true" className="fixed inset-0 -z-10 overflow-hidden pointer-events-none max-lg:opacity-[0.3]">
+    <div
+      ref={containerRef}
+      aria-hidden="true"
+      className={`fixed inset-0 -z-10 overflow-hidden pointer-events-none transition-opacity duration-700 motion-reduce:transition-none ${quiet ? "opacity-[0.2] max-lg:opacity-[0.12]" : "max-lg:opacity-[0.3]"}`}
+    >
       <canvas ref={canvasRef} className="absolute inset-0" />
     </div>
   );

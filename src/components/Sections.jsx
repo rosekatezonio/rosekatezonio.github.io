@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { PortfolioImage } from "../images.jsx";
-import { PROFILE } from "../data.js";
+import { PROFILE, hasLink } from "../data.js";
 import { Reveal, SectionHeading, SectionLabel, ActivityLink } from "./ui.jsx";
 import { usePlayer } from "./CDPlayer.jsx";
-import { MapPin, ArrowLeftRight, ArrowRight } from "../icons.jsx";
+import { MapPin, ArrowLeftRight, ArrowRight, ArrowUpRight } from "../icons.jsx";
 
 export function ActivityRow({ f, reverse, t, isDark }) {
   const [swapped, setSwapped] = useState(false);
@@ -149,7 +149,7 @@ export function GithubActivity({ t, isDark }) {
   ];
 
   return (
-    <section id="github-activity" className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-24 sm:pt-28">
+    <section id="github-activity" className="max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24">
       <Reveal>
         <div className="text-center">
         <SectionLabel side="OUTRO" no="008" name="Final Track" t={t} />
@@ -157,8 +157,8 @@ export function GithubActivity({ t, isDark }) {
           <span className={`block ${t.text}`}>The work doesn't</span>
           <span className={`block hero-outline ${t.accent}`}>stop here.</span>
         </h2>
-        <p className={`mx-auto mt-8 max-w-xl font-body text-base leading-relaxed sm:text-lg ${t.textMuted}`}>
-          Every commit, every experiment, and every project is another step forward.
+        <p className={`mx-auto mt-8 max-w-xl font-mono text-xs uppercase leading-relaxed tracking-[0.18em] sm:text-sm ${t.textMuted}`}>
+          A record of contributions, experiments &amp; builds.
         </p>
         </div>
 
@@ -175,9 +175,11 @@ export function GithubActivity({ t, isDark }) {
               <p className={`mt-1 font-mono text-[11px] uppercase tracking-widest leading-tight ${t.textFaint}`}>GitHub / last 12 months</p>
             </div>
           </div>
-          <a href={PROFILE.github} target="_blank" rel="noreferrer" className={`shrink-0 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} hover:text-accent-400 transition-colors`}>
-            View profile <ArrowRight size={14} />
-          </a>
+          <div className="shrink-0 text-right">
+            <a href={PROFILE.github} target="_blank" rel="noreferrer" className={`shrink-0 inline-flex items-center gap-1.5 text-sm underline underline-offset-4 decoration-1 ${t.textMuted} hover:text-accent-400 transition-colors`}>
+              View profile <ArrowRight size={14} />
+            </a>
+          </div>
         </div>
 
         {status === "loading" && (
@@ -196,12 +198,12 @@ export function GithubActivity({ t, isDark }) {
         {status === "ready" && (
           <>
             <dl className="mt-8 grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4">
-              {statItems.map((s) => (
-                <div key={s.label}>
-                  <dt className={`font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>{s.label}</dt>
+              {statItems.map((item) => (
+                <div key={item.label}>
+                  <dt className={`font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>{item.label}</dt>
                   <dd className={`mt-1 font-display text-3xl font-bold tabular-nums sm:text-4xl ${t.text}`}>
-                    {s.value}
-                    {s.note && <span className={`ml-1.5 font-mono text-[11px] font-normal uppercase tracking-widest ${t.textFaint}`}>{s.note}</span>}
+                    {item.value}
+                    {item.note && <span className={`ml-1.5 font-mono text-[11px] font-normal uppercase tracking-widest ${t.textFaint}`}>{item.note}</span>}
                   </dd>
                 </div>
               ))}
@@ -262,5 +264,53 @@ export function GithubActivity({ t, isDark }) {
         )}
       </Reveal>
     </section>
+  );
+}
+
+export function AlbumCredits({ t }) {
+  const { setAtEnd } = usePlayer();
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return undefined;
+    const io = new IntersectionObserver(([entry]) => setAtEnd(entry.isIntersecting), { threshold: 0.4 });
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      setAtEnd(false);
+    };
+  }, [setAtEnd]);
+
+  const toTop = () => {
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({ top: 0, behavior: calm ? "auto" : "smooth" });
+  };
+  const link = `inline-flex items-center gap-1.5 transition-colors hover:text-accent-400 ${t.textMuted}`;
+
+  return (
+    <footer ref={ref} className={`border-t ${t.border}`}>
+      <div className="mx-auto max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pb-20 sm:pt-12">
+        <div className="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-end">
+          <div className="space-y-2 font-mono text-[11px] uppercase leading-relaxed tracking-widest sm:text-xs">
+            <p className={t.text}>Designed &amp; developed by {PROFILE.fullName}</p>
+            <p className={t.textMuted}>Built with curiosity and code</p>
+            <p className={t.textFaint}>© {new Date().getFullYear()}</p>
+          </div>
+          <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-3 font-mono text-[11px] uppercase tracking-widest sm:text-xs">
+            {hasLink(PROFILE.github) && (
+              <a href={PROFILE.github} target="_blank" rel="noreferrer" className={link}>GitHub <ArrowUpRight size={12} /></a>
+            )}
+            {hasLink(PROFILE.linkedin) && (
+              <a href={PROFILE.linkedin} target="_blank" rel="noreferrer" className={link}>LinkedIn <ArrowUpRight size={12} /></a>
+            )}
+            <button type="button" onClick={toTop} className={link}>Back to top ↑</button>
+          </nav>
+        </div>
+        <p className={`mt-12 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] ${t.accent}`}>
+          <span aria-hidden="true" className="h-px w-8 bg-accent-400" />
+          End of album
+        </p>
+      </div>
+    </footer>
   );
 }

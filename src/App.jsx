@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useRemoteImages } from "./images.jsx";
 import { NAV_LINKS, PROFILE, theme, PROJECT_BY_SLUG, RESUME_URL, slugOf } from "./data.js";
-import { useScrollProgress } from "./hooks.js";
-import { Sun, Moon, Menu, X, ArrowUp } from "./icons.jsx";
+import { Sun, Moon, Menu, X } from "./icons.jsx";
 import { NetworkCanvas } from "./components/NetworkCanvas.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { SectionPanel, ScrollProgress } from "./components/ui.jsx";
 import { PlayerProvider, WaveDivider, MiniPlayer, usePlayer } from "./components/CDPlayer.jsx";
 import { ContactChooser } from "./components/ContactChooser.jsx";
 import { HeroSection, SkillsSection, ProjectsSection, ExperienceSection } from "./components/Home.jsx";
-import { GithubActivity } from "./components/Sections.jsx";
+import { GithubActivity, AlbumCredits } from "./components/Sections.jsx";
 import { CertificationSection, AboutMeSection, AffiliationSection, ActivitiesJourney, ExperienceHistory } from "./components/Panels.jsx";
 import { SkillsArchive, ProjectArchive, ProjectDetail } from "./components/Archives.jsx";
 
@@ -23,7 +22,6 @@ function AppInner() {
   useRemoteImages();
   const [menuOpen, setMenuOpen] = useState(false);
   const [projectTab, setProjectTab] = useState("webapps");
-  const [showTop, setShowTop] = useState(false);
   const [activeId, setActiveId] = useState("");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
@@ -40,13 +38,11 @@ function AppInner() {
   }, [sidebarCollapsed]);
 
   const t = isDark ? theme.dark : theme.light;
-  const progress = useScrollProgress();
 
   const switchProjectTab = useCallback((tab) => setProjectTab(tab), []);
 
   useEffect(() => {
     const onScroll = () => {
-      setShowTop(window.scrollY > 500);
       let current = "";
       NAV_LINKS.forEach((link) => {
         const el = document.getElementById(link.id);
@@ -166,13 +162,6 @@ function AppInner() {
     >
       <NetworkCanvas isDark={isDark} />
 
-      <div className="fixed top-0 left-0 right-0 z-50 bg-transparent" style={{ height: "2px" }}>
-        <div
-          className="h-full bg-accent-400 transition-all duration-150 ease-out"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
-
       <Sidebar
         t={t}
         isDark={isDark}
@@ -250,13 +239,7 @@ function AppInner() {
       <WaveDivider />
       <GithubActivity t={t} isDark={isDark} />
 
-      <footer className={`border-t ${t.border}`}>
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex items-center justify-center">
-          <p className={`font-mono text-xs ${t.textFaint}`}>
-            © {new Date().getFullYear()} {PROFILE.fullName}.
-          </p>
-        </div>
-      </footer>
+      <AlbumCredits t={t} />
 
       {archiveOpen && <ProjectArchive t={t} isDark={isDark} onClose={closeArchive} instant={archiveInstant} />}
       {projectSlug && <ProjectDetail key={projectSlug} t={t} isDark={isDark} project={PROJECT_BY_SLUG[projectSlug]} onBack={closeProject} />}
@@ -267,30 +250,6 @@ function AppInner() {
       {panel === "experience" && <SectionPanel t={t} onClose={closePanel}><ExperienceHistory t={t} isDark={isDark} /></SectionPanel>}
       {skillsOpen && <SkillsArchive t={t} onClose={closeSkills} isDark={isDark} />}
       {contactOpen && <ContactChooser t={t} isDark={isDark} onClose={closeContact} />}
-
-      {showTop && !menuOpen && (
-        <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Back to top"
-          className={`group fixed bottom-6 right-6 z-50 h-12 w-12 rounded-full ${t.surfaceSolid} ${t.text} flex items-center justify-center transition-colors hover:text-accent-400`}
-        >
-          <svg viewBox="0 0 48 48" className="absolute inset-0 h-full w-full -rotate-90" aria-hidden="true">
-            <circle cx="24" cy="24" r="22" fill="none" strokeWidth="2" className={isDark ? "stroke-neutral-800" : "stroke-slate-200"} />
-            <circle
-              cx="24"
-              cy="24"
-              r="22"
-              fill="none"
-              strokeWidth="2"
-              strokeLinecap="round"
-              className="stroke-accent-400"
-              strokeDasharray={2 * Math.PI * 22}
-              strokeDashoffset={2 * Math.PI * 22 * (1 - progress)}
-            />
-          </svg>
-          <ArrowUp size={16} className="relative transition-transform group-hover:-translate-y-0.5" />
-        </button>
-      )}
 
     </div>
   );

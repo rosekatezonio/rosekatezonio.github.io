@@ -295,8 +295,8 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #panel-scroll::-webkit-scrollb
 
 .gh-eq i{flex:1;min-width:1px;border-radius:1px;background:rgb(var(--accent-400));opacity:.85;transform-origin:bottom}
 .gh-eq[data-on=true] i{animation:gh-eq 1.3s ease-in-out infinite}
-.gh-cal[data-on=true] .gh-cell{animation:gh-cell 1.6s ease-in-out infinite}
 @keyframes gh-eq{0%,100%{transform:scaleY(.82)}50%{transform:scaleY(1)}}
+.gh-cal[data-on=true] .gh-cell{animation:gh-cell 1.6s ease-in-out infinite}
 @keyframes gh-cell{0%,100%{opacity:.6}50%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.gh-eq i,.gh-cal .gh-cell{animation:none!important}}
 

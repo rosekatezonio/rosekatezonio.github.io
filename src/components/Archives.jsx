@@ -45,6 +45,8 @@ function ProjectLinks({ titles, t }) {
 
 function ToolkitCategory({ group, open, onToggle, t, isDark }) {
   const panelId = `toolkit-${group.num}`;
+  const toolProjects = new Set(group.items.flatMap((item) => projectsUsing(item.name).map((p) => p.title)));
+  const relatedOnly = (group.proof || []).filter((title) => !toolProjects.has(title));
   const columns = "grid grid-cols-[2.25rem_minmax(0,1fr)_1.5rem] gap-x-4 sm:grid-cols-[3.5rem_minmax(0,1fr)_2rem]";
   return (
     <li className={`border-t last:border-b ${t.border}`}>
@@ -80,16 +82,16 @@ function ToolkitCategory({ group, open, onToggle, t, isDark }) {
           <div className={`${columns} pb-8 sm:pb-10`}>
             <div className="col-start-2 min-w-0">
               {group.blurb && <p className={`font-body text-sm ${t.textMuted}`}>{group.blurb}</p>}
-              {group.proof && group.proof.length > 0 && (
+              {relatedOnly.length > 0 && (
                 <p className={`mt-3 font-mono text-[11px] uppercase tracking-widest ${t.textFaint}`}>
-                  {group.proofLabel || "Applied in"}: <ProjectLinks titles={group.proof} t={t} />
+                  {group.proofLabel || "Applied in"}: <ProjectLinks titles={relatedOnly} t={t} />
                 </p>
               )}
               <ul className="mt-5">
                 {group.items.map((item) => {
                   const used = projectsUsing(item.name).map((p) => p.title);
                   return (
-                    <li key={item.name} className={`flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-t py-3 ${t.border}`}>
+                    <li key={item.name} className={`flex flex-col gap-1 border-t py-3 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-6 ${t.border}`}>
                       <span className="flex min-w-0 items-center gap-2.5">
                         <ToolIcon item={item} isDark={isDark} />
                         <span className="min-w-0">
@@ -116,7 +118,7 @@ function ToolkitCategory({ group, open, onToggle, t, isDark }) {
 
 export function SkillsArchive({ t, onClose, isDark }) {
   const [closing, requestClose] = useOverlayClose(onClose);
-  const [openIdx, setOpenIdx] = useState(0);
+  const [openIdx, setOpenIdx] = useState(() => (window.matchMedia("(min-width: 640px)").matches ? 0 : -1));
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
