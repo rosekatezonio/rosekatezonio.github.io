@@ -97,7 +97,7 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
   return (
     <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center lg:min-h-[92vh]">
       <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-5 md:py-12 lg:py-16">
-        <div className="grid max-lg:mx-auto max-lg:max-w-[38rem] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
+        <div className="grid max-lg:mx-auto max-lg:max-w-[38rem] grid-cols-[minmax(0,1fr)] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
 
           <div className="min-w-0 max-lg:contents">
             <Reveal delay={60} className="max-lg:order-1">
@@ -139,21 +139,21 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </Reveal>
 
             <Reveal delay={320} className="max-lg:order-5 lg:mt-8">
-              <div className="flex flex-col items-start gap-2 sm:gap-3 md:items-center lg:items-end">
+              <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
                 <a
                   href="#aboutme"
                   onClick={(event) => {
                     event.preventDefault();
                     onOpenAbout();
                   }}
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[1.05rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[0.95rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   More about me
                   <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
                 </a>
                 <a
                   href="#labs"
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[1.05rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
+                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[0.95rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
                 >
                   View selected projects
                   <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
@@ -258,12 +258,15 @@ const MARQUEE_SKILLS = TOOLKIT_GROUPS.flatMap((g) => g.items);
 export function SkillsSection({ t, isDark, onOpenSkills }) {
   return (
     <section id="skills">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 pt-24">
-        <div className="text-center max-w-4xl mx-auto mb-12 sm:mb-14">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 pt-24">
+        <div className="mb-12 text-center sm:mb-14">
           <Reveal>
-            <SectionLabel side="SIDE A" no="003" name="The Soundboard" t={t} className="mb-3" />
-            <h2 className={`${headline} text-[2.75rem] sm:text-[4.5rem] lg:text-[6.5rem] ${t.text} mb-6`}>What I work with.</h2>
-            <p className={`font-body text-sm sm:text-base ${t.textMuted}`}>
+            <SectionLabel side="SIDE A" no="003" name="The Soundboard" t={t} />
+            <h2 className="journey-title mt-6 whitespace-nowrap font-display font-bold uppercase leading-[0.95] tracking-tight">
+              <span className={t.text}>What I work</span>{" "}
+              <span className={`hero-outline ${t.accent}`}>with.</span>
+            </h2>
+            <p className={`mx-auto mt-6 max-w-xl font-mono text-xs uppercase leading-relaxed tracking-[0.18em] sm:text-sm ${t.textMuted}`}>
               A practical toolkit for building software and understanding IT systems.
             </p>
           </Reveal>
@@ -304,25 +307,24 @@ export function ProjectsSection({ t, isDark, projectTab, onSwitchTab, onOpenArch
   const item = (isLabs ? LABS : WEB_APPS).find((p) => p.title === HOME_PROJECT_BY_TAB[projectTab]);
   return (
     <section id="labs" className="max-w-6xl mx-auto px-5 sm:px-8 py-24">
-      <div className="text-center mb-10 sm:mb-14">
-        <SectionLabel side="SIDE B" no="004" name="Tracklist" t={t} className="mb-3" />
-        <div className="flex flex-wrap items-baseline justify-center gap-3">
+      <div className="mb-10 text-center sm:mb-14">
+        <SectionLabel side="SIDE B" no="004" name="Tracklist" t={t} />
+        <h2 className="mt-6 flex flex-wrap items-baseline justify-center gap-x-4 gap-y-2 font-display text-[2.1rem] font-bold uppercase leading-[0.95] tracking-tight sm:text-5xl lg:text-6xl">
           {[["webapps", "Software"], ["labs", "Networking & IT"]].map(([key, label], i) => (
             <React.Fragment key={key}>
-              {i > 0 && <span className={`font-serif-read text-3xl sm:text-5xl ${t.textFaint}`}>/</span>}
+              {i > 0 && <span aria-hidden="true" className={t.textFaint}>/</span>}
               <button
+                type="button"
                 onClick={() => onSwitchTab(key)}
                 aria-pressed={projectTab === key}
-                className={`font-serif-read font-normal tracking-[-0.03em] text-3xl sm:text-5xl pb-1 border-b-2 transition-colors ${
-                  projectTab === key ? `${t.text} border-accent-400` : `${t.textFaint} border-transparent hover:${t.textMuted}`
-                }`}
+                className={`uppercase transition-opacity ${projectTab === key ? t.text : `hero-outline ${t.accent} opacity-70 hover:opacity-100`}`}
               >
                 {label}
               </button>
             </React.Fragment>
           ))}
-        </div>
-        <p className={`font-mono text-xs ${t.textFaint} mt-3`}>
+        </h2>
+        <p className={`mx-auto mt-6 max-w-xl font-mono text-xs uppercase leading-relaxed tracking-[0.18em] sm:text-sm ${t.textMuted}`}>
           A few things I've built. The full list lives in the project log.
         </p>
       </div>
