@@ -109,6 +109,21 @@ export const LABS = [
       next: "Device fingerprinting so unknown devices get a name, not just a flag.",
     },
   },
+  {
+    title: "Networking Labs",
+    eyebrow: "Hands-on Networking Projects",
+    meta: "Hands-on Labs · 2026",
+    category: "Labs",
+    description: [
+      "Hands-on networking projects covering ",
+      { hl: "VLANs" },
+      ", routing, switching, ACLs, DHCP, NAT, and more.",
+    ],
+    highlights: ["VLANs", "Routing and switching", "Access control lists (ACLs)", "DHCP and NAT"],
+    tags: ["VLANs", "Routing", "Switching", "ACLs", "DHCP", "NAT"],
+    thumbnail: "networking-labs",
+    github: "https://github.com/arkyxo/Networking-Labs",
+  },
 ];
 
 export const WEB_APPS_LIST = [
@@ -543,7 +558,7 @@ export const TOOLKIT_GROUPS = [
     num: "02",
     title: "Networking & IT",
     blurb: "Fundamentals, simulation and lab environments",
-    proof: ["Home Network Device Monitor"],
+    proof: ["Home Network Device Monitor", "Networking Labs"],
     proofLabel: "Related project",
     items: pickSkills(["TCP/IP, DNS & DHCP", "Cisco Packet Tracer", "VirtualBox", "Kali Linux"]),
   },
