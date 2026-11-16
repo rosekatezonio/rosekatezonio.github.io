@@ -290,13 +290,13 @@ export function AlbumCredits({ t }) {
   return (
     <footer ref={ref} className={`border-t ${t.border}`}>
       <div className="mx-auto max-w-6xl px-5 pb-24 pt-10 sm:px-8 sm:pb-20 sm:pt-12">
-        <div className="grid gap-8 sm:grid-cols-[1fr_auto] sm:items-end">
+        <div className="grid justify-items-center gap-8 text-center sm:grid-cols-[1fr_auto] sm:items-end sm:justify-items-stretch sm:text-left">
           <div className="space-y-2 font-mono text-[11px] uppercase leading-relaxed tracking-widest sm:text-xs">
             <p className={t.text}>Designed &amp; developed by {PROFILE.fullName}</p>
             <p className={t.textMuted}>Built with curiosity and code</p>
             <p className={t.textFaint}>© {new Date().getFullYear()}</p>
           </div>
-          <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-3 font-mono text-[11px] uppercase tracking-widest sm:text-xs">
+          <nav aria-label="Footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono text-[11px] uppercase tracking-widest sm:justify-start sm:text-xs">
             {hasLink(PROFILE.github) && (
               <a href={PROFILE.github} target="_blank" rel="noreferrer" className={link}>GitHub <ArrowUpRight size={12} /></a>
             )}
@@ -306,7 +306,7 @@ export function AlbumCredits({ t }) {
             <button type="button" onClick={toTop} className={link}>Back to top ↑</button>
           </nav>
         </div>
-        <p className={`mt-12 flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] ${t.accent}`}>
+        <p className={`mt-12 flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.25em] sm:justify-start ${t.accent}`}>
           <span aria-hidden="true" className="h-px w-8 bg-accent-400" />
           End of album
         </p>
