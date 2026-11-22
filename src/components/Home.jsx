@@ -1,4 +1,4 @@
-import { CDDisc, PlayerControls, StereoMeter, EqMeter, WaveDivider } from "./CDPlayer.jsx";
+import { PlayerControls, EqMeter, WaveDivider } from "./CDPlayer.jsx";
 import React, { useState } from "react";
 import { PortfolioImage, img } from "../images.jsx";
 import { Reveal, SectionHeading, SectionLabel, ViewMore, headline } from "./ui.jsx";
@@ -96,96 +96,87 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
   ];
   return (
     <section id="hero" className="relative pt-16 lg:pt-0 overflow-hidden flex items-center lg:min-h-[92vh]">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 w-full py-5 md:py-12 lg:py-16">
-        <div className="grid max-lg:mx-auto max-lg:max-w-[38rem] grid-cols-[minmax(0,1fr)] lg:grid-cols-2 gap-x-14 gap-y-5 md:gap-y-8 lg:gap-y-10 items-stretch">
+      <div className="hero-cq w-full">
+        <div className="hero-frame">
+          <h1 className="sr-only">Rose Kate Zonio, {PROFILE.role}</h1>
 
-          <div className="min-w-0 max-lg:contents">
-            <Reveal delay={60} className="max-lg:order-1">
-              <div className="w-full md:mx-auto md:w-fit md:max-w-full lg:mx-0">
-                <div className={`flex items-center justify-between gap-4 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] sm:text-[11px] ${t.textFaint}`}>
-                  <span>Side A / <span className={t.accent}>001</span></span>
-                  <StereoMeter />
-                </div>
-                <h2 className="hero-role font-display font-bold uppercase text-left md:text-center lg:text-left">
-                  <span className={`block ${t.text}`}>Software</span>
-                  <span className={`block hero-outline ${t.accent}`}>Networking</span>
-                </h2>
-                <div className={`mt-2 flex items-center justify-between gap-4 border-t pt-2 text-[10px] font-semibold uppercase tracking-[0.22em] sm:text-[11px] ${t.border} ${t.textFaint}`}>
-                  <span>Side B / <span className={t.accent}>002</span></span>
-                  <EqMeter />
-                </div>
-              </div>
-              <p className={`mt-4 text-left md:text-center font-mono text-[11px] uppercase tracking-[0.18em] ${t.textFaint} lg:hidden`}>
-                01 / From {PROFILE.location}
+          {/* label + name + role */}
+          <div className="mx-auto w-full max-w-6xl px-5 pt-5 sm:px-8 md:pt-12 lg:pt-[min(8vh,5.5rem)]">
+            <Reveal delay={60}>
+              <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]">
+                <span aria-hidden="true" className="hero-rule h-px w-10 bg-accent-400 sm:w-14" />
+                <span className={t.textMuted}>Side A / 001 <span className="mx-1.5">·</span> {PROFILE.location}</span>
               </p>
             </Reveal>
 
-            <Reveal delay={180} className="max-lg:order-3"><div className="lg:mt-3"><CDDisc /></div></Reveal>
+            <div className="mt-6 flex flex-col gap-2 lg:flex-row lg:items-baseline lg:justify-between lg:gap-10" aria-hidden="true">
+              <span className="hero-line">
+                <span className={`hero-name-big font-display font-bold uppercase leading-none tracking-[-0.03em] ${t.text}`} style={{ "--d": "60ms" }}>Rose Kate</span>
+              </span>
+              <span className="hero-line">
+                <span className={`hero-role-line whitespace-nowrap font-display font-medium leading-tight tracking-[-0.01em] ${t.textMuted}`} style={{ "--d": "200ms" }}>{PROFILE.role}</span>
+              </span>
+            </div>
           </div>
 
-          <div className="flex min-w-0 flex-col gap-7 sm:gap-10 max-lg:contents lg:text-right">
-            <Reveal delay={120} className="hidden lg:block">
-              <p className={`font-mono text-[11px] sm:text-xs uppercase tracking-[0.22em] ${t.textFaint}`}>
-                01 / From {PROFILE.location}
-              </p>
-            </Reveal>
-
-            <Reveal delay={220} className="max-lg:order-2">
-              <div className="space-y-4 font-mono text-[11px] tracking-[0.1em] sm:text-sm sm:tracking-[0.16em] uppercase leading-relaxed text-left md:text-center lg:text-right">
-                <p className={`normal-case text-xs sm:text-sm ${t.textMuted}`}>
-                  I build web experiences, configure networks, and explore practical cybersecurity solutions.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={320} className="max-lg:order-5 lg:mt-8">
-              <div className="flex flex-col items-center gap-2 sm:gap-3 lg:items-end">
-                <a
-                  href="#aboutme"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    onOpenAbout();
-                  }}
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[0.95rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
-                >
-                  More about me
-                  <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
-                </a>
-                <a
-                  href="#labs"
-                  className={`group inline-flex items-baseline gap-2 whitespace-nowrap font-display text-[0.95rem] font-medium uppercase leading-tight min-[360px]:text-xl sm:text-3xl ${t.text} underline underline-offset-8 decoration-1 hover:text-accent-400 transition-colors`}
-                >
-                  View selected projects
-                  <ArrowUpRight size={20} className={`${t.accent} shrink-0 self-center transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5`} />
-                </a>
-              </div>
-            </Reveal>
-
-            <Reveal delay={360} className="flex flex-col max-lg:order-4 lg:my-auto">
-              <PlayerControls t={t} />
-            </Reveal>
-
-            <Reveal delay={400} className="flex flex-col max-lg:sr-only lg:mt-0">
-              <h1 className="hero-name mt-3 inline-flex w-full flex-col items-center self-center font-display font-bold uppercase lg:mt-0 lg:w-auto lg:self-end">
-                <span className={t.text}>Rose Kate</span>
-                <span className="flex w-full items-baseline justify-between">
-                  <span className={`hero-handle ${t.textMuted}`}>(@arkyxo)</span>
-                  <span className={`hero-outline ${t.accent}`}>Zonio</span>
-                </span>
-              </h1>
-            </Reveal>
+          {/* giant surname, full width, fading out toward the bottom */}
+          <div className="mx-auto mt-3 w-full max-w-6xl px-5 sm:px-8 lg:mt-4" aria-hidden="true">
+            <span className="hero-line hero-giant-line">
+              <span className={`hero-giant font-display font-bold uppercase ${t.accent}`} style={{ "--d": "120ms" }}>Zonio</span>
+            </span>
           </div>
-        </div>
+
+          <div className="mx-auto w-full max-w-6xl px-5 pb-5 sm:px-8 md:pb-12 lg:pb-16">
+            <div className="hero-overlap relative z-10">
+            <div className="grid grid-cols-[minmax(0,1fr)] gap-10 xl:grid-cols-[minmax(0,1fr)_24rem] xl:items-end xl:gap-x-12">
+              <div className="min-w-0">
+                <Reveal delay={220}>
+                  <p className={`max-w-xl text-base leading-relaxed sm:text-lg ${t.textMuted}`}>
+                    I build web experiences, configure networks, and explore practical cybersecurity solutions.
+                  </p>
+                </Reveal>
+
+                <Reveal delay={300}>
+                  <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 sm:mt-10">
+                    <a
+                      href="#labs"
+                      className="group inline-flex items-center gap-3 whitespace-nowrap bg-accent-400 px-5 py-4 font-display text-xs font-semibold uppercase tracking-[0.14em] text-onaccent transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_28px_-10px_rgba(182,255,46,.6)]"
+                    >
+                      View projects
+                      <ArrowRight size={14} className="shrink-0 transition-transform group-hover:translate-x-1" />
+                    </a>
+                    <a
+                      href="#aboutme"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        onOpenAbout();
+                      }}
+                      className={`group inline-flex items-center gap-2 whitespace-nowrap px-2 py-4 font-display text-xs font-semibold uppercase tracking-[0.14em] transition-colors hover:text-accent-400 ${t.textMuted}`}
+                    >
+                      More about me
+                      <ArrowRight size={14} className="shrink-0 transition-transform group-hover:translate-x-1" />
+                    </a>
+                  </div>
+                </Reveal>
+              </div>
+
+              <Reveal delay={380} className="w-full max-w-[26rem] xl:-mb-3 xl:max-w-none">
+                <div className={`border-t pt-6 ${t.border}`}>
+                  <PlayerControls t={t} />
+                </div>
+              </Reveal>
+            </div>
+            </div>
 
         <Reveal delay={440}>
-          <div id="contact" className={`mt-10 sm:mt-14 border-t ${t.border} pt-7 scroll-mt-24`}>
-            <p className={`font-mono text-[11px] uppercase tracking-[0.22em] ${t.textFaint} mb-6`}>Reach me</p>
+          <div id="contact" className={`mt-14 sm:mt-20 border-t ${t.border} pt-7 scroll-mt-24`}>
+            <p className={`font-mono text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px] ${t.textMuted} mb-6`}>Side B / 002 <span className="mx-1.5">·</span> Reach me</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-4 sm:gap-8">
               {tiles.map((item) => {
                 const inner = (
                   <>
                     <ArrowUpRight size={14} className={`absolute right-0 top-1 ${t.textFaint} transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent-400`} />
-                    <p className={`font-display text-xl sm:text-[28px] font-medium leading-tight tracking-tight ${t.text} transition-colors group-hover:text-accent-400`}>
+                    <p className={`font-display text-xl sm:text-2xl font-medium leading-tight tracking-tight ${t.text} transition-colors group-hover:text-accent-400`}>
                       {item.big}
                     </p>
                     <p className={`font-body text-[12px] sm:text-sm ${t.textMuted} mt-1.5`}>{item.label}</p>
@@ -226,6 +217,8 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             ))}
           </div>
         </section>
+      </div>
+        </div>
       </div>
     </section>
   );

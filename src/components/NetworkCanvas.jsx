@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 
 const NODE_COUNT_BASE = 42;
 const MAX_DIST = 170;
-const MIN_SPEED = 6;
-const MAX_SPEED = 18;
+const MIN_SPEED = 4;
+const MAX_SPEED = 12;
 
 const network = { nodes: [] };
 
@@ -13,7 +13,7 @@ const isLowPower = () => (navigator.hardwareConcurrency && navigator.hardwareCon
 function targetCounts(width, height) {
   const area = width * height * (isSmall() ? 0.4 : 1);
   return {
-    dark: Math.round(Math.min(NODE_COUNT_BASE * 1.6, Math.max(22, area / 22000))),
+    dark: Math.round(Math.min(NODE_COUNT_BASE * 0.9, Math.max(14, area / 38000))),
     light: Math.round(Math.min(NODE_COUNT_BASE * 0.7, Math.max(12, area / 50000))),
   };
 }
@@ -77,7 +77,7 @@ export function NetworkCanvas({ isDark }) {
           const dx = a.x - b.x, dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < maxDist) {
-            const opacity = (1 - dist / maxDist) * (dark ? 0.75 : 0.45);
+            const opacity = (1 - dist / maxDist) * (dark ? 0.4 : 0.3);
             ctx.strokeStyle = `rgba(${lineColor}, ${opacity})`;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -87,7 +87,7 @@ export function NetworkCanvas({ isDark }) {
         }
       }
 
-      ctx.fillStyle = `rgba(${nodeColor}, ${dark ? 0.95 : 0.55})`;
+      ctx.fillStyle = `rgba(${nodeColor}, ${dark ? 0.5 : 0.4})`;
       for (const n of nodes) {
         ctx.beginPath();
         ctx.arc(n.x, n.y, dark ? n.r : n.r * 0.8, 0, Math.PI * 2);
@@ -161,7 +161,7 @@ export function NetworkCanvas({ isDark }) {
     <div
       ref={containerRef}
       aria-hidden="true"
-      className={`fixed inset-0 -z-10 overflow-hidden pointer-events-none transition-opacity duration-700 motion-reduce:transition-none ${quiet ? "opacity-[0.2] max-lg:opacity-[0.12]" : "max-lg:opacity-[0.3]"}`}
+      className={`fixed inset-0 -z-10 overflow-hidden pointer-events-none transition-opacity duration-700 motion-reduce:transition-none ${quiet ? "opacity-[0.2] max-lg:opacity-[0.12]" : "opacity-[0.5] max-lg:opacity-[0.28]"}`}
     >
       <canvas ref={canvasRef} className="absolute inset-0" />
     </div>

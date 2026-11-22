@@ -4,7 +4,7 @@ import { CodeBrackets, NetworkNodes, ShieldCheck, Code2, Network, GraduationCap,
 export const PROFILE = {
   name: "RK",
   fullName: "Rose Kate Zonio",
-  role: "Software & Networking/IT",
+  role: "Software Developer · Networking & IT",
   subrole: "Computer Engineering · Software & Networking/IT",
   email: "rkzonio1@gmail.com",
   photo: "asset-a1c55936",
