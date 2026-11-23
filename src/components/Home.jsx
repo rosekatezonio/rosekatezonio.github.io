@@ -100,7 +100,6 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
         <div className="hero-frame">
           <h1 className="sr-only">Rose Kate Zonio, {PROFILE.role}</h1>
 
-          {/* label + name + role */}
           <div className="mx-auto w-full max-w-6xl px-5 pt-5 sm:px-8 md:pt-12 lg:pt-[min(8vh,5.5rem)]">
             <Reveal delay={60}>
               <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[10px] font-semibold uppercase tracking-[0.2em] sm:text-[11px]">
@@ -119,7 +118,6 @@ export function HeroSection({ t, isDark, onContact, openResumes, onOpenAbout }) 
             </div>
           </div>
 
-          {/* giant surname, full width, fading out toward the bottom */}
           <div className="mx-auto mt-3 w-full max-w-6xl px-5 sm:px-8 lg:mt-4" aria-hidden="true">
             <span className="hero-line hero-giant-line">
               <span className={`hero-giant font-display font-bold uppercase ${t.accent}`} style={{ "--d": "120ms" }}>Zonio</span>

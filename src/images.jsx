@@ -107,18 +107,31 @@ export async function fetchRemoteImages() {
   return urls;
 }
 
+const fetchAndStore = () =>
+  fetchRemoteImages().then((urls) => {
+    remoteImages = urls;
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify(urls));
+    } catch {}
+    return urls;
+  });
+
+let pending = null;
+
+export const loadRemoteImages = () => {
+  pending = fetchAndStore();
+  return pending;
+};
+
 export function useRemoteImages() {
   const [, setVersion] = useState(0);
   useEffect(() => {
     let alive = true;
-    fetchRemoteImages()
-      .then((urls) => {
-        if (!alive) return;
-        remoteImages = urls;
-        try {
-          localStorage.setItem(CACHE_KEY, JSON.stringify(urls));
-        } catch {}
-        setVersion((v) => v + 1);
+    const request = pending || fetchAndStore();
+    pending = null;
+    request
+      .then(() => {
+        if (alive) setVersion((v) => v + 1);
       })
       .catch(() => {});
     return () => {

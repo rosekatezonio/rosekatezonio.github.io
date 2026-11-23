@@ -150,7 +150,7 @@ export function SkillsArchive({ t, onClose, isDark }) {
   );
 }
 
-const galleryUrl = (key) => {
+export const galleryUrl = (key) => {
   const u = img(key);
   if (!u || !/res\.cloudinary\.com/.test(u) || /\/upload\/[^/]*w_\d/.test(u)) return u;
   return u.replace("/upload/", "/upload/w_1400,c_limit/");

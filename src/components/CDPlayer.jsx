@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback, createContext, useCont
 import july from "../assets/music/July.mp3";
 import snow from "../assets/music/Snow_on_The_Bluff.mp3";
 import radiate from "../assets/music/Radiate.mp3";
+import { resolveAudio } from "../audioCache.js";
 
 export const TRACKS = [
   { title: "July", src: july, duration: 214.465 },
@@ -48,7 +49,7 @@ export function PlayerProvider({ children }) {
     setTime(0);
     setDur(TRACKS[n].duration);
     setFailed(false);
-    a.src = TRACKS[n].src;
+    a.src = resolveAudio(TRACKS[n].src);
     if (autoplay) a.play().catch(() => setPlaying(false));
   }, []);
 
@@ -77,7 +78,7 @@ export function PlayerProvider({ children }) {
     if (!supported) return;
     const a = new Audio();
     a.preload = "none";
-    a.src = TRACKS[0].src;
+    a.src = resolveAudio(TRACKS[0].src);
     audio.current = a;
     const onTime = () => setTime(a.currentTime);
     const onMeta = () => {
